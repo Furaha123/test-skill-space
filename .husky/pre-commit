@@ -1,0 +1,10 @@
+npx lint-staged
+
+# Run tests with coverage
+npx jest --coverage --passWithNoTests
+
+# Check if the test coverage meets the required threshold
+if [ $? -ne 0 ]; then
+  echo "Commit rejected! Test coverage did not meet the required threshold of 80%."
+  exit 1
+fi

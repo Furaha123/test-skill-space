@@ -1,13 +1,13 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
+import { ROUTE_PATHS } from "./app.routes";
 
 const routes: Routes = [
   {
-    path: "auth",
-    loadChildren: () =>
-      import("./authentication/authentication.module").then(
-        (m) => m.AuthenticationModule,
-      ),
+    path: ROUTE_PATHS.auth,
+    loadChildren: async () =>
+      (await import("./authentication/authentication.module"))
+        .AuthenticationModule,
   },
 ];
 

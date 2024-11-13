@@ -1,0 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Archivo:wght@400;500;700&display=swap");
+
+$font-primary: "Roboto", sans-serif;
+$font-secondary: "Archivo", sans-serif;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 900;
+
+$font-size-small: 0.875rem; // 14px
+$font-size-base: 1rem; // 16px
+$font-size-large: 1.125rem; // 18px
+$font-size-xlarge: 1.25rem; // 20px
+
+@mixin font(
+  $family: $font-primary,
+  $weight: $font-weight-regular,
+  $size: $font-size-base
+) {
+  font-family: $family;
+  font-weight: $weight;
+  font-size: $size;
+}
+
+body {
+  @include font($family: $font-primary);
+}
+
+h1,
+h2,
+.secondary-heading {
+  @include font(
+    $family: $font-secondary,
+    $weight: $font-weight-bold,
+    $size: $font-size-large
+  );
+}
+
+p,
+.text {
+  @include font(
+    $family: $font-primary,
+    $weight: $font-weight-regular,
+    $size: $font-size-base
+  );
+}

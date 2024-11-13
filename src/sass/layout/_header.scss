@@ -1,0 +1,42 @@
+.main-content {
+  &__header {
+    @include flex-between;
+    padding: 16px 32px;
+    border-bottom: 1px solid $nav-bottom;
+    border-left: 1px solid $nav-bottom;
+  }
+
+  &__label {
+    display: inline-flex;
+    height: 100%;
+    padding-top: 10px;
+    align-items: center;
+    color: $tertiary-20;
+  }
+
+  &__icons {
+    @include flex-center;
+    gap: 1rem;
+  }
+
+  &__notification {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    background-color: $neutral-92;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  &__profile {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
+// Modifier applied directly to main-content__label
+.main-content__label--welcome {
+  color: $nav-text-color;
+}

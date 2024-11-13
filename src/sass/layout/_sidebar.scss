@@ -1,0 +1,167 @@
+.sidebar {
+  background-color: $white;
+  min-height: 100vh;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  @include transition-base;
+
+  // Header section
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 2.25rem;
+    @include transition-base;
+
+    &--expanded {
+      flex-direction: row;
+      padding-left: 1.5rem;
+    }
+
+    &--collapsed {
+      flex-direction: column;
+    }
+  }
+
+  // Logo section
+  &__logo-wrapper {
+    display: flex;
+    align-items: center;
+
+    img {
+      @include transition-base;
+
+      &.expanded {
+        width: $logo-expanded-width;
+        height: $logo-expanded-height;
+      }
+
+      &.collapsed {
+        width: $logo-collapsed-width;
+        height: $logo-collapsed-height;
+      }
+    }
+  }
+
+  // Title
+  &__title {
+    font-size: 1.5rem;
+    color: $nav-text-dark;
+    @include transition-base;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-top: 18px;
+
+    &--visible {
+      opacity: 1;
+      width: auto;
+    }
+
+    &--hidden {
+      opacity: 0;
+      width: 0;
+    }
+  }
+
+  // Toggle button
+  &__toggle {
+    cursor: pointer;
+    background-color: $white;
+    position: absolute;
+    width: $toggle-button-size;
+    height: $toggle-button-size;
+    border-radius: 50%;
+    right: -22px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    @include flex-center;
+    @include transition-base;
+    z-index: 10;
+
+    &:hover {
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+      transform: scale(1.05);
+    }
+
+    &--expanded {
+      top: 70px;
+    }
+
+    &--collapsed {
+      top: 100px;
+    }
+
+    img {
+      transition: transform $transition-timing;
+
+      &.rotated {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  // Navigation content
+  &__content {
+    display: flex;
+    margin-top: 4rem;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+  }
+
+  // Navigation items
+  &__nav-item {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    @include transition-base;
+
+    &:hover {
+      background-color: rgba($orange-color, 0.1);
+    }
+
+    &--expanded {
+      padding-left: 2rem;
+    }
+
+    &--collapsed {
+      justify-content: center;
+    }
+
+    &--active {
+      background-color: rgba($orange-color, 0.2);
+      border-right: 3px solid $orange-color;
+      color: $orange-color;
+    }
+
+    p {
+      @include transition-base;
+      overflow: hidden;
+      white-space: nowrap;
+      padding-top: 13px;
+
+      &.visible {
+        opacity: 1;
+        width: auto;
+      }
+
+      &.hidden {
+        opacity: 0;
+        width: 0;
+      }
+    }
+  }
+
+  // Logout section
+  &__logout {
+    &:hover {
+      background-color: rgba(239, 68, 68, 0.1); // red-50 equivalent
+    }
+
+    p {
+      color: $nav-text-color;
+    }
+  }
+}

@@ -1,3 +1,60 @@
 @mixin padding($size) {
   padding: $size;
 }
+
+@mixin margin($size) {
+  margin: $size;
+}
+
+@mixin font-size($size) {
+  font-size: $size;
+  line-height: 1.5 * $size;
+}
+
+@mixin responsive-font-size($small, $medium, $large) {
+  font-size: $small;
+
+  @media (min-width: 768px) {
+    font-size: $medium;
+  }
+
+  @media (min-width: 1024px) {
+    font-size: $large;
+  }
+}
+
+@mixin border-radius($radius) {
+  border-radius: $radius;
+}
+
+@mixin box-shadow($shadow...) {
+  box-shadow: $shadow;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin transition($property, $duration: 0.3s, $timing-function: ease) {
+  transition: $property $duration $timing-function;
+}
+
+@mixin media-query($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin responsive-padding($small, $medium, $large) {
+  padding: $small;
+
+  @media (min-width: 768px) {
+    padding: $medium;
+  }
+
+  @media (min-width: 1024px) {
+    padding: $large;
+  }
+}

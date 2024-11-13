@@ -7,6 +7,7 @@ import { StoreModule } from "@ngrx/store";
 import { EffectsModule } from "@ngrx/effects";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
+import { SharedModule } from "./shared/shared.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -24,6 +25,7 @@ import { provideAnimationsAsync } from "@angular/platform-browser/animations/asy
       traceLimit: 75, // maximum stack trace frames to be stored (in case trace option was provided as true)
       connectInZone: true, // If set to true, the connection is established within the Angular zone
     }),
+    SharedModule,
   ],
   providers: [provideAnimationsAsync()],
   bootstrap: [AppComponent],

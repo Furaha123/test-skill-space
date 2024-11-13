@@ -1,4 +1,5 @@
 import { Component, Input } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 const sidebarItems = [
   {
     label: "Dashboard",
@@ -31,7 +32,10 @@ export class LayoutComponent {
   selectedIndex = 0;
   selectedSetting = false;
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
   toggleNav() {
     this.minimized = !this.minimized;
@@ -39,14 +43,13 @@ export class LayoutComponent {
 
   selectItem(index: number) {
     this.selectedIndex = index;
-    this.selectedSetting = false; // Deselect settings when selecting other items
-    // You can add your navigation logic here (e.g., using Angular Router)
-    // this.router.navigate([this.items[index].route]);
+    this.selectedSetting = false;
+    this.router.navigate([this.items[index].route]);
   }
 
   selectSettings() {
     this.selectedSetting = true;
-    this.selectedIndex = -1; // Deselect other items when selecting settings
-    // Add logic to navigate to the settings route or any other behavior needed
+    this.selectedIndex = -1;
+    this.router.navigate(["settings"], { relativeTo: this.route });
   }
 }

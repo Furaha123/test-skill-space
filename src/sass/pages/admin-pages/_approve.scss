@@ -1,0 +1,158 @@
+.approve-container {
+  padding: 30px 66px;
+  background-color: $primary-98;
+  min-height: 100vh;
+  &__content {
+    @include flex-start;
+    flex-direction: column;
+    width: 100%;
+    gap: 30px;
+    background-color: white;
+    padding: 30px;
+  }
+
+  &__title {
+    font-size: 23px;
+    font-weight: 400;
+    color: black;
+  }
+
+  &__text-icons {
+    @include flex-start;
+    flex-direction: column;
+    gap: 0.9375rem;
+    font-weight: 400;
+    color: $nav-text-color;
+  }
+
+  &__company-detail {
+    @include flex-center-row;
+  }
+
+  &__details {
+    @include flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &__content-detail {
+    @include flex-center-row-between;
+    width: 100%;
+  }
+
+  &__comany-certificate-image {
+    height: 550px;
+    border-radius: 8px;
+  }
+}
+
+.approve-buttons {
+  width: 100%;
+  gap: 56px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  &__approve {
+    background-color: $orange-color;
+    color: $white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-block;
+    cursor: pointer;
+    &:hover {
+      background-color: darken($orange-color, 10%);
+    }
+  }
+
+  &__reject {
+    background-color: transparent;
+    color: $orange-color;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid $orange-color;
+    display: inline-block;
+    cursor: pointer;
+    &:hover {
+      background-color: darken($primary-98, 10%);
+    }
+  }
+
+  &__button1 {
+    @include flex-center;
+  }
+
+  &__button2 {
+    @include flex-center;
+  }
+}
+
+.back {
+  cursor: pointer;
+  &__icon-wrapper {
+    @include flex-center-row;
+    mask-image: url("../../../assets/icon/arrow-lefty.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: $orange-color;
+    width: 25px;
+    height: 12px;
+    margin-right: 0.25rem;
+    display: inline-block;
+    z-index: 1;
+  }
+}
+
+.register-icon {
+  @include flex-center-row;
+  mask-image: url("../../../assets/icon/register.svg");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: $nav-text-color;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.25rem;
+  display: inline-block;
+}
+
+.web-icon {
+  @include flex-center-row;
+  mask-image: url("../../../assets/icon/web.svg");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: $nav-text-color;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.25rem;
+  display: inline-block;
+}
+
+.mail-icon {
+  @include flex-center-row;
+  mask-image: url("../../../assets/icon/mail.svg");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: $nav-text-color;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.25rem;
+  display: inline-block;
+}
+
+.phone-icon {
+  @include flex-center-row;
+  mask-image: url("../../../assets/icon/phone.svg");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: $nav-text-color;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.25rem;
+  display: inline-block;
+}

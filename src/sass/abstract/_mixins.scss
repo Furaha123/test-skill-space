@@ -45,9 +45,21 @@
   justify-content: space-between;
 }
 
-@mixin flex-center-between {
+@mixin flex-center-row {
   display: flex;
   align-items: center;
+}
+
+@mixin flex-center-row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: start;
+  justify-content: flex-start;
 }
 
 @mixin transition($property, $duration: 0.3s, $timing-function: ease) {

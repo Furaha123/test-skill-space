@@ -9,6 +9,7 @@
     border-left: 1px solid $nav-bottom;
     position: sticky;
     top: 0;
+    z-index: 2;
   }
 
   &__label {

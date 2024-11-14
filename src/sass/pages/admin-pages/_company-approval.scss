@@ -1,0 +1,45 @@
+.approval-content {
+  @include flex-start;
+  gap: 30px;
+  flex-direction: column;
+  padding: 5px 66px;
+  background-color: $primary-98;
+  min-height: 100vh;
+  &__card {
+    @include flex-between;
+    width: 100%;
+    background-color: $primary-100;
+    padding: 50px 20px;
+    border-radius: 8px;
+  }
+
+  &__labels {
+    @include flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__label1 {
+    color: $card-text;
+    font-weight: 600;
+  }
+
+  &__label2 {
+    color: $nav-text-color;
+    font-weight: 400;
+  }
+
+  &__button {
+    @include flex-center;
+    background-color: $orange-color;
+    color: $white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-block;
+    cursor: pointer;
+    &:hover {
+      background-color: darken($orange-color, 10%);
+    }
+  }
+}

@@ -6,12 +6,14 @@ import { AdminDashboardComponent } from "./admin-dashboard.component";
 import { SharedModule } from "../../shared/shared.module";
 import { CompanyApprovalComponent } from "./pages/company-approval/company-approval.component";
 import { AdminSettingsComponent } from "./pages/admin-settings/admin-settings.component";
+import { ApproveComponent } from "./pages/approve/approve.component";
 
 @NgModule({
   declarations: [
     AdminDashboardComponent,
     CompanyApprovalComponent,
     AdminSettingsComponent,
+    ApproveComponent,
   ],
   imports: [CommonModule, AdminDashboardRoutingModule, SharedModule],
 })

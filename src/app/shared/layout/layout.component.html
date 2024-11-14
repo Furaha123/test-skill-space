@@ -1,0 +1,175 @@
+<div
+  class="layout-grid"
+  [ngClass]="{
+    'layout-grid--expanded': !minimized,
+    'layout-grid--collapsed': minimized,
+  }"
+>
+  <div class="sidebar">
+    <!-- Header -->
+    <div
+      class="sidebar__header"
+      [ngClass]="{
+        'sidebar__header--expanded': !minimized,
+        'sidebar__header--collapsed': minimized,
+      }"
+    >
+      <div class="sidebar__logo-wrapper">
+        <img
+          src="assets/logo.svg"
+          [ngClass]="{
+            expanded: !minimized,
+            collapsed: minimized,
+          }"
+          alt="logo"
+        />
+        <p
+          class="sidebar__title"
+          [ngClass]="{
+            'sidebar__title--visible': !minimized,
+            'sidebar__title--hidden': minimized,
+          }"
+        >
+          SkillSpace
+        </p>
+      </div>
+    </div>
+
+    <!-- Toggle Button -->
+    <div
+      class="sidebar__toggle"
+      [ngClass]="{
+        'sidebar__toggle--expanded': !minimized,
+        'sidebar__toggle--collapsed': minimized,
+      }"
+      (click)="toggleNav()"
+    >
+      <img
+        src="assets/icon/chevron_back.svg"
+        [ngClass]="{ rotated: minimized }"
+        alt="chevron"
+      />
+    </div>
+
+    <!-- Navigation Content -->
+    <div class="sidebar__content">
+      <div>
+        <div
+          *ngFor="let item of items; let i = index"
+          class="sidebar__nav-item"
+          [ngClass]="{
+            'sidebar__nav-item--expanded': !minimized,
+            'sidebar__nav-item--collapsed': minimized,
+            'sidebar__nav-item--active': selectedIndex === i,
+          }"
+          (click)="selectItem(i)"
+        >
+          <img
+            [src]="item.icon"
+            [alt]="item.icon + ' icon'"
+            [style.width.px]="minimized ? 24 : 20"
+            [style.height.px]="minimized ? 24 : 20"
+            [style.filter]="
+              selectedIndex === i
+                ? 'invert(35%) sepia(70%) saturate(550%) hue-rotate(0deg)'
+                : 'invert(50%) sepia(0%) saturate(0%) hue-rotate(180deg)'
+            "
+          />
+          <p
+            class="sidebar__nav-item-label"
+            [ngClass]="{
+              visible: !minimized,
+              hidden: minimized,
+            }"
+          >
+            {{ item.label }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Settings and Logout -->
+      <div>
+        <div
+          class="sidebar__nav-item"
+          [ngClass]="{
+            'sidebar__nav-item--expanded': !minimized,
+            'sidebar__nav-item--collapsed': minimized,
+            'sidebar__nav-item--active': selectedSetting,
+          }"
+          (click)="selectSettings()"
+        >
+          <img
+            src="assets/icon/settings.svg"
+            alt="settings icon"
+            [style.width.px]="minimized ? 24 : 20"
+            [style.height.px]="minimized ? 24 : 20"
+            [style.filter]="
+              selectedSetting
+                ? 'invert(35%) sepia(70%) saturate(550%) hue-rotate(0deg)'
+                : 'invert(50%) sepia(0%) saturate(0%) hue-rotate(180deg)'
+            "
+          />
+          <p
+            [ngClass]="{
+              visible: !minimized,
+              hidden: minimized,
+            }"
+          >
+            Settings
+          </p>
+        </div>
+
+        <div
+          class="sidebar__nav-item sidebar__logout"
+          [ngClass]="{
+            'sidebar__nav-item--expanded': !minimized,
+            'sidebar__nav-item--collapsed': minimized,
+          }"
+        >
+          <img
+            src="assets/icon/logout.svg"
+            alt="logout icon"
+            [style.width.px]="minimized ? 24 : 20"
+            [style.height.px]="minimized ? 24 : 20"
+            style="
+              filter: invert(35%) sepia(5%) saturate(0%) hue-rotate(0deg)
+                brightness(50%);
+            "
+          />
+          <p
+            [ngClass]="{
+              visible: !minimized,
+              hidden: minimized,
+            }"
+          >
+            Logout
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div class="main-content">
+    <div class="main-content__header">
+      <div class="main-content__label">
+        <p>
+          <span class="main-content__label--welcome">Welcome,</span> John
+          Hopkins
+        </p>
+      </div>
+      <div class="main-content__icons">
+        <div class="main-content__notification">
+          <img src="assets/icon/notification.svg" alt="notifications" />
+        </div>
+        <div class="main-content__profile">
+          <img src="assets/icon/profile.svg" alt="profile" />
+        </div>
+      </div>
+    </div>
+    <!-- this will render the selected sidebar-item -->
+    <div class="contents">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

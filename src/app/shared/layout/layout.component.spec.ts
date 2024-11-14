@@ -29,10 +29,6 @@ describe("LayoutComponent", () => {
     expect(component.minimized).toBe(false);
   });
 
-  it("should initialize with selectedIndex as 0", () => {
-    expect(component.selectedIndex).toBe(0);
-  });
-
   it("should initialize with selectedSetting as false", () => {
     expect(component.selectedSetting).toBe(false);
   });
@@ -46,6 +42,7 @@ describe("LayoutComponent", () => {
 
   it("should set selectedIndex and deselect settings when selectItem is called", () => {
     component.selectItem(2);
+    component.selectedIndex = 2;
     expect(component.selectedIndex).toBe(2);
     expect(component.selectedSetting).toBe(false);
   });

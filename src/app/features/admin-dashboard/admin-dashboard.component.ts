@@ -8,11 +8,6 @@ import { Component } from "@angular/core";
 export class AdminDashboardComponent {
   adminDashboardSidebarItems = [
     {
-      label: "Dashboard",
-      icon: "assets/icon/dashboard.svg",
-      route: "/admin-dashboard", // Root route for admin dashboard
-    },
-    {
       label: "Company Approval",
       icon: "assets/icon/program.svg",
       route: "/admin-dashboard/company-approval", // Route for Company Approval component

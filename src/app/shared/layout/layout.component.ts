@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 const sidebarItems = [
   {
@@ -25,7 +25,7 @@ const sidebarItems = [
   templateUrl: "./layout.component.html",
   styleUrl: "./layout.component.scss",
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
   @Input() items: Array<{ label: string; icon: string; route: string }> =
     sidebarItems;
   minimized = false;
@@ -36,6 +36,15 @@ export class LayoutComponent {
     private router: Router,
     private route: ActivatedRoute,
   ) {}
+
+  ngOnInit() {
+    this.router.events.subscribe(() => {
+      this.selectedIndex = this.items.findIndex(
+        (item) => item.route === this.router.url,
+      );
+    });
+    this.selectItem(this.selectedIndex);
+  }
 
   toggleNav() {
     this.minimized = !this.minimized;

@@ -7,7 +7,7 @@ $primary-30: #832700;
 $primary-35: #972e00;
 $primary-40: #ab3602;
 $primary-50: #cd4d1d;
-$primary-60: #ef6634;
+$primary-60: #dd5928;
 $primary-70: #ff8b64;
 $primary-80: #ffb59d;
 $primary-90: #ffdbd0;
@@ -72,7 +72,7 @@ $neutral-70: #aaabab;
 $neutral-80: #c6c6c7;
 $neutral-87: #dadada;
 $neutral-90: #e2e2e2;
-$neutral-92: #e8e8e8;
+$neutral-92: #bfbfbf;
 $neutral-94: #edeeee;
 $neutral-95: #f0f1f1;
 $neutral-96: #f3f4f4;
@@ -80,7 +80,6 @@ $neutral-98: #f9f9f9;
 $neutral-99: #fcfcfc;
 $neutral-100: #ffffff;
 
-// Error Colors
 $error-0: #000000;
 $error-10: #410002;
 $error-20: #690005;
@@ -109,7 +108,6 @@ $white: #ffffff;
 $nav-bottom: #b5b5b5;
 $card-text: #333333;
 
-// Element sizes
 $toggle-button-size: 44px;
 $logo-expanded-width: 31px;
 $logo-expanded-height: 32px;
@@ -122,3 +120,11 @@ $primary-orange: #dd5928;
 $primary-hover-color: #e8906f;
 $danger-color: #ef4444;
 $danger-hover-color: #dc2626;
+
+$modal-bg-color: #f8fdf6;
+$modal-shadow-color: rgba(0, 0, 0, 0.1);
+$overlay-bg-color: rgba(0, 0, 0, 0.7);
+$success-color: #4caf50;
+$hover-color: #45a049;
+$z-index-overlay: 1050;
+$z-index-modal: -99;

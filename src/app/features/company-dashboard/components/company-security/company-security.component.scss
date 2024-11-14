@@ -1,0 +1,100 @@
+@import "../../../../../sass/base/typography";
+@import "../../../../../sass/abstract/mixins";
+@import "../../../../../sass/abstract/variables";
+
+.company-security {
+  padding: $spacing-large;
+
+  h2 {
+    font-size: $font-size-large;
+    font-weight: $font-weight-bold;
+    color: $neutral-17;
+  }
+
+  .password-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-medium;
+    max-width: 630px;
+
+    .password-field {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-size: $font-size-small;
+        font-weight: $font-weight-medium;
+        color: $neutral-40;
+      }
+
+      input[type="password"] {
+        padding: $spacing-small $spacing-medium;
+        border: 1px solid $neutral-92;
+        border-radius: 4px;
+        font-size: $font-size-base;
+        color: $neutral-10;
+        width: 100%;
+        background-color: $neutral-98;
+
+        &::placeholder {
+          color: $neutral-60;
+          letter-spacing: 0.2em;
+        }
+
+        &:focus {
+          border-color: $primary-60;
+          outline: none;
+          box-shadow: 0 0 0 2px rgba($primary-60, 0.2);
+        }
+      }
+    }
+  }
+
+  .passwords {
+    display: flex;
+    gap: 3rem;
+    margin-top: 1rem;
+
+    .password-input-group {
+      flex: 1;
+    }
+  }
+
+  .save-btn.cancel-btn {
+    display: flex;
+    gap: $spacing-medium;
+    margin-top: $spacing-medium;
+
+    .btn {
+      padding: $spacing-medium $spacing-medium;
+      width: 170px;
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      border-radius: 8px;
+      cursor: pointer;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      border: none;
+
+      &.save {
+        background-color: $primary-60;
+        color: $tertiary-100;
+
+        &:hover {
+          background-color: $primary-70;
+        }
+      }
+
+      &.cancel {
+        background-color: $tertiary-100;
+        color: $primary-40;
+        border: 1px solid $primary-60;
+
+        &:hover {
+          background-color: $tertiary-100;
+        }
+      }
+    }
+  }
+}

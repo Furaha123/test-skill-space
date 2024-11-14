@@ -9,18 +9,19 @@ import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { SharedModule } from "./shared/shared.module";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-
-import { ToastrModule } from "ngx-toastr";
 import { provideHttpClient, withFetch } from "@angular/common/http";
+
+// import { ToastrModule } from "ngx-toastr";
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
+    SharedModule,
+
     AppRoutingModule,
     StoreModule.forRoot(),
     EffectsModule.forRoot([]),
-
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: !isDevMode(), // Restrict extension to log-only mode
@@ -31,7 +32,7 @@ import { provideHttpClient, withFetch } from "@angular/common/http";
     }),
     SharedModule,
     BrowserAnimationsModule, // required animations module
-    ToastrModule.forRoot(),
+    // ToastrModule.forRoot(),
   ],
   providers: [provideAnimationsAsync(), provideHttpClient(withFetch())],
   bootstrap: [AppComponent],

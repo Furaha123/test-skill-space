@@ -1,0 +1,30 @@
+<div class="company-profile-layout">
+  <section class="company-profile">
+    <div class="tab-header">
+      <div
+        class="tab-item company-details"
+        [class.active]="selectedTabIndex === 0"
+        (click)="onTabChange(0)"
+      >
+        <h2>Company Details</h2>
+      </div>
+
+      <div
+        class="tab-item security"
+        [class.active]="selectedTabIndex === 1"
+        (click)="onTabChange(1)"
+      >
+        <h2>Security</h2>
+      </div>
+    </div>
+
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="tab-content">
+      <mat-tab>
+        <app-company-details />
+      </mat-tab>
+      <mat-tab>
+        <app-company-security />
+      </mat-tab>
+    </mat-tab-group>
+  </section>
+</div>

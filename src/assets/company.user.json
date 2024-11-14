@@ -1,0 +1,14 @@
+{
+  "id": "12345",
+  "name": "Furaha Dev",
+  "contact": {
+    "phone": "+250-780-1627",
+    "website": "https://furahadev.netlify.app/",
+    "email": "info@furahadev.com"
+  },
+  "logo": "https://images.pexels.com/photos/11035543/pexels-photo-11035543.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+
+  "documentUrl": "https://signaturely.com/wp-content/uploads/2022/08/loan-agreement-uplead-791x1024.jpg",
+
+  "password": "12121"
+}

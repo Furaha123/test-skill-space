@@ -1,0 +1,373 @@
+@import "../../../../../sass/base/typography";
+@import "../../../../../sass/abstract/mixins";
+@import "../../../../../sass/abstract/variables";
+
+.company-details {
+  padding: $spacing-large;
+  &.modal-open {
+    filter: blur(5px);
+    pointer-events: none;
+    user-select: none;
+  }
+  .main-container {
+    display: flex;
+    gap: $spacing-large;
+    margin-bottom: $spacing-large;
+  }
+
+  .left-column,
+  .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-large;
+  }
+
+  .company-info {
+    width: 100%;
+    margin-bottom: $spacing-large;
+
+    h2 {
+      font-size: $font-size-large;
+      font-weight: $font-weight-bold;
+      color: $neutral-17;
+      margin-bottom: $spacing-small;
+    }
+
+    p {
+      font-size: $font-size-base;
+      color: $neutral-6;
+      font-weight: $font-weight-regular;
+      margin-bottom: $spacing-medium;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+
+      label {
+        font-size: $font-size-small;
+        font-weight: $font-weight-medium;
+        color: $neutral-40;
+        margin-bottom: $spacing-small;
+      }
+
+      input {
+        padding: $spacing-small;
+        border: 1px solid $neutral-92;
+        border-radius: 4px;
+        font-size: $font-size-base;
+        color: $neutral-10;
+        width: 100%;
+
+        &:focus {
+          border-color: $primary-60;
+          outline: none;
+          box-shadow: 0 0 0 2px rgba($primary-60, 0.2);
+        }
+      }
+    }
+  }
+
+  .phone-input-group {
+    display: flex;
+    gap: $spacing-medium;
+    margin-bottom: $spacing-large;
+
+    .country-code {
+      flex: 0 0 120px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-number {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      .resize-input {
+        width: 100%;
+      }
+
+      input {
+        padding: $spacing-small;
+        border: 1px solid $neutral-92;
+        border-radius: 4px;
+        font-size: $font-size-base;
+        color: $neutral-10;
+        width: 100%;
+      }
+    }
+
+    label {
+      font-size: $font-size-small;
+      font-weight: $font-weight-medium;
+      color: $neutral-40;
+      margin-bottom: $spacing-small;
+    }
+  }
+
+  .file-preview {
+    position: relative;
+    width: 50px;
+    margin-bottom: $spacing-medium;
+
+    .file-content {
+      .delete-button {
+        position: absolute;
+        padding: 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white !important;
+        border: none;
+        right: -30px;
+
+        img {
+          width: 24px !important;
+          height: 24px !important;
+          max-width: 100%;
+          max-height: 100%;
+        }
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+
+      .file-icon {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+      }
+
+      .file-name {
+        font-size: $font-size-small;
+        color: $neutral-17;
+        font-weight: $font-weight-regular;
+        word-break: break-word;
+        max-width: 100%;
+        line-height: 1.2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        margin-top: $spacing-medium;
+      }
+    }
+  }
+
+  .upload-box {
+    border: 2px dashed $neutral-92;
+    border-radius: 8px;
+    padding: $spacing-medium;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    gap: $spacing-medium;
+    transition: all 0.3s ease;
+    background-color: $neutral-98;
+    position: relative;
+    width: 100%;
+
+    &:hover,
+    &.drag-over {
+      border-color: $primary-60;
+      background-color: $primary-98;
+    }
+
+    .upload-icon {
+      margin-bottom: $spacing-medium;
+
+      img {
+        width: 38px;
+        height: 38px;
+        opacity: 0.6;
+      }
+    }
+
+    .upload-text {
+      p {
+        font-size: $font-size-base;
+        color: $neutral-40;
+        font-weight: $font-weight-medium;
+        text-align: start;
+
+        &.supported-formats {
+          font-size: $font-size-small;
+          color: $neutral-60;
+        }
+      }
+    }
+
+    input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+    }
+  }
+
+  .input-group-website {
+    display: flex;
+    align-items: center;
+    gap: $spacing-small;
+    width: 100%;
+
+    input {
+      flex: 1;
+      padding: $spacing-medium;
+      border: 1px solid $neutral-92;
+      border-radius: 4px;
+      font-size: $font-size-base;
+      color: $neutral-10;
+
+      &:focus {
+        border-color: $primary-60;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba($primary-60, 0.2);
+      }
+
+      &::placeholder {
+        color: $neutral-60;
+      }
+    }
+
+    .icon-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background-color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      img {
+        width: 24px !important;
+        height: 24px !important;
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+
+    &.two {
+      margin-top: $spacing-large;
+    }
+  }
+
+  .save-btn.cancel-btn {
+    display: flex;
+    gap: $spacing-medium;
+    margin-top: $spacing-medium;
+
+    .btn {
+      padding: $spacing-medium $spacing-medium;
+      width: 170px;
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      border-radius: 8px;
+      cursor: pointer;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      border: none;
+
+      &.save {
+        background-color: $primary-60;
+        color: $tertiary-100;
+
+        &:hover {
+          background-color: $primary-70;
+        }
+      }
+
+      &.cancel {
+        background-color: $tertiary-100;
+        color: $primary-40;
+        border: 1px solid $primary-60;
+
+        &:hover {
+          background-color: $tertiary-100;
+        }
+      }
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $overlay-bg-color;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: $z-index-overlay;
+}
+
+.modal-content {
+  background-color: $modal-bg-color;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 400px;
+  box-shadow: 0 8px 16px $modal-shadow-color;
+  z-index: $z-index-modal;
+  position: relative;
+
+  .success-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 15px;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+
+    h2 {
+      color: $success-color;
+      margin: 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+
+  p {
+    color: #555;
+    margin-bottom: 25px;
+    font-size: 16px;
+  }
+
+  .btn.ok {
+    background-color: $success-color;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 500;
+
+    &:hover {
+      background-color: $hover-color;
+    }
+  }
+}

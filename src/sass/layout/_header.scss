@@ -4,6 +4,7 @@
   &__header {
     @include flex-between;
     background-color: white;
+    z-index: 100;
     padding: 16px 32px;
     border-bottom: 1px solid $nav-bottom;
     border-left: 1px solid $nav-bottom;

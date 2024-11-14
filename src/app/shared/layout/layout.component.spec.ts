@@ -1,17 +1,22 @@
-// layout.component.spec.ts
-
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { LayoutComponent } from "./layout.component";
-import { RouterTestingModule } from "@angular/router/testing";
+import {
+  provideRouter,
+  withComponentInputBinding,
+  Routes,
+} from "@angular/router";
+import { ApplicationConfig } from "@angular/core";
 
 describe("LayoutComponent", () => {
   let component: LayoutComponent;
   let fixture: ComponentFixture<LayoutComponent>;
 
+  const routes: Routes = [];
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LayoutComponent],
-      imports: [RouterTestingModule],
+      providers: [provideRouter(routes, withComponentInputBinding())],
     }).compileComponents();
   });
 
@@ -83,3 +88,8 @@ describe("LayoutComponent", () => {
     ]);
   });
 });
+
+// Optional: If you need to set up routes for testing
+export const appConfig: ApplicationConfig = {
+  providers: [provideRouter([], withComponentInputBinding())],
+};

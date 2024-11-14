@@ -23,7 +23,6 @@ const sidebarItems = [
 @Component({
   selector: "app-layout",
   templateUrl: "./layout.component.html",
-  styleUrl: "./layout.component.scss",
 })
 export class LayoutComponent implements OnInit {
   @Input() items: Array<{ label: string; icon: string; route: string }> =
@@ -33,8 +32,8 @@ export class LayoutComponent implements OnInit {
   selectedSetting = false;
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit() {

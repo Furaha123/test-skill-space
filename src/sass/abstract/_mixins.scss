@@ -46,7 +46,6 @@
 @mixin flex-center-between {
   display: flex;
   align-items: center;
-  // justify-content: space-between;
 }
 
 @mixin transition($property, $duration: 0.3s, $timing-function: ease) {

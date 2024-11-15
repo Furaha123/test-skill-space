@@ -8,6 +8,11 @@ import { EffectsModule } from "@ngrx/effects";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { SharedModule } from "./shared/shared.module";
+import { provideHttpClient } from "@angular/common/http";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+
+import { ToastrModule } from "ngx-toastr";
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,8 +31,10 @@ import { SharedModule } from "./shared/shared.module";
       connectInZone: true, // If set to true, the connection is established within the Angular zone
     }),
     SharedModule,
+    BrowserAnimationsModule, // required animations module
+    ToastrModule.forRoot(),
   ],
-  providers: [provideAnimationsAsync()],
+  providers: [provideAnimationsAsync(), provideHttpClient(), MatSnackBar],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

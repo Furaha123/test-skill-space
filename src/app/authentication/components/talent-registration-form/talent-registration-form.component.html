@@ -1,0 +1,54 @@
+<section class="form-wrapper">
+  <h5>Talent Registration</h5>
+
+  <form class="register-form" [formGroup]="form">
+    <app-input
+      label="Company Name"
+      formControlName="userName"
+      id="name"
+      placeholder="Enter your company name here"
+      type="text"
+      [hasError]="isControlInvalid('userName')"
+    ></app-input>
+    <app-input
+      label="Email Address"
+      formControlName="email"
+      id="email"
+      type="text"
+      placeholder="Enter address here"
+      [hasError]="isControlInvalid('email')"
+    ></app-input>
+    <app-input
+      label="Contact Information"
+      formControlName="phoneNumber"
+      id="phoneNumber"
+      type="number"
+      placeholder="+250 *** *** ***"
+      [hasError]="isControlInvalid('phoneNumber')"
+    ></app-input>
+    <app-input
+      label="Password"
+      id="password"
+      formControlName="password"
+      type="password"
+      placeholder="Enter your password"
+      [hasError]="isControlInvalid('password')"
+    ></app-input>
+    <app-input
+      label="Confirm password"
+      formControlName="passwordConfirm"
+      id="confirm"
+      type="passwordConfirm"
+      placeholder="Confirm your password"
+      [hasError]="isControlInvalid('passwordConfirm')"
+    ></app-input>
+    <app-button
+      type="button"
+      [isActive]="true"
+      [customClasses]="'btn talent-register-btn'"
+      [isDisabled]="form.invalid"
+      (handleClick)="onSubmit()"
+      >Register
+    </app-button>
+  </form>
+</section>

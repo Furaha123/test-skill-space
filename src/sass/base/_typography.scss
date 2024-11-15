@@ -23,7 +23,7 @@ $font-size-xlarge: 1.25rem; // 20px
 }
 
 body {
-  @include font($family: $font-primary);
+  @include font($family: $font-secondary);
 }
 
 h1,

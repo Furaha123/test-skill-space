@@ -1,0 +1,44 @@
+@import "../../../../styles.scss";
+.alert {
+  &-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  &-box {
+    display: flex;
+    align-items: flex-start;
+    padding: 0.75rem;
+    border-left-width: 4px;
+    border-left-style: solid;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    max-width: 28rem;
+    width: 523px;
+  }
+
+  &-warning {
+    border-left-color: #ffa500;
+    background-color: #fff5e6;
+  }
+
+  &-error {
+    border-left-color: #d32f2f; // error color
+    background-color: #ffebee; // lightError color
+  }
+
+  &-content {
+    flex-grow: 1;
+    margin-left: 1rem;
+  }
+
+  &-title {
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  &-text {
+    @include font(Archivo, 400, 16px);
+    color: #2d3748;
+  }
+}

@@ -26,7 +26,9 @@
 @mixin border-radius($radius) {
   border-radius: $radius;
 }
-
+@mixin border($size, $state, $color) {
+  border: $size $state $color;
+}
 @mixin box-shadow($shadow...) {
   box-shadow: $shadow;
 }

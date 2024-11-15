@@ -83,10 +83,17 @@ export class LayoutComponent implements OnInit {
     this.minimized = !this.minimized;
   }
 
+  // selectItem(index: number) {
+  //   this.selectedIndex = index;
+  //   this.selectedSetting = false;
+  //   this.router.navigate([this.items[index].route]);
+  // }
   selectItem(index: number) {
     this.selectedIndex = index;
     this.selectedSetting = false;
-    this.router.navigate([this.items[index].route]);
+    if (index >= 0 && index < this.items.length) {
+      this.router.navigate([this.items[index].route]);
+    }
   }
 
   selectSettings() {

@@ -8,7 +8,7 @@ import { Company } from "../models/company.model";
   providedIn: "root",
 })
 export class AdminService {
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   getCompanies(): Observable<Company[]> {
     return this.http

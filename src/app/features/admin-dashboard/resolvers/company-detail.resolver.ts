@@ -8,7 +8,7 @@ import { selectCompanyById } from "../store/admin.selectors";
 
 @Injectable({ providedIn: "root" })
 export class CompanyDetailResolver implements Resolve<Company | undefined> {
-  constructor(private store: Store) {}
+  constructor(private readonly store: Store) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Company | undefined> {
     const companyId = route.paramMap.get("id")!;

@@ -10,6 +10,17 @@ import {
   Event,
 } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
+import { Component } from "@angular/core";
+
+// Create mock components
+@Component({ template: "" })
+class DashboardMockComponent {}
+
+@Component({ template: "" })
+class CompanyApprovalMockComponent {}
+
+@Component({ template: "" })
+class CompanyApprovalDetailMockComponent {}
 
 describe("LayoutComponent", () => {
   let component: LayoutComponent;
@@ -18,9 +29,12 @@ describe("LayoutComponent", () => {
   let routerEvents: BehaviorSubject<Event | null>;
 
   const routes: Routes = [
-    { path: "dashboard", component: class {} },
-    { path: "company-approval", component: class {} },
-    { path: "company-approval/approve/:id", component: class {} },
+    { path: "dashboard", component: DashboardMockComponent },
+    { path: "company-approval", component: CompanyApprovalMockComponent },
+    {
+      path: "company-approval/approve/:id",
+      component: CompanyApprovalDetailMockComponent,
+    },
   ];
 
   // Create a complete mock of ActivatedRoute
@@ -156,31 +170,71 @@ describe("LayoutComponent", () => {
       expect(component.selectedIndex).toBe(applicationsIndex);
     });
 
+    // describe("ngOnInit route handling", () => {
+    //   // Add beforeEach to set up navigation mock for all tests
+    //   beforeEach(() => {
+    //     // Mock navigation before any tests run
+    //     jest
+    //       .spyOn(router, "navigate")
+    //       .mockImplementation(() => Promise.resolve(true));
+    //   });
+
+    //   it("should select settings when URL includes settings", () => {
+    //     // First spy on selectSettings
+    //     const selectSettingsSpy = jest.spyOn(component, "selectSettings");
+
+    //     // Set up the initial route
+    //     Object.defineProperty(router, "url", { value: "/dashboard" }); // Start with a valid route
+
+    //     // Initialize the component first (this will call selectItem with initial route)
+    //     component.ngOnInit();
+
+    //     // Clear the navigation spy calls from initialization
+    //     jest.clearAllMocks();
+
+    //     // Now change to settings route
+    //     Object.defineProperty(router, "url", { value: "/settings" });
+    //     routerEvents.next(new NavigationEnd(1, "/settings", "/settings"));
+
+    //     // Verify that selectSettings was called
+    //     expect(selectSettingsSpy).toHaveBeenCalled();
+    //   });
+    // });
+
     describe("ngOnInit route handling", () => {
-      // Add beforeEach to set up navigation mock for all tests
+      let selectSettingsSpy: jest.SpyInstance;
+
       beforeEach(() => {
-        // Mock navigation before any tests run
+        // Mock router navigation
         jest
           .spyOn(router, "navigate")
           .mockImplementation(() => Promise.resolve(true));
+
+        // Spy on selectSettings
+        selectSettingsSpy = jest.spyOn(component, "selectSettings");
       });
 
-      it("should select settings when URL includes settings", () => {
-        // First spy on selectSettings
-        const selectSettingsSpy = jest.spyOn(component, "selectSettings");
-
-        // Set up the initial route
-        Object.defineProperty(router, "url", { value: "/dashboard" }); // Start with a valid route
-
-        // Initialize the component first (this will call selectItem with initial route)
-        component.ngOnInit();
-
-        // Clear the navigation spy calls from initialization
+      afterEach(() => {
+        // Clear mocks after each test
         jest.clearAllMocks();
+      });
 
-        // Now change to settings route
-        Object.defineProperty(router, "url", { value: "/settings" });
-        routerEvents.next(new NavigationEnd(1, "/settings", "/settings"));
+      const setInitialRoute = (url: string) => {
+        Object.defineProperty(router, "url", { value: url });
+        component.ngOnInit();
+      };
+
+      const navigateToRoute = (url: string) => {
+        Object.defineProperty(router, "url", { value: url });
+        routerEvents.next(new NavigationEnd(1, url, url));
+      };
+
+      it("should select settings when URL includes settings", () => {
+        // Set the initial route
+        setInitialRoute("/dashboard");
+
+        // Navigate to the settings route
+        navigateToRoute("/settings");
 
         // Verify that selectSettings was called
         expect(selectSettingsSpy).toHaveBeenCalled();

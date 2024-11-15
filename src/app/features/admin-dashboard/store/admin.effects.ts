@@ -22,7 +22,7 @@ export class AdminEffects {
   );
 
   constructor(
-    private actions$: Actions,
-    private adminService: AdminService,
+    private readonly actions$: Actions,
+    private readonly adminService: AdminService,
   ) {}
 }

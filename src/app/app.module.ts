@@ -8,11 +8,10 @@ import { EffectsModule } from "@ngrx/effects";
 import { StoreDevtoolsModule } from "@ngrx/store-devtools";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { SharedModule } from "./shared/shared.module";
-import { provideHttpClient } from "@angular/common/http";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 import { ToastrModule } from "ngx-toastr";
+import { provideHttpClient, withFetch } from "@angular/common/http";
 
 @NgModule({
   declarations: [AppComponent],
@@ -34,7 +33,7 @@ import { ToastrModule } from "ngx-toastr";
     BrowserAnimationsModule, // required animations module
     ToastrModule.forRoot(),
   ],
-  providers: [provideAnimationsAsync(), provideHttpClient(), MatSnackBar],
+  providers: [provideAnimationsAsync(), provideHttpClient(withFetch())],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -4,6 +4,7 @@ import { AdminDashboardComponent } from "./admin-dashboard.component";
 import { AdminSettingsComponent } from "./pages/admin-settings/admin-settings.component";
 import { CompanyApprovalComponent } from "./pages/company-approval/company-approval.component";
 import { ApproveComponent } from "./pages/approve/approve.component";
+import { CompanyDetailResolver } from "./resolvers/company-detail.resolver";
 
 const routes: Routes = [
   {
@@ -14,7 +15,13 @@ const routes: Routes = [
         path: "company-approval",
         component: CompanyApprovalComponent,
       },
-      { path: "company-approval/approve/:id", component: ApproveComponent },
+      {
+        path: "company-approval/approve/:id",
+        component: ApproveComponent,
+        resolve: {
+          company: CompanyDetailResolver,
+        },
+      },
       { path: "settings", component: AdminSettingsComponent },
     ],
   },

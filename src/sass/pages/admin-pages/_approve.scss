@@ -156,3 +156,29 @@
   margin-right: 0.25rem;
   display: inline-block;
 }
+
+.approve-icon {
+  @include flex-center-row;
+  mask-image: url("../../../assets/icon/approve.svg");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: white;
+  width: 12.5px;
+  height: 12.5px;
+  margin-right: 0.25rem;
+  display: inline-block;
+}
+
+.reject-icon {
+  @include flex-center-row;
+  mask-image: url("../../../assets/icon/reject.svg");
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  background-color: $orange-color;
+  width: 13.5px;
+  height: 13.5px;
+  margin-right: 0.25rem;
+  display: inline-block;
+}

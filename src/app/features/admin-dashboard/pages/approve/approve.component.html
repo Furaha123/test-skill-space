@@ -4,51 +4,69 @@
       <div class="back__icon-wrapper"></div>
       back
     </div>
-    <div class="approve-container__content-detail">
+
+    <ng-container *ngIf="company$ | async as company">
+      <div class="approve-container__content-detail">
+        <div class="approve-container__details">
+          <div class="approve-container__text-icons">
+            <div class="approve-container__title">{{ company.name }}</div>
+            <div class="approve-container__company-detail">
+              <div class="register-icon"></div>
+              <div class="approve-container__date">
+                Registered on
+                {{ company.registrationDate | date: "MMM dd, yyyy" }}
+              </div>
+            </div>
+            <div class="approve-container__company-detail">
+              <div class="web-icon"></div>
+              <div class="approve-container__web">{{ company.web }}</div>
+            </div>
+            <div class="approve-container__company-detail">
+              <div class="mail-icon"></div>
+              <div class="approve-container__mail">{{ company.email }}</div>
+            </div>
+            <div class="approve-container__company-detail">
+              <div class="phone-icon"></div>
+              <div class="approve-container__phone">{{ company.phone }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="approve-container__company-icon-wrapper">
+          <img src="assets/images/company-icon.png" alt="company-icon" />
+        </div>
+      </div>
+
       <div class="approve-container__details">
         <div class="approve-container__text-icons">
-          <div class="approve-container__title">Tech innovators</div>
-          <div class="approve-container__company-detail">
-            <div class="register-icon"></div>
-            <div class="approve-container__date">Registered on Oct 24,2024</div>
+          <div class="approve-container__title">{{ company.name }}</div>
+        </div>
+        <div>
+          <img
+            class="approve-container__comany-certificate-image"
+            [src]="company.certificateUrl"
+            alt="company-certificate"
+          />
+        </div>
+      </div>
+
+      <div class="approve-buttons">
+        <div class="approve-buttons__approve" (click)="approveCompany()">
+          <div class="approve-buttons__button1">
+            <div class="approve-icon"></div>
+            Approve
           </div>
-          <div class="approve-container__company-detail">
-            <div class="web-icon"></div>
-            <div class="approve-container__web">www.technovators.org</div>
-          </div>
-          <div class="approve-container__company-detail">
-            <div class="mail-icon"></div>
-            <div class="approve-container__mail">technovatorsgmaill.com</div>
-          </div>
-          <div class="approve-container__company-detail">
-            <div class="phone-icon"></div>
-            <div class="approve-container__phone">030-484-7386-227323</div>
+        </div>
+        <div class="approve-buttons__reject" (click)="rejectCompany()">
+          <div class="approve-buttons__button2">
+            <div class="reject-icon"></div>
+            Reject
           </div>
         </div>
       </div>
-      <div class="approve-container__company-icon-wrapper">
-        <img src="assets/images/company-icon.png" alt="company-icon" />
-      </div>
-    </div>
-    <div class="approve-container__details">
-      <div class="approve-container__text-icons">
-        <div class="approve-container__title">Tech innovators</div>
-      </div>
-      <div>
-        <img
-          class="approve-container__comany-certificate-image"
-          src="assets/images/comany-certificate.png"
-          alt="comany-certificate"
-        />
-      </div>
-    </div>
-    <div class="approve-buttons">
-      <div class="approve-buttons__approve">
-        <div class="approve-buttons__button1">Approve</div>
-      </div>
-      <div class="approve-buttons__reject">
-        <div class="approve-buttons__button2">Reject</div>
-      </div>
+    </ng-container>
+
+    <div *ngIf="isLoading$ | async" class="loading">
+      Loading company details...
     </div>
   </div>
 </div>

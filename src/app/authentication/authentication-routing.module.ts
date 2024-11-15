@@ -6,6 +6,7 @@ import { VerificationPageComponent } from "./pages/verification-page/verificatio
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
 import { CreateNewPasswordComponent } from "./components/create-new-password/create-new-password.component";
 import { CompanyVerificationPageComponent } from "./pages/company-verification-page/company-verification-page.component";
+import { LoginComponent } from "./components/login/login.component";
 
 const routes: Routes = [
   {
@@ -22,6 +23,8 @@ const routes: Routes = [
     path: AUTH_PATHS.verifyCompany,
     component: CompanyVerificationPageComponent,
   },
+  
+  { path: "login", component: LoginComponent },
 ];
 
 @NgModule({

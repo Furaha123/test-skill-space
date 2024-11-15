@@ -6,6 +6,9 @@ import * as UserActions from "./auth.actions";
 import { AuthService } from "../../core/services/auth/auth-service.service";
 import { Router } from "@angular/router";
 
+import * as AuthActions from "./auth.actions";
+
+
 @Injectable()
 export class AuthEffects {
   constructor(
@@ -14,15 +17,24 @@ export class AuthEffects {
     private toastr: ToastrService,
     private readonly router: Router,
   ) {}
-  registerUser$ = createEffect(() =>
+  
+
+
+
+  login$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(UserActions.registerUser),
-      mergeMap(({ user }) =>
-        this.authService.talentRegister(user).pipe(
-          map(() => UserActions.registerUserSuccess()),
-          catchError((error) =>
-            of(UserActions.registerUserFailure({ error: error.error.message })),
+      ofType(AuthActions.login),
+      mergeMap((action) =>
+        this.authService.login(action.email, action.password).pipe(
+          map((response) =>
+            AuthActions.loginSuccess({
+              token: response.token,
+              role: response.role,
+            }),
           ),
+          catchError(() =>
+            of(AuthActions.loginFailure({ error: "Invalid credentials" })),
+          ), // Removed unused `_`
         ),
       ),
     ),
@@ -38,6 +50,19 @@ export class AuthEffects {
         }),
       ),
     { dispatch: false },
+  );
+  registerUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserActions.registerUser),
+      mergeMap(({ user }) =>
+        this.authService.talentRegister(user).pipe(
+          map(() => UserActions.registerUserSuccess()),
+          catchError((error) =>
+            of(UserActions.registerUserFailure({ error: error.error.message })),
+          ),
+        ),
+      ),
+    ),
   );
 
   showErrorToast$ = createEffect(

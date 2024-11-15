@@ -8,6 +8,7 @@ import { environment } from "../../../../environments/environment";
 import { Talent } from "../../../shared/models/talent.interface";
 import { ResponseInterface } from "../../../shared/models/response.interface";
 
+
 describe("AuthService", () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
@@ -35,12 +36,51 @@ describe("AuthService", () => {
     httpMock = TestBed.inject(HttpTestingController);
   });
 
+  
+
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
+  it("should send a login request and store the token and role", () => {
+    const mockResponse = { token: "mock-token", role: "admin" };
+    const email = "test@example.com";
+    const password = "Password123!";
+
+    service.login(email, password).subscribe((response) => {
+      expect(response.token).toBe(mockResponse.token);
+      expect(response.role).toBe(mockResponse.role);
+    });
+
+    const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
+    expect(req.request.method).toBe("POST");
+    expect(req.request.body).toEqual({ email, password });
+
+    req.flush(mockResponse);
+
+    expect(localStorage.getItem("jwtToken")).toBe(mockResponse.token);
+    expect(localStorage.getItem("userRole")).toBe(mockResponse.role);
+  });
+
+  it("should retrieve the token from localStorage", () => {
+    localStorage.setItem("jwtToken", "mock-token");
+    expect(service.getToken()).toBe("mock-token");
+  });
+
+  it("should retrieve the role from localStorage", () => {
+    localStorage.setItem("userRole", "admin");
+    expect(service.getUserRole()).toBe("admin");
+  });
+
+  it("should clear session data on logout", () => {
+    localStorage.setItem("jwtToken", "mock-token");
+    localStorage.setItem("userRole", "admin");
+
+    service.logout();
+
+    expect(localStorage.getItem("jwtToken")).toBeNull();
+    expect(localStorage.getItem("userRole")).toBeNull();
   });
 
   describe("talentRegister", () => {

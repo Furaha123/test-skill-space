@@ -94,10 +94,6 @@ describe("ApproveComponent", () => {
     expect(dispatchSpy).toHaveBeenCalledWith(
       AdminActions.approveCompany({ companyId: "123" }),
     );
-    expect(router.navigate).toHaveBeenCalledWith([
-      "admin-dashboard",
-      "company-approval",
-    ]);
   });
 
   it("should dispatch reject action and navigate when rejectCompany is called", () => {
@@ -108,10 +104,6 @@ describe("ApproveComponent", () => {
     expect(dispatchSpy).toHaveBeenCalledWith(
       AdminActions.rejectCompany({ companyId: "123" }),
     );
-    expect(router.navigate).toHaveBeenCalledWith([
-      "admin-dashboard",
-      "company-approval",
-    ]);
   });
 
   it("should handle loading state", (done) => {

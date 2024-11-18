@@ -39,13 +39,11 @@ export class ApproveComponent implements OnInit {
     this.store.dispatch(
       AdminActions.approveCompany({ companyId: this.companyId }),
     );
-    this.router.navigate(["admin-dashboard", "company-approval"]);
   }
 
   rejectCompany() {
     this.store.dispatch(
       AdminActions.rejectCompany({ companyId: this.companyId }),
     );
-    this.router.navigate(["admin-dashboard", "company-approval"]);
   }
 }

@@ -21,6 +21,34 @@ export class AdminEffects {
     ),
   );
 
+  approveCompany$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AdminActions.approveCompany),
+      mergeMap(({ companyId }) =>
+        this.adminService.approveCompany(companyId).pipe(
+          map((company) => AdminActions.approveCompanySuccess({ company })),
+          catchError((error) =>
+            of(AdminActions.approveCompanyFailure({ error: error.message })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  rejectCompany$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AdminActions.rejectCompany),
+      mergeMap(({ companyId }) =>
+        this.adminService.rejectCompany(companyId).pipe(
+          map((company) => AdminActions.rejectCompanySuccess({ company })),
+          catchError((error) =>
+            of(AdminActions.rejectCompanyFailure({ error: error.message })),
+          ),
+        ),
+      ),
+    ),
+  );
+
   constructor(
     private readonly actions$: Actions,
     private readonly adminService: AdminService,

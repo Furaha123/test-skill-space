@@ -43,3 +43,5 @@ Thumbs.db
 /src/environments/
 /.scannerwork/
 .scannerwork/
+
+/sonar-project.properties

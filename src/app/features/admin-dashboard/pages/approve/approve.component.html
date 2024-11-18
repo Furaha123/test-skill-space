@@ -1,6 +1,6 @@
 <div class="approve-container">
   <div class="approve-container__content">
-    <div class="back" (click)="headBack()">
+    <div class="back" (click)="headBack()" (keypress)="headBack()">
       <div class="back__icon-wrapper"></div>
       back
     </div>
@@ -50,18 +50,18 @@
       </div>
 
       <div class="approve-buttons">
-        <div class="approve-buttons__approve" (click)="approveCompany()">
+        <button class="approve-buttons__approve" (click)="approveCompany()">
           <div class="approve-buttons__button1">
             <div class="approve-icon"></div>
             Approve
           </div>
-        </div>
-        <div class="approve-buttons__reject" (click)="rejectCompany()">
+        </button>
+        <button class="approve-buttons__reject" (click)="rejectCompany()">
           <div class="approve-buttons__button2">
             <div class="reject-icon"></div>
             Reject
           </div>
-        </div>
+        </button>
       </div>
     </ng-container>
 

@@ -22,16 +22,6 @@ export class AdminService {
     );
   }
 
-  searchCompanies(query: string): Observable<Company[]> {
-    return this.getCompanies().pipe(
-      map((companies) =>
-        companies.filter((company) =>
-          company.name.toLowerCase().includes(query.toLowerCase()),
-        ),
-      ),
-    );
-  }
-
   // Simulate PUT/POST requests (in a real app these would be HTTP requests)
   approveCompany(id: string): Observable<Company> {
     return this.getCompanyById(id).pipe(

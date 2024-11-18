@@ -45,3 +45,5 @@ Thumbs.db
 .scannerwork/
 
 /sonar-project.properties
+/.sonarlint/
+/.vscode

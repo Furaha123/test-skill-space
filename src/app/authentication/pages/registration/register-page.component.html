@@ -1,0 +1,57 @@
+<section class="section-wrapper">
+  <form class="register-form">
+    <div>
+      <button class="btn-google">
+        <img src="assets/icons/icon-google.svg" alt="google icon" />
+        <span class="text">Sign up with google</span>
+      </button>
+
+      <!--   OR -->
+
+      <div class="lines">
+        <div class="line"></div>
+        <span class="text-or">OR</span>
+        <div class="line"></div>
+      </div>
+
+      <!--  Buttons -->
+
+      <div class="register-as-btns">
+        <app-button
+          type="button"
+          [customClasses]="'btn secondary'"
+          [isActive]="currentForm === 'company'"
+          (handleClick)="onRegisterCompany()"
+        >
+          Register as company
+        </app-button>
+        <app-button
+          type="button"
+          [isActive]="currentForm === 'talent'"
+          [customClasses]="'btn talent-register-btn'"
+          (handleClick)="onRegisterTalent()"
+        >
+          Register as talent
+        </app-button>
+      </div>
+
+      <!--   Forms-->
+
+      @if (currentForm === "company") {
+        <app-company-registration-form></app-company-registration-form>
+      } @else if (currentForm === "talent") {
+        <app-talent-registration-form></app-talent-registration-form>
+      }
+      <div class="log-in-alt">
+        <h3 class="text">
+          Already have an account? <a class="link">Login instead</a>
+        </h3>
+
+        <h4 class="terms">
+          By registering an account, you agree our Terms of Service and Privacy
+          Policy.
+        </h4>
+      </div>
+    </div>
+  </form>
+</section>

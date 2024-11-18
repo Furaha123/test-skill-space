@@ -1,0 +1,24 @@
+<div class="alert-container">
+  <div
+    class="alert-box"
+    [class.alert-warning]="type === 'warning'"
+    [class.alert-error]="type === 'error'"
+  >
+    <svg
+      width="26"
+      height="26"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        [attr.d]="currentConfig?.icon"
+        [attr.fill]="type === 'warning' ? '#FFA500' : '#D32F2F'"
+      />
+    </svg>
+    <div class="alert-content">
+      <h3 class="alert-title">{{ title }}</h3>
+      <p class="alert-text">{{ subText }}</p>
+    </div>
+  </div>
+</div>

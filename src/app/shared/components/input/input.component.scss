@@ -1,0 +1,108 @@
+@import "../../../../styles.scss";
+
+.input-wrapper {
+  width: 100%;
+  margin-bottom: 1rem;
+
+  .input-label {
+    display: block;
+    margin-bottom: 8px;
+    @include font(Archivo, 400, 16px);
+  }
+
+  .input-field-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .input-field,
+  .textarea-field,
+  .select-field {
+    width: 100%;
+    margin: 4px 0;
+    padding: 4px 8px;
+    border: 1px solid $primary-grey;
+    @include border-radius(4px);
+    caret-color: $primary-orange;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: $neutral-96;
+    }
+
+    &:focus {
+      border: 1px solid $primary-orange;
+      outline: none;
+    }
+
+    &::placeholder {
+      margin-left: 4px;
+      @include font(Archivo, 400, 16px);
+    }
+
+    &.has-error {
+      border-color: #d32f2f; // Or any error color from your variables
+    }
+  }
+
+  .textarea-field {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .select-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%234a5568' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    padding-right: 2.5rem;
+  }
+
+  .file-input-container {
+    position: relative;
+    width: 100%;
+
+    .file-input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    .file-input-label {
+      display: inline-block;
+      padding: 4px 8px;
+      background-color: $primary-orange; // Using your primary color
+      color: #fff;
+      @include border-radius(4px);
+      cursor: pointer;
+      @include font(Archivo, 400, 16px);
+      text-align: center;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: darken($primary-orange, 10%);
+      }
+    }
+  }
+
+  .toggle-password-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

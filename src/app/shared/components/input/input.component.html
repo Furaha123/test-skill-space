@@ -1,0 +1,105 @@
+<div class="input-wrapper">
+  <label *ngIf="label" [for]="id" class="input-label">
+    {{ label }}
+  </label>
+
+  <!-- Text, Number, Date, Password, URL, Email inputs -->
+  <div *ngIf="fieldType === 'input'" class="input-field-container">
+    <input
+      [type]="type === 'passwordConfirm' ? 'password' : type"
+      [id]="id"
+      [placeholder]="placeholder"
+      [value]="value"
+      (input)="onInputChange($event)"
+      class="input-field"
+      [ngClass]="{ 'has-error': hasError }"
+      *ngIf="type !== 'textarea' && type !== 'select'"
+    />
+  </div>
+
+  <!-- Textarea -->
+  <textarea
+    *ngIf="type === 'textarea' || fieldType === 'textarea'"
+    [id]="id"
+    [placeholder]="placeholder"
+    [value]="value"
+    (input)="onInputChange($event)"
+    [rows]="rows"
+    class="textarea-field"
+    [ngClass]="{ 'has-error': hasError }"
+  ></textarea>
+
+  <!-- Select -->
+  <select
+    *ngIf="type === 'select' || fieldType === 'select'"
+    [id]="id"
+    [value]="value"
+    (change)="onInputChange($event)"
+    class="select-field"
+    [ngClass]="{ 'has-error': hasError }"
+  >
+    <option value="" disabled selected>{{ placeholder }}</option>
+    <option *ngFor="let option of options" [value]="option">
+      {{ option }}
+    </option>
+  </select>
+
+  <!-- File Input -->
+  <div *ngIf="type === 'file'" class="file-input-container">
+    <input
+      type="file"
+      [id]="id"
+      (change)="onInputChange($event)"
+      class="file-input"
+      [ngClass]="{ 'has-error': hasError }"
+    />
+    <label [for]="id" class="file-input-label"> Choose File </label>
+  </div>
+
+  <!-- Input for Option (Special Case) -->
+  <div *ngIf="fieldType === 'inputForOption'" class="input-field-container">
+    <input
+      [type]="type"
+      [id]="id"
+      [placeholder]="placeholder"
+      [value]="value"
+      (input)="onInputChange($event)"
+      class="input-field"
+      [ngClass]="{ 'has-error': hasError }"
+    />
+  </div>
+
+  <div *ngIf="hasError">
+    @if (type === "number") {
+      <app-error-toast
+        subText="NUmber wrong"
+        title="Error"
+        type="warning"
+      ></app-error-toast>
+    } @else if (type === "password") {
+      <app-error-toast
+        title="Password requirements"
+        subText="Passwords must be at least 8 characters with a mix of upper case, lower case, and special characters."
+        type="warning"
+      ></app-error-toast>
+    } @else if (type === "passwordConfirm") {
+      <app-error-toast
+        title="Incorrect password"
+        subText="Your password is invalid,try again."
+        type="error"
+      ></app-error-toast>
+    } @else if (type === "email") {
+      <app-error-toast
+        title="Invalid Email"
+        subText="Please enter a valid email."
+        type="error"
+      ></app-error-toast>
+    } @else {
+      <app-error-toast
+        title="Validation Error"
+        subText="This field is required."
+        type="warning"
+      ></app-error-toast>
+    }
+  </div>
+</div>

@@ -1,0 +1,70 @@
+@import "../../../../styles.scss";
+
+.section-wrapper {
+  width: 100%;
+  background-color: $primary-100;
+  @include flex-center();
+
+  .register-form {
+    width: 90%;
+    @include margin(2rem);
+
+    @media (min-width: 768px) {
+      width: 40%;
+    }
+
+    @media (min-width: 1024px) {
+      width: 30%;
+    }
+
+    .btn-google {
+      @include border-radius(8px);
+      border: 1px solid $primary-grey;
+      padding: 0.4rem 0.8rem;
+
+      width: 100%;
+      @include flex-center();
+      .text {
+        color: $primary-orange;
+        margin: 0 4px;
+        @include responsive-font-size(8px, 10px, 16px);
+      }
+    }
+
+    .lines {
+      display: flex;
+      margin-top: 1.4rem;
+      align-items: center;
+      gap: 4px;
+      justify-content: space-between;
+    }
+    .line {
+      height: 1px;
+      width: 100%;
+      background-color: $primary-grey;
+    }
+    .register-as-btns {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      margin-top: 8px;
+      width: 100%;
+    }
+    .log-in-alt {
+      margin-top: 8px;
+      text-align: center;
+      .text {
+        @include font(Archivo, 500, 16px);
+        @include responsive-font-size(8px, 10px, 16px);
+        margin: 4px 0;
+        .link {
+          color: $primary-orange;
+        }
+      }
+      .terms {
+        @include font(Archivo, 200, 16px);
+        @include responsive-font-size(8px, 10px, 16px);
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+@import "../../../../styles.scss";
+
+button {
+  @include font-size(16px);
+  @include responsive-font-size(8px, 10px, 16px);
+  width: 100%;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &.secondary {
+    border: 1px solid $primary-orange;
+    color: $primary-orange;
+
+    &:hover {
+      background-color: $primary-orange;
+      color: #fff;
+    }
+
+    &:not(.active) {
+      background-color: #fff;
+      color: $primary-orange;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background-color: $primary-orange;
+    color: #fff !important;
+  }
+}

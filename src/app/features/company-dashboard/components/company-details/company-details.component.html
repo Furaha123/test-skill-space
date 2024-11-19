@@ -1,0 +1,172 @@
+<div class="company-details" [formGroup]="companyForm">
+  <div class="main-container">
+    <div class="left-column">
+      <div class="company-info">
+        <h2>Company Name</h2>
+        <p>This is what applicants will see on your profile.</p>
+        <div class="input-group">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            id="name"
+            formControlName="name"
+            [value]="companyForm.get('name')?.value"
+            class="resize-input"
+          />
+        </div>
+      </div>
+
+      <div class="company-info">
+        <h2>Update Document</h2>
+        <p>This document will be displayed on your profile.</p>
+
+        <div class="file-preview" *ngIf="companyForm.get('documentUrl')?.value">
+          <div class="file-content">
+            <button class="delete-button" (click)="deleteFile('document')">
+              <img src="assets/remove.svg" alt="Delete" />
+            </button>
+            <div class="file-icon">
+              <img
+                [src]="companyForm.get('documentUrl')?.value"
+                alt="Uploaded Document"
+              />
+            </div>
+            <p class="file-name">Document Uploaded</p>
+          </div>
+        </div>
+
+        <div class="upload-box" (click)="documentInput.click()">
+          <input
+            #documentInput
+            type="file"
+            accept=".png, .jpg, .jpeg, .pdf"
+            (change)="onFileSelected($event, 'document')"
+            style="display: none"
+            class="resize-input"
+          />
+          <div class="upload-icon">
+            <img src="assets/upload.svg" alt="Upload Document" />
+          </div>
+          <div class="upload-text">
+            <p>Click here or drag your document to upload</p>
+            <p class="supported-formats">
+              Supported formats: PNG, JPG, JPEG, PDF (5mb max)
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="company-info">
+        <h2>Update Logo</h2>
+        <p>This logo will be displayed on your profile.</p>
+
+        <div class="file-preview" *ngIf="companyForm.get('logo')?.value">
+          <div class="file-content">
+            <button class="delete-button" (click)="deleteFile('logo')">
+              <img src="assets/remove.svg" alt="Delete" />
+            </button>
+            <div class="file-icon">
+              <img [src]="companyForm.get('logo')?.value" alt="Uploaded Logo" />
+            </div>
+            <p class="file-name">Logo Uploaded</p>
+          </div>
+        </div>
+
+        <div class="upload-box" (click)="fileInput.click()">
+          <input
+            #fileInput
+            type="file"
+            accept=".png, .jpg, .jpeg"
+            (change)="onFileSelected($event, 'logo')"
+            style="display: none"
+            class="resize-input"
+          />
+          <div class="upload-icon">
+            <img src="assets/upload.svg" alt="Upload Logo" />
+          </div>
+          <div class="upload-text">
+            <p>Click here or drag your logo to upload</p>
+            <p class="supported-formats">
+              Supported formats: PNG, JPG, JPEG (5mb max)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="company-info">
+        <h2>Company phone number</h2>
+        <p>You can set this as private/public to control who sees it.</p>
+        <div class="phone-input-group">
+          <div class="country-code">
+            <label for="country-code">Country Code</label>
+            <div class="country-codes">
+              <app-country-codes />
+            </div>
+          </div>
+
+          <div class="phone-number">
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              formControlName="phone"
+              [value]="companyForm.get('phone')?.value"
+              class="resize-input"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="company-info">
+        <h2>Update Website Link</h2>
+        <p>You can set this as private/public to control who sees it.</p>
+
+        <div formArrayName="websites">
+          <div
+            *ngFor="let website of websites.controls; let i = index"
+            class="input-group-website"
+            [class.two]="i > 0"
+          >
+            <input
+              type="text"
+              [formControlName]="i"
+              class="resize-input"
+              [class.is-invalid]="isWebsiteInvalid(i)"
+            />
+            <button
+              class="icon-button minus"
+              (click)="removeWebsite(i)"
+              *ngIf="websites.length > 1"
+            >
+              <img src="assets/minus.svg" alt="Remove Website" />
+            </button>
+            <button
+              *ngIf="i === websites.length - 1"
+              class="icon-button add"
+              (click)="addWebsite()"
+            >
+              <img src="assets/plus.svg" alt="Add Website" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-btn cancel-btn">
+    <button class="btn save" (click)="onSave()">Save changes</button>
+    <button class="btn cancel">Cancel</button>
+  </div>
+</div>
+<div *ngIf="isModalOpen" class="modal-overlay">
+  <div class="modal-content">
+    <div class="success-header">
+      <img src="assets/icon/social/success.svg" alt="Success" />
+      <h2>Success</h2>
+    </div>
+    <p>Your information has been successfully updated.</p>
+    <button class="btn ok" (click)="closeModal()">O.K</button>
+  </div>
+</div>

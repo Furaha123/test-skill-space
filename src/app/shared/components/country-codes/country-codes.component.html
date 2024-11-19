@@ -1,0 +1,32 @@
+<div class="country-code">
+  <div class="custom-dropdown">
+    <div class="dropdown-selected" (click)="toggleDropdown()">
+      <img
+        *ngIf="selectedCountryCode"
+        [src]="selectedFlagUrl"
+        [alt]="selectedCountryCode + ' flag'"
+        class="flag-icon"
+      />
+      {{ selectedCountryCode || "Select" }}
+      <img
+        src="../../../../assets/icon/chevron_down.svg"
+        alt="Dropdown Icon"
+        class="dropdown-icon"
+      />
+    </div>
+    <div *ngIf="isDropdownOpen" class="dropdown-options">
+      <div
+        *ngFor="let country of countries"
+        class="dropdown-option"
+        (click)="selectCountry(country)"
+      >
+        <img
+          [src]="country.flag"
+          alt="{{ country.code }} flag"
+          class="flag-icon"
+        />
+        {{ country.code }}
+      </div>
+    </div>
+  </div>
+</div>

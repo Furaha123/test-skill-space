@@ -1,3 +1,8 @@
+$spacing-small: 14px;
+$spacing-medium: 1rem;
+$spacing-large: 1.5rem;
+$spacing-xlarge: 2.5rem;
+
 @mixin padding($size) {
   padding: $size;
 }
@@ -9,6 +14,10 @@
 @mixin font-size($size) {
   font-size: $size;
   line-height: 1.5 * $size;
+}
+
+@mixin spacing($property, $size) {
+  #{$property}: $size;
 }
 
 @mixin responsive-font-size($small, $medium, $large) {

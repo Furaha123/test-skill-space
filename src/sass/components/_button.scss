@@ -1,0 +1,23 @@
+@import "../../sass/abstract/variables";
+@import "../../sass/abstract/mixins";
+@import "../../sass/base/typography";
+
+.button {
+  background-color: $primary-60;
+  color: $neutral-100;
+  @include padding(0.75em 2em);
+  border: none;
+  @include border-radius(14px);
+  @include font(
+    $family: $font-primary,
+    $weight: $font-weight-medium,
+    $size: 1rem
+  );
+  text-align: center;
+  cursor: pointer;
+  @include transition(background-color, 0.3s, ease);
+
+  &:active {
+    background-color: $primary-50;
+  }
+}

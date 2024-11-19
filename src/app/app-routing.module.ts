@@ -16,14 +16,16 @@ const routes: Routes = [
         .AdminDashboardModule,
   },
   {
-    path: "",
-    redirectTo: ROUTE_PATHS["admin-dashboard"],
-    pathMatch: "full",
+    path: "company",
+    loadChildren: () =>
+      import("./features/company-dashboard/company-dashboard.module").then(
+        (m) => m.CompanyDashboardModule,
+      ),
   },
   {
-    path: "shared",
-    loadChildren: () =>
-      import("./shared/shared.module").then((m) => m.SharedModule),
+    path: "",
+    redirectTo: ROUTE_PATHS["company"],
+    pathMatch: "full",
   },
 ];
 

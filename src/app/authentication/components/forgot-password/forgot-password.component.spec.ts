@@ -9,7 +9,6 @@ describe("ForgotPasswordComponent", () => {
   let mockRouter: jest.Mocked<Router>;
 
   beforeEach(async () => {
-    // Fully mock Router with Jest
     mockRouter = {
       navigate: jest.fn(),
     } as unknown as jest.Mocked<Router>;
@@ -74,7 +73,7 @@ describe("ForgotPasswordComponent", () => {
     expect(component.timeLeft).toBe(599);
     expect(component.timerExpired).toBe(false);
 
-    jest.advanceTimersByTime(599000); // Simulate 10 minutes
+    jest.advanceTimersByTime(599000);
     expect(component.timeLeft).toBe(0);
 
     jest.runOnlyPendingTimers();
@@ -91,7 +90,7 @@ describe("ForgotPasswordComponent", () => {
     expect(component.timeLeft).toBe(598);
 
     component.startCountdown();
-    expect(component.timeLeft).toBe(599); // Timer restarted
+    expect(component.timeLeft).toBe(599);
 
     jest.useRealTimers();
   });

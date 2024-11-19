@@ -31,15 +31,9 @@ export class CreateNewPasswordComponent {
     const newPassword = this.passwordForm.get("newPassword")?.value || "";
     const confirmPassword =
       this.passwordForm.get("confirmPassword")?.value || "";
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/; // At least 8 characters, one uppercase, one lowercase, and one special character
-
-    // Check for invalid password format
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
     this.showPasswordWarning = !passwordRegex.test(newPassword);
-
-    // Check for reused old password
     this.showPasswordError = newPassword === this.oldPassword;
-
-    // Check if passwords match and are valid to show the success message
     this.showSuccessMessage =
       !this.showPasswordWarning &&
       !this.showPasswordError &&

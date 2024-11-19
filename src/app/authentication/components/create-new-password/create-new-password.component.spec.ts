@@ -54,23 +54,21 @@ describe("CreateNewPasswordComponent", () => {
     // Weak password format
     newPasswordControl?.setValue("weakpass");
     component.validatePassword();
-    expect(component.showPasswordWarning).toBe(true); // Triggering validation
+    expect(component.showPasswordWarning).toBe(true);
 
     // Strong password format
     newPasswordControl?.setValue("ValidPass99%");
     component.validatePassword();
-    expect(component.showPasswordWarning).toBe(false); // Valid case
+    expect(component.showPasswordWarning).toBe(false);
   });
 
   it("should detect reused old password", () => {
     const newPasswordControl = component.passwordForm.get("newPassword");
 
-    // Reusing old password
     newPasswordControl?.setValue("Coutipati99%");
     component.validatePassword();
     expect(component.showPasswordError).toBe(true);
 
-    // Not reusing old password
     newPasswordControl?.setValue("NewStrongPass99%");
     component.validatePassword();
     expect(component.showPasswordError).toBe(false);
@@ -80,14 +78,10 @@ describe("CreateNewPasswordComponent", () => {
     const newPasswordControl = component.passwordForm.get("newPassword");
     const confirmPasswordControl =
       component.passwordForm.get("confirmPassword");
-
-    // Valid matching passwords
     newPasswordControl?.setValue("ValidPass99%");
     confirmPasswordControl?.setValue("ValidPass99%");
     component.validatePassword();
     expect(component.showSuccessMessage).toBe(true);
-
-    // Invalid or mismatched passwords
     confirmPasswordControl?.setValue("MismatchPass");
     component.validatePassword();
     expect(component.showSuccessMessage).toBe(false);
@@ -95,14 +89,10 @@ describe("CreateNewPasswordComponent", () => {
 
   it("should handle form submission correctly", () => {
     const alertSpy = jest.spyOn(window, "alert").mockImplementation();
-
-    // Invalid form
     component.passwordForm.get("newPassword")?.setValue("");
     component.passwordForm.get("confirmPassword")?.setValue("");
     component.onSubmit();
     expect(alertSpy).not.toHaveBeenCalled();
-
-    // Reused old password
     component.passwordForm.get("newPassword")?.setValue("Coutipati99%");
     component.passwordForm.get("confirmPassword")?.setValue("Coutipati99%");
     component.validatePassword();

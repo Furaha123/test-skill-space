@@ -1,0 +1,72 @@
+<div class="approve-container">
+  <div class="approve-container__content">
+    <div class="back" (click)="headBack()" (keypress)="headBack()">
+      <div class="back__icon-wrapper"></div>
+      back
+    </div>
+
+    <ng-container *ngIf="company$ | async as company">
+      <div class="approve-container__content-detail">
+        <div class="approve-container__details">
+          <div class="approve-container__text-icons">
+            <div class="approve-container__title">{{ company.name }}</div>
+            <div class="approve-container__company-detail">
+              <div class="register-icon"></div>
+              <div class="approve-container__date">
+                Registered on
+                {{ company.registrationDate | date: "MMM dd, yyyy" }}
+              </div>
+            </div>
+            <div class="approve-container__company-detail">
+              <div class="web-icon"></div>
+              <div class="approve-container__web">{{ company.web }}</div>
+            </div>
+            <div class="approve-container__company-detail">
+              <div class="mail-icon"></div>
+              <div class="approve-container__mail">{{ company.email }}</div>
+            </div>
+            <div class="approve-container__company-detail">
+              <div class="phone-icon"></div>
+              <div class="approve-container__phone">{{ company.phone }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="approve-container__company-icon-wrapper">
+          <img src="assets/images/company-icon.png" alt="company-icon" />
+        </div>
+      </div>
+
+      <div class="approve-container__details">
+        <div class="approve-container__text-icons">
+          <div class="approve-container__title">{{ company.name }}</div>
+        </div>
+        <div>
+          <img
+            class="approve-container__comany-certificate-image"
+            [src]="company.certificateUrl"
+            alt="company-certificate"
+          />
+        </div>
+      </div>
+
+      <div class="approve-buttons">
+        <button class="approve-buttons__approve" (click)="approveCompany()">
+          <div class="approve-buttons__button1">
+            <div class="approve-icon"></div>
+            Approve
+          </div>
+        </button>
+        <button class="approve-buttons__reject" (click)="rejectCompany()">
+          <div class="approve-buttons__button2">
+            <div class="reject-icon"></div>
+            Reject
+          </div>
+        </button>
+      </div>
+    </ng-container>
+
+    <div *ngIf="isLoading$ | async" class="loading">
+      Loading company details...
+    </div>
+  </div>
+</div>

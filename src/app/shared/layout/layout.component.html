@@ -43,6 +43,7 @@
         'sidebar__toggle--collapsed': minimized,
       }"
       (click)="toggleNav()"
+      (keypress)="toggleNav()"
     >
       <img
         src="assets/icon/chevron_back.svg"
@@ -54,7 +55,7 @@
     <!-- Navigation Content -->
     <div class="sidebar__content">
       <div>
-        <div
+        <button
           *ngFor="let item of items; let i = index"
           class="sidebar__nav-item"
           [ngClass]="{
@@ -84,12 +85,12 @@
           >
             {{ item.label }}
           </p>
-        </div>
+        </button>
       </div>
 
       <!-- Settings and Logout -->
       <div>
-        <div
+        <button
           class="sidebar__nav-item"
           [ngClass]="{
             'sidebar__nav-item--expanded': !minimized,
@@ -117,7 +118,7 @@
           >
             Settings
           </p>
-        </div>
+        </button>
 
         <div
           class="sidebar__nav-item sidebar__logout"

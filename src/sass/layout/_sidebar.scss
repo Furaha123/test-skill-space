@@ -114,6 +114,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    width: 100%;
     gap: 0.5rem;
     padding: 0.2rem 0;
     @include transition-base;

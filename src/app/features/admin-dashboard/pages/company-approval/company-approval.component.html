@@ -1,1 +1,19 @@
-<p>company-approval works!</p>
+<div class="approval-content">
+  <ng-container *ngIf="isLoading$ | async">
+    <div>Loading...</div>
+  </ng-container>
+
+  <ng-container *ngIf="companies$ | async as companies">
+    <div class="approval-content__card" *ngFor="let company of companies">
+      <div class="approval-content__labels">
+        <div class="approval-content__label1">{{ company.name }}</div>
+        <div class="approval-content__label2">
+          Registered: {{ company.registrationDate }}
+        </div>
+      </div>
+      <button class="approval-content__button" (click)="routeTo(company.id)">
+        View details
+      </button>
+    </div>
+  </ng-container>
+</div>

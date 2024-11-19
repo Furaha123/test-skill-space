@@ -69,14 +69,32 @@
           placeholder="*"
         />
       </div>
-      <h3>Code expires in <span>9:59</span></h3>
+      @if (verrificationError) {
+        <app-error-toast
+          title="Error"
+          subText="The verification code provided is invalid"
+          type="error"
+        ></app-error-toast>
+      }
+      @if (codeExpired) {
+        <h3>
+          Code has expired
+          <span (click)="onRequestNewCode()">Request another one</span>
+        </h3>
+      } @else {
+        <h3>
+          Code expires in <span>{{ formattedTime }}</span>
+        </h3>
+      }
       <app-button
         type="button"
         [isActive]="true"
         [customClasses]="'btn btn-primary'"
+        (handleClick)="OnVerifyOTP()"
       >
         Verify
       </app-button>
     </form>
   </div>
 </section>
+<app-loader [isLoading]="isLoading"></app-loader>

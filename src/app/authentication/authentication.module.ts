@@ -11,6 +11,10 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { VerificationPageComponent } from "./pages/verification-page/verification-page.component";
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
 import { CreateNewPasswordComponent } from "./components/create-new-password/create-new-password.component";
+import { StoreModule } from "@ngrx/store";
+import { userReducer } from "./auth-store/auth.reducers";
+import { EffectsModule } from "@ngrx/effects";
+import { UserEffects } from "./auth-store/auth.effects";
 
 @NgModule({
   declarations: [
@@ -21,7 +25,7 @@ import { CreateNewPasswordComponent } from "./components/create-new-password/cre
     ForgotPasswordComponent,
     CreateNewPasswordComponent,
   ],
- 
+
   imports: [
     CommonModule,
     AuthenticationRoutingModule,
@@ -30,6 +34,8 @@ import { CreateNewPasswordComponent } from "./components/create-new-password/cre
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    StoreModule.forFeature("user", userReducer),
+    EffectsModule.forFeature([UserEffects]),
   ],
 })
 export class AuthenticationModule {}

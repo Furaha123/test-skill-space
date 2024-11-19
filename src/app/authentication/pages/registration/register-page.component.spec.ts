@@ -1,13 +1,23 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { RegisterPageComponent } from "./register-page.component";
+import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { provideMockStore } from "@ngrx/store/testing";
 
 describe("RegisterPageComponent", () => {
   let component: RegisterPageComponent;
   let fixture: ComponentFixture<RegisterPageComponent>;
 
+  const initialState = {
+    auth: {
+      isLoading: false,
+    },
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [RegisterPageComponent],
+      providers: [provideMockStore({ initialState })],
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
   });
 

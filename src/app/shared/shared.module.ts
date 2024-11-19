@@ -7,8 +7,9 @@ import { LayoutComponent } from "./layout/layout.component";
 import { InputComponent } from "./components/input/input.component";
 import { ErrorToastComponent } from "./components/error-toast/error-toast.component";
 import { ButtonComponent } from "./components/button/button.component";
+import { LoaderComponent } from "./components/loader/loader.component";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
-import { NgxCountriesDropdownModule } from "ngx-countries-dropdown";
 import { CountryCodesComponent } from "./components/country-codes/country-codes.component";
 
 @NgModule({
@@ -19,15 +20,20 @@ import { CountryCodesComponent } from "./components/country-codes/country-codes.
     ErrorToastComponent,
     ButtonComponent,
     CountryCodesComponent,
+    LoaderComponent,
   ],
+
+  imports: [CommonModule, SharedRoutingModule, MatProgressSpinnerModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+
   exports: [
     SharedComponent,
     LayoutComponent,
     InputComponent,
     ButtonComponent,
+    LoaderComponent,
+    ErrorToastComponent,
     CountryCodesComponent,
   ],
-  imports: [CommonModule, SharedRoutingModule, NgxCountriesDropdownModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SharedModule {}

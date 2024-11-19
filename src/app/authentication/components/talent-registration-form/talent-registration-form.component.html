@@ -1,12 +1,16 @@
+@if (isLoading$ | async) {
+  <app-loader [color]="'accent'" [isLoading]="true"></app-loader>
+}
+
 <section class="form-wrapper">
   <h5>Talent Registration</h5>
 
   <form class="register-form" [formGroup]="form">
     <app-input
-      label="Company Name"
+      label="Full Name"
       formControlName="userName"
       id="name"
-      placeholder="Enter your company name here"
+      placeholder="Enter your full name here"
       type="text"
       [hasError]="isControlInvalid('userName')"
     ></app-input>

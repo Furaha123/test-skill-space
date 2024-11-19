@@ -1,19 +1,32 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {
   passwordPattern,
   phoneNumberPattern,
 } from "../../../core/utils/patterns";
+import { Observable, Subscription } from "rxjs";
+import * as UserActions from "../../auth-store/auth.actions";
+import * as UserSelectors from "../../auth-store/auth.selectors";
+import { Store } from "@ngrx/store";
 
 @Component({
   selector: "app-talent-registration-form",
   templateUrl: "./talent-registration-form.component.html",
   styleUrls: ["./talent-registration-form.component.scss"],
 })
-export class TalentRegistrationFormComponent implements OnInit {
+export class TalentRegistrationFormComponent implements OnInit, OnDestroy {
   form!: FormGroup;
   submitted = false;
-  constructor(private readonly fb: FormBuilder) {}
+  isLoading$: Observable<boolean> = this.store.select(
+    UserSelectors.selectIsLoading,
+  );
+
+  subscription: Subscription | null = null;
+  constructor(
+    private readonly fb: FormBuilder,
+
+    private readonly store: Store,
+  ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -53,6 +66,16 @@ export class TalentRegistrationFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.submitted = true;
+    if (this.form.valid) {
+      const { email } = this.form.getRawValue();
+      this.submitted = true;
+      this.store.dispatch(UserActions.registerUser({ user: email }));
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

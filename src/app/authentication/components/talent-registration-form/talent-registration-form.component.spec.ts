@@ -1,116 +1,110 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import {
-  ReactiveFormsModule,
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-} from "@angular/forms";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { TalentRegistrationFormComponent } from "./talent-registration-form.component";
-import { AuthServiceService } from "../../../core/services/auth/auth-service.service";
-import { forwardRef } from "@angular/core";
 import { SharedModule } from "../../../shared/shared.module";
+import { StoreModule } from "@ngrx/store";
+import { provideMockStore } from "@ngrx/store/testing";
+import { NO_ERRORS_SCHEMA } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { Subscription } from "rxjs";
 
 describe("TalentRegistrationFormComponent", () => {
   let component: TalentRegistrationFormComponent;
   let fixture: ComponentFixture<TalentRegistrationFormComponent>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let mockStore: unknown;
+
+  const initialState = {
+    auth: {
+      isLoading: false,
+    },
+  };
 
   beforeEach(async () => {
-    const mockAuthService = {
-      talentRegister: jest.fn(),
-    };
-
     await TestBed.configureTestingModule({
       declarations: [TalentRegistrationFormComponent],
-      imports: [ReactiveFormsModule, FormsModule, SharedModule],
-      providers: [
-        {
-          provide: AuthServiceService,
-          useValue: mockAuthService,
-        },
-        {
-          provide: NG_VALUE_ACCESSOR,
-          useExisting: forwardRef(() => TalentRegistrationFormComponent),
-          multi: true,
-        },
+      imports: [
+        ReactiveFormsModule,
+        FormsModule,
+        SharedModule,
+        StoreModule.forRoot({}),
       ],
+      providers: [provideMockStore({ initialState })],
+      schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TalentRegistrationFormComponent);
     component = fixture.componentInstance;
+    mockStore = TestBed.inject(Store);
     fixture.detectChanges();
   });
 
-  describe("Component Initialization", () => {
-    it("should create the component", () => {
-      expect(component).toBeTruthy();
-    });
+  it("should create", () => {
+    expect(component).toBeTruthy();
+  });
 
-    it("should initialize form with all controls", () => {
-      const expectedControls = [
-        "userName",
-        "email",
-        "phoneNumber",
-        "password",
-        "passwordConfirm",
-      ];
-      expectedControls.forEach((control) => {
-        expect(component.form.contains(control)).toBeTruthy();
-      });
-    });
-
-    it("should have empty initial form values", () => {
-      expect(component.form.value).toEqual({
-        userName: "",
-        email: "",
-        phoneNumber: "",
-        password: "",
-        passwordConfirm: "",
-      });
+  describe("Form Initialization", () => {
+    it("should initialize the form with empty fields", () => {
+      expect(component.form).toBeDefined();
+      expect(component.form.get("userName")?.value).toBe("");
+      expect(component.form.get("email")?.value).toBe("");
+      expect(component.form.get("phoneNumber")?.value).toBe("");
+      expect(component.form.get("password")?.value).toBe("");
+      expect(component.form.get("passwordConfirm")?.value).toBe("");
     });
   });
 
-  describe("Form Control Validation", () => {
-    it("should mark control as invalid when empty", () => {
-      const userNameControl = component.form.get("userName");
-      userNameControl?.setValue("");
-      expect(userNameControl?.valid).toBeFalsy();
-    });
-
-    it("should handle invalid control state", () => {
-      const userNameControl = component.form.get("userName");
-
-      // Untouched control
-      userNameControl?.setValue("");
-      expect(component.isControlInvalid("userName")).toBeFalsy();
-
-      // Touched invalid control
-      userNameControl?.markAsTouched();
-      expect(component.isControlInvalid("userName")).toBeTruthy();
-
-      // Submitted state
-      component.submitted = true;
-      expect(component.isControlInvalid("userName")).toBeTruthy();
-    });
-  });
-
-  describe("Form Submission", () => {
-    it("should set submitted flag to true on submit", () => {
-      component.onSubmit();
-      expect(component.submitted).toBeTruthy();
-    });
-  });
-
-  describe("Password Confirmation", () => {
+  describe("Form Validation", () => {
     it("should validate password confirmation", () => {
-      const passwordControl = component.form.get("password");
-      const confirmControl = component.form.get("passwordConfirm");
-
-      passwordControl?.setValue("Password123!");
-      confirmControl?.setValue("Password123!");
-      confirmControl?.markAsTouched();
-      expect(component.isControlInvalid("passwordConfirm")).toBeFalsy();
-
-      confirmControl?.setValue("DifferentPassword123!");
+      component.form.patchValue({
+        password: "Password123!",
+        passwordConfirm: "DifferentPassword123!",
+      });
+      component.submitted = true;
       expect(component.isControlInvalid("passwordConfirm")).toBeTruthy();
+    });
+
+    it("should validate email format", () => {
+      const emailControl = component.form.get("email");
+      emailControl?.setValue("invalid-email");
+      expect(emailControl?.valid).toBeFalsy();
+
+      emailControl?.setValue("valid@email.com");
+      expect(emailControl?.valid).toBeTruthy();
+    });
+
+    it("should validate phone number pattern", () => {
+      const phoneControl = component.form.get("phoneNumber");
+      phoneControl?.setValue("123");
+      expect(phoneControl?.valid).toBeFalsy();
+
+      phoneControl?.setValue("+1234567890");
+      expect(phoneControl?.valid).toBeTruthy();
+    });
+  });
+
+  describe("Component Lifecycle", () => {
+    it("should unsubscribe without errors during destruction", () => {
+      component.subscription = new Subscription();
+      const unsubscribeSpy = jest.spyOn(component.subscription, "unsubscribe");
+
+      component.ngOnDestroy();
+
+      expect(unsubscribeSpy).toHaveBeenCalled();
+    });
+
+    it("should not attempt to unsubscribe if no subscription exists", () => {
+      // Reset subscription to null
+      component.subscription = null;
+
+      // This should not throw any errors
+      expect(() => component.ngOnDestroy()).not.toThrow();
+    });
+  });
+
+  describe("Loading State", () => {
+    it("should have an observable for loading state", () => {
+      expect(component.isLoading$).toBeDefined();
     });
   });
 });

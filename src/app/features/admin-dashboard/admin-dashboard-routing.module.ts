@@ -9,7 +9,7 @@ import { CompanyDetailResolver } from "./resolvers/company-detail.resolver";
 const routes: Routes = [
   {
     path: "",
-    component: AdminDashboardComponent, // Wrapper component with <app-layout>
+    component: AdminDashboardComponent,
     children: [
       {
         path: "company-approval",

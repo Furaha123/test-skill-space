@@ -13,13 +13,11 @@ export class CompanyDetailResolver implements Resolve<Company | undefined> {
   resolve(route: ActivatedRouteSnapshot): Observable<Company | undefined> {
     const companyId = route.paramMap.get("id")!;
 
-    // Dispatch action to load company
     this.store.dispatch(AdminActions.loadCompany({ companyId }));
 
-    // Wait for the company to be loaded
     return this.store.select(selectCompanyById(companyId)).pipe(
-      filter((company) => !!company), // Wait until company is loaded
-      first(), // Complete after first emission
+      filter((company) => !!company),
+      first(),
       tap((company) => {
         if (!company) {
           throw new Error("Company not found");

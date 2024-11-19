@@ -13,7 +13,7 @@ import {
 export class TalentRegistrationFormComponent implements OnInit {
   form!: FormGroup;
   submitted = false;
-  constructor(private fb: FormBuilder) {}
+  constructor(private readonly fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({

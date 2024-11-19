@@ -1,4 +1,3 @@
-// admin.selectors.spec.ts
 import {
   selectAdminState,
   selectCompanies,

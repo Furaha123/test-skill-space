@@ -9,7 +9,7 @@ export class AdminDashboardComponent {
     {
       label: "Company Approval",
       icon: "assets/icon/program.svg",
-      route: "/admin-dashboard/company-approval", // Route for Company Approval component
+      route: "/admin-dashboard/company-approval",
     },
   ];
 }

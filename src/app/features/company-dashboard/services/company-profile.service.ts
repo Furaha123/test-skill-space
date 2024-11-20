@@ -8,7 +8,7 @@ import { CompanyUser } from "../models/company-user";
   providedIn: "root",
 })
 export class CompanyProfileService {
-  private readonly apiUrl = "assets/company.user.json";
+  private readonly apiUrl = "assets/mock-data/company.user.json";
 
   constructor(private readonly http: HttpClient) {}
 

@@ -11,6 +11,7 @@ import { LoaderComponent } from "./components/loader/loader.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 import { CountryCodesComponent } from "./components/country-codes/country-codes.component";
+import { CalendarComponent } from "./components/calendar/calendar.component";
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { CountryCodesComponent } from "./components/country-codes/country-codes.
     ButtonComponent,
     CountryCodesComponent,
     LoaderComponent,
+    CalendarComponent,
   ],
 
   imports: [CommonModule, SharedRoutingModule, MatProgressSpinnerModule],
@@ -34,6 +36,7 @@ import { CountryCodesComponent } from "./components/country-codes/country-codes.
     LoaderComponent,
     ErrorToastComponent,
     CountryCodesComponent,
+    CalendarComponent,
   ],
 })
 export class SharedModule {}

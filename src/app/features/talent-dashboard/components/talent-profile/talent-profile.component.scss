@@ -1,0 +1,67 @@
+@import "../../../../../sass/base/typography";
+@import "../../../../../sass/abstract/mixins";
+@import "../../../../../sass/abstract/variables";
+
+.talent-profile-layout {
+  display: flex;
+  padding: $spacing-medium;
+  margin-left: $spacing-medium;
+  background-color: $primary-99;
+
+  .talent-profile {
+    width: 100%;
+
+    .profile-tabs-header {
+      display: flex;
+      gap: $spacing-large;
+      border-bottom: 1px solid $neutral-20;
+      margin-bottom: -1px;
+
+      .profile-tab-item {
+        min-width: 200px;
+        padding: 8px 24px;
+        cursor: pointer;
+        position: relative;
+
+        h2 {
+          font-weight: $font-weight-medium;
+          font-size: $font-size-base;
+          color: $neutral-17;
+          text-align: center;
+        }
+
+        &.active {
+          h2 {
+            color: $neutral-0;
+            font-weight: $font-weight-bold;
+          }
+
+          &::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: $primary-60;
+          }
+        }
+      }
+    }
+
+    ::ng-deep {
+      h2 {
+        font: inherit !important;
+        margin: 0 !important;
+        letter-spacing: inherit !important;
+      }
+      .mat-mdc-tab-header {
+        display: none;
+      }
+
+      .mat-mdc-tab-body-wrapper {
+        border-top: none;
+      }
+    }
+  }
+}

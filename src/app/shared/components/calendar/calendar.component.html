@@ -1,0 +1,61 @@
+<div class="calendar-wrapper" (click)="$event.stopPropagation()">
+  <div class="input-wrapper">
+    <img src="assets/icon/calendar.svg" alt="calendar" class="calendar-icon" />
+    <input
+      type="text"
+      [value]="formatDate(selectedDate)"
+      (click)="toggleCalendar()"
+      readonly
+      class="date-input"
+    />
+  </div>
+
+  <div class="calendar-container" *ngIf="showCalendar">
+    <div class="navigation">
+      <div class="navigation-section">
+        <button (click)="toggleMonthDropdown()">
+          {{ months[currentDate.getMonth()] }}
+        </button>
+        <ul *ngIf="showMonthDropdown" class="dropdown">
+          <li
+            *ngFor="let month of months; let i = index"
+            (click)="selectMonth(i)"
+          >
+            {{ month }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="navigation-section">
+        <button (click)="toggleYearDropdown()">
+          {{ currentDate.getFullYear() }}
+        </button>
+        <ul *ngIf="showYearDropdown" class="dropdown">
+          <li *ngFor="let year of yearRange" (click)="selectYear(year)">
+            {{ year }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th *ngFor="let day of daysOfWeek">{{ day }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let week of getWeeks()">
+          <td
+            *ngFor="let dayInfo of week"
+            (click)="selectDate(dayInfo)"
+            [class.selected]="isSelectedDate(dayInfo)"
+            [class.disabled]="!dayInfo.isCurrentMonth"
+          >
+            <span>{{ dayInfo.day || "" }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

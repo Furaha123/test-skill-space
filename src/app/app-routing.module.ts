@@ -24,8 +24,15 @@ const routes: Routes = [
   },
   {
     path: "",
-    redirectTo: ROUTE_PATHS["company"],
+    redirectTo: ROUTE_PATHS["talent"],
     pathMatch: "full",
+  },
+  {
+    path: "talent",
+    loadChildren: () =>
+      import("./features/talent-dashboard/talent-dashboard.module").then(
+        (m) => m.TalentDashboardModule,
+      ),
   },
 ];
 

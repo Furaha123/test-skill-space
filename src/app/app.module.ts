@@ -10,8 +10,7 @@ import { provideAnimationsAsync } from "@angular/platform-browser/animations/asy
 import { SharedModule } from "./shared/shared.module";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { provideHttpClient, withFetch } from "@angular/common/http";
-
-// import { ToastrModule } from "ngx-toastr";
+import { ToastrModule } from "ngx-toastr";
 
 @NgModule({
   declarations: [AppComponent],
@@ -32,7 +31,7 @@ import { provideHttpClient, withFetch } from "@angular/common/http";
     }),
     SharedModule,
     BrowserAnimationsModule, // required animations module
-    // ToastrModule.forRoot(),
+    ToastrModule.forRoot(),
   ],
   providers: [provideAnimationsAsync(), provideHttpClient(withFetch())],
   bootstrap: [AppComponent],

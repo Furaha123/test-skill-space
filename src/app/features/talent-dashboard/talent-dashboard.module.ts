@@ -9,6 +9,7 @@ import { SharedModule } from "../../shared/shared.module";
 import { MatTabsModule } from "@angular/material/tabs";
 import { FormsModule } from "@angular/forms";
 import { DashboardTalentComponent } from "./components/dashboard-talent/dashboard-talent.component";
+import { TalentEducationComponent } from "./components/talent-education/talent-education.component";
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { DashboardTalentComponent } from "./components/dashboard-talent/dashboar
     TalentDetailsComponent,
     TalentProfileComponent,
     DashboardTalentComponent,
+    TalentEducationComponent,
   ],
   imports: [
     CommonModule,

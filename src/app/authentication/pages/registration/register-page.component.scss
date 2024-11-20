@@ -19,14 +19,14 @@
 
     .btn-google {
       @include border-radius(8px);
-      border: 1px solid $primary-grey;
-      padding: 0.4rem 0.8rem;
+      border: 1px solid $primary-grey !important;
+      padding: 0.4rem 0.8rem !important;
 
-      width: 100%;
+      width: 100% !important;
       @include flex-center();
       .text {
-        color: $primary-orange;
-        margin: 0 4px;
+        color: $primary-orange !important;
+        margin: 0 4px !important;
         @include responsive-font-size(8px, 10px, 16px);
       }
     }

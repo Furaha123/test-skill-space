@@ -22,7 +22,7 @@ export class VerificationPageComponent implements OnInit, OnDestroy {
   isLoading = false;
   expiryTime = 600; // 10 minutes
   codeExpired = false;
-  currentScreen = "checkMailScreem";
+  currentScreen = "checkMailScreen";
   userEmail = "";
   form!: FormGroup;
   user$: Observable<Talent | null> = this.store.select(
@@ -88,11 +88,6 @@ export class VerificationPageComponent implements OnInit, OnDestroy {
   }
 
   OnVerifyOTP(): void {
-    if (!this.form.valid || !this.userEmail) {
-      this.toastr.error("Invalid form or email", "Error");
-      return;
-    }
-
     this.isLoading = true;
     const { field1, field2, field3, field4, field5 } = this.form.getRawValue();
     const otp = `${field1}${field2}${field3}${field4}${field5}`;

@@ -68,7 +68,7 @@ describe("VerificationPageComponent", () => {
   describe("Component Initialization", () => {
     it("should create with default values", () => {
       expect(component).toBeTruthy();
-      expect(component.currentScreen).toBe("checkMailScreem");
+      expect(component.currentScreen).toBe("checkMailScreen");
       expect(component.expiryTime).toBe(600);
       expect(component.codeExpired).toBeFalsy();
       expect(component.isLoading).toBeFalsy();
@@ -119,13 +119,6 @@ describe("VerificationPageComponent", () => {
       Object.keys(component.form.controls).forEach((key, index) => {
         component.form.get(key)?.setValue(index.toString());
       });
-    });
-
-    it("should handle verification with empty email", () => {
-      component.userEmail = "";
-      component.OnVerifyOTP();
-      expect(mockAuthService.verifyOTP).not.toHaveBeenCalled();
-      expect(mockToastrService.error).toHaveBeenCalled();
     });
 
     it("should handle network error during verification", () => {

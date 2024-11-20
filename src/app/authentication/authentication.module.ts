@@ -31,7 +31,6 @@ import { UserEffects } from "./auth-store/auth.effects";
     AuthenticationRoutingModule,
     SharedModule,
     ReactiveFormsModule,
-    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     StoreModule.forFeature("user", userReducer),

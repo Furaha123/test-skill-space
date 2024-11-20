@@ -23,7 +23,7 @@
         <div class="file-preview" *ngIf="companyForm.get('documentUrl')?.value">
           <div class="file-content">
             <button class="delete-button" (click)="deleteFile('document')">
-              <img src="assets/remove.svg" alt="Delete" />
+              <img src="assets/icon/remove.svg" alt="Delete" />
             </button>
             <div class="file-icon">
               <img
@@ -45,7 +45,7 @@
             class="resize-input"
           />
           <div class="upload-icon">
-            <img src="assets/upload.svg" alt="Upload Document" />
+            <img src="assets/icon/upload.svg" alt="Upload Document" />
           </div>
           <div class="upload-text">
             <p>Click here or drag your document to upload</p>
@@ -63,7 +63,7 @@
         <div class="file-preview" *ngIf="companyForm.get('logo')?.value">
           <div class="file-content">
             <button class="delete-button" (click)="deleteFile('logo')">
-              <img src="assets/remove.svg" alt="Delete" />
+              <img src="assets/icon/remove.svg" alt="Delete" />
             </button>
             <div class="file-icon">
               <img [src]="companyForm.get('logo')?.value" alt="Uploaded Logo" />
@@ -82,7 +82,7 @@
             class="resize-input"
           />
           <div class="upload-icon">
-            <img src="assets/upload.svg" alt="Upload Logo" />
+            <img src="assets/icon/upload.svg" alt="Upload Logo" />
           </div>
           <div class="upload-text">
             <p>Click here or drag your logo to upload</p>
@@ -140,14 +140,14 @@
               (click)="removeWebsite(i)"
               *ngIf="websites.length > 1"
             >
-              <img src="assets/minus.svg" alt="Remove Website" />
+              <img src="assets/icon/minus.svg" alt="Remove Website" />
             </button>
             <button
               *ngIf="i === websites.length - 1"
               class="icon-button add"
               (click)="addWebsite()"
             >
-              <img src="assets/plus.svg" alt="Add Website" />
+              <img src="assets/icon/plus.svg" alt="Add Website" />
             </button>
           </div>
         </div>

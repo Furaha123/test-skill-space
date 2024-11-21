@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import { GoogleAuthService } from "../../services/google-auth.service";
 import { of, throwError } from "rxjs";
 import { AuthResponse } from "../../models/auth-response.model";
+import { ToastrService } from "ngx-toastr";
 
 describe("RegisterPageComponent", () => {
   let component: RegisterPageComponent;
@@ -41,6 +42,14 @@ describe("RegisterPageComponent", () => {
     setItem: jest.fn(),
   };
 
+  // Mock ToastrService
+  const mockToastrService = {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    warning: jest.fn(),
+  };
+
   beforeEach(async () => {
     // Mock window.google
     Object.defineProperty(window, "google", {
@@ -69,6 +78,10 @@ describe("RegisterPageComponent", () => {
         {
           provide: GoogleAuthService,
           useValue: mockGoogleAuthService,
+        },
+        {
+          provide: ToastrService,
+          useValue: mockToastrService,
         },
       ],
       schemas: [NO_ERRORS_SCHEMA],

@@ -4,6 +4,7 @@ import { GoogleAuthService } from "../../services/google-auth.service";
 import { take } from "rxjs";
 import { AuthResponse } from "../../models/auth-response.model";
 import { DecodedToken } from "../../models/google-auth.model";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-register-page",
@@ -17,6 +18,7 @@ export class RegisterPageComponent {
   constructor(
     private readonly googleAuthService: GoogleAuthService,
     private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
 
   onRegisterCompany() {
@@ -46,7 +48,7 @@ export class RegisterPageComponent {
             this.setUserInfo();
           },
           error: (error) => {
-            throw new Error(error);
+            this.toastr.error("Failed to register", error.message);
           },
         });
     }

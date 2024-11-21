@@ -15,6 +15,7 @@ import { StoreModule } from "@ngrx/store";
 import { userReducer } from "./auth-store/auth.reducers";
 import { EffectsModule } from "@ngrx/effects";
 import { UserEffects } from "./auth-store/auth.effects";
+import { GoogleButtonComponent } from "./components/google-button/google-button.component";
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { UserEffects } from "./auth-store/auth.effects";
     VerificationPageComponent,
     ForgotPasswordComponent,
     CreateNewPasswordComponent,
+    GoogleButtonComponent,
   ],
 
   imports: [

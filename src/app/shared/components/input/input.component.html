@@ -71,7 +71,7 @@
   <div *ngIf="hasError">
     @if (type === "number") {
       <app-error-toast
-        subText="NUmber wrong"
+        subText="Wrong phone number"
         title="Error"
         type="warning"
       ></app-error-toast>
@@ -84,7 +84,7 @@
     } @else if (type === "passwordConfirm") {
       <app-error-toast
         title="Incorrect password"
-        subText="Your password is invalid,try again."
+        subText="Your password is invalid, try again."
         type="error"
       ></app-error-toast>
     } @else if (type === "email") {

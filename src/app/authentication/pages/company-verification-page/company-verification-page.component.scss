@@ -1,0 +1,235 @@
+@import "../../../../styles.scss";
+
+// Common mixins and shared styles
+%wrapper-base {
+  @include flex-center();
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+  max-width: 45%;
+  margin: 0 auto;
+}
+
+%base-text {
+  @include font("Archivo", 400);
+  @include responsive-font-size(14px, 16px, 18px);
+  color: $primary-grey;
+}
+
+// Check Mail Screen
+.check-mail-wrapper {
+  @extend %wrapper-base;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 1.5rem;
+  }
+
+  .check-mail {
+    @include font("Roboto", 400, 2.5rem);
+    margin: 1rem 0;
+  }
+
+  .sub-text {
+    @extend %base-text;
+    margin: 1rem 0;
+  }
+
+  .pad {
+    margin: 1rem 0;
+  }
+
+  .text {
+    margin: 2rem 0;
+    @include font(Archivo, 400, 1rem);
+    @include responsive-font-size(12px, 14px, 16px);
+
+    span {
+      color: $primary-orange;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  }
+}
+
+// Verification Screen
+.verification-screen-wrapper {
+  @extend %wrapper-base;
+
+  .wrapper {
+    margin: 6rem auto;
+    width: 100%;
+    max-width: 480px;
+    padding: 2rem;
+    @include border-radius(0.5rem);
+    background-color: $white;
+
+    .otp-form {
+      width: 90%;
+      max-width: 600px;
+
+      .otp-inputs {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        input {
+          width: 60px;
+          height: 60px;
+          text-align: center;
+          border: 1px solid $primary-grey;
+          @include border-radius(0.4rem);
+          @include font($size: $font-size-large, $weight: $font-weight-medium);
+          color: $neutral-0;
+          transition: all 0.3s ease;
+          -webkit-appearance: none;
+          -moz-appearance: textfield;
+
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+
+          &:focus {
+            outline: none;
+            border-color: $primary-60;
+            box-shadow: 0 0 0 2px rgba($primary-60, 0.1);
+          }
+
+          &.invalid {
+            border-color: $error-60;
+            background-color: rgba($error-60, 0.05);
+
+            &:focus {
+              box-shadow: 0 0 0 2px rgba($error-60, 0.1);
+            }
+          }
+
+          &.valid {
+            border-color: $success-60;
+            background-color: rgba($success-60, 0.05);
+
+            &:focus {
+              box-shadow: 0 0 0 2px rgba($success-60, 0.1);
+            }
+          }
+
+          &:disabled {
+            background-color: $neutral-94;
+            color: $neutral-80;
+            border-color: $neutral-80;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+
+    .ver-text {
+      @include font(Roboto, 400, 2.5rem);
+      color: $primary-grey;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      @extend %base-text;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      .fields {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        .input {
+          width: 60px;
+          height: 60px;
+          text-align: center;
+          @include border-radius(0.5rem);
+          @include border(1px, solid, $primary-grey);
+          font-size: 1.5rem;
+
+          &:focus {
+            border-color: $primary-orange;
+            outline: none;
+          }
+
+          @media (max-width: 480px) {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+          }
+        }
+      }
+    }
+  }
+
+  h3 {
+    @include font("Archivo", 400, 1.4rem);
+    color: $primary-grey;
+    margin-top: 1rem;
+
+    span {
+      color: $primary-orange;
+      font-weight: bold;
+    }
+  }
+}
+
+// Success Screen
+.successfull-screen-wrapper {
+  @extend %wrapper-base;
+
+  div {
+    background-color: $white;
+
+    text-align: center;
+    width: 100%;
+  }
+
+  h3 {
+    color: $primary-grey;
+    @include font("Roboto", 500, 1.5rem);
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: $primary-grey;
+    @include font("Archivo", 400, 0.875rem);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+  }
+}
+
+// Responsive Styles
+@media screen and (max-width: 480px) {
+  %wrapper-base {
+    width: 100%;
+  }
+
+  .successfull-screen-wrapper {
+    div {
+      padding: 1.5rem 1rem;
+    }
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      font-size: 0.8125rem;
+      padding: 0;
+    }
+  }
+}

@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { VerificationPageComponent } from "./verification-page.component";
-import { AuthServiceService } from "../../../core/services/auth/auth-service.service";
+import { AuthService } from "../../../core/services/auth/auth-service.service";
 import { ToastrService } from "ngx-toastr";
 import { Router } from "@angular/router";
 import { Store } from "@ngrx/store";
@@ -18,7 +18,7 @@ import { Talent } from "../../../shared/models/talent.interface";
 describe("VerificationPageComponent", () => {
   let component: VerificationPageComponent;
   let fixture: ComponentFixture<VerificationPageComponent>;
-  let mockAuthService: jest.Mocked<AuthServiceService>;
+  let mockAuthService: jest.Mocked<AuthService>;
   let mockToastrService: jest.Mocked<ToastrService>;
   let mockRouter: jest.Mocked<Router>;
   let mockStore: { select: jest.Mock };
@@ -27,7 +27,7 @@ describe("VerificationPageComponent", () => {
     mockAuthService = {
       verifyOTP: jest.fn(),
       requestNewOTP: jest.fn(),
-    } as unknown as jest.Mocked<AuthServiceService>;
+    } as unknown as jest.Mocked<AuthService>;
 
     mockToastrService = {
       success: jest.fn(),
@@ -48,7 +48,7 @@ describe("VerificationPageComponent", () => {
       imports: [ReactiveFormsModule],
       declarations: [VerificationPageComponent],
       providers: [
-        { provide: AuthServiceService, useValue: mockAuthService },
+        { provide: AuthService, useValue: mockAuthService },
         { provide: ToastrService, useValue: mockToastrService },
         { provide: Router, useValue: mockRouter },
         { provide: Store, useValue: mockStore },

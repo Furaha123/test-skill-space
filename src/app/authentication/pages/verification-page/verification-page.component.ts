@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { AuthServiceService } from "../../../core/services/auth/auth-service.service";
+import { AuthService } from "../../../core/services/auth/auth-service.service";
 import { Store } from "@ngrx/store";
 import * as UserSelectors from "../../auth-store/auth.selectors";
 import { Observable, Subject, takeUntil } from "rxjs";
@@ -31,7 +31,7 @@ export class VerificationPageComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly authService: AuthServiceService,
+    private readonly authService: AuthService,
     private readonly store: Store,
     private readonly toastr: ToastrService,
     private readonly router: Router,

@@ -3,14 +3,14 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { ToastrService } from "ngx-toastr";
 import { catchError, map, mergeMap, of, tap } from "rxjs";
 import * as UserActions from "./auth.actions";
-import { AuthServiceService } from "../../core/services/auth/auth-service.service";
+import { AuthService } from "../../core/services/auth/auth-service.service";
 import { Router } from "@angular/router";
 
 @Injectable()
-export class UserEffects {
+export class AuthEffects {
   constructor(
     private actions$: Actions,
-    private authService: AuthServiceService,
+    private authService: AuthService,
     private toastr: ToastrService,
     private readonly router: Router,
   ) {}

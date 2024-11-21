@@ -8,6 +8,7 @@ import { Observable, Subscription } from "rxjs";
 import * as UserActions from "../../auth-store/auth.actions";
 import * as UserSelectors from "../../auth-store/auth.selectors";
 import { Store } from "@ngrx/store";
+import { Talent } from "../../../shared/models/talent.interface";
 
 @Component({
   selector: "app-talent-registration-form",
@@ -67,9 +68,18 @@ export class TalentRegistrationFormComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.form.valid) {
-      const { email } = this.form.getRawValue();
+      const { email, userName, password, phoneNumber } =
+        this.form.getRawValue();
+
+      const user: Talent = {
+        email,
+        password,
+        phoneNumber,
+        firstName: userName,
+      };
+
       this.submitted = true;
-      this.store.dispatch(UserActions.registerUser({ user: email }));
+      this.store.dispatch(UserActions.registerUser({ user }));
     }
   }
 

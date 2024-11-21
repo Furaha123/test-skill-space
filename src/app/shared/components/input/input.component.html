@@ -3,7 +3,6 @@
     {{ label }}
   </label>
 
-  <!-- Text, Number, Date, Password, URL, Email inputs -->
   <div *ngIf="fieldType === 'input'" class="input-field-container">
     <input
       [type]="type === 'passwordConfirm' ? 'password' : type"

@@ -423,6 +423,11 @@
           width: 100%;
         }
       }
+      .calendar {
+        border: 2px solid $tertiary-90;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+      }
     }
     .phone-input-group {
       display: flex;

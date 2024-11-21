@@ -1,0 +1,144 @@
+<div class="education-container" *ngIf="record">
+  <div class="form-content">
+    <div class="educational-records">
+      <h2>Educational Records</h2>
+      <p class="description">
+        Below, you can manage all educational records you have provided.
+      </p>
+
+      <form [formGroup]="educationForm">
+        <div class="form-group">
+          <app-input
+            label="Name of Institution"
+            type="text"
+            id="institution"
+            placeholder="Enter institution name"
+            [hasError]="isFieldInvalid('institution')"
+            formControlName="institution"
+          ></app-input>
+        </div>
+
+        <div class="form-group">
+          <app-input
+            label="Address of Institution"
+            type="textarea"
+            id="address"
+            placeholder="Enter institution address"
+            fieldType="textarea"
+            formControlName="address"
+            [rows]="3"
+          ></app-input>
+        </div>
+
+        <div class="form-group">
+          <app-input
+            label="Country of Institution"
+            type="select"
+            id="country"
+            placeholder="Select country"
+            fieldType="select"
+            formControlName="country"
+            [options]="['United States', 'Canada', 'United Kingdom']"
+          ></app-input>
+        </div>
+
+        <div class="form-group">
+          <app-input
+            label="Qualification Level"
+            type="select"
+            id="qualification"
+            placeholder="Select qualification"
+            fieldType="select"
+            formControlName="qualification"
+            [options]="qualificationOptions"
+            [hasError]="isFieldInvalid('qualification')"
+          ></app-input>
+        </div>
+
+        <div class="form-group">
+          <app-input
+            label="Name of Program"
+            type="text"
+            id="degree"
+            placeholder="Enter program name"
+            formControlName="degree"
+            [hasError]="isFieldInvalid('degree')"
+          ></app-input>
+        </div>
+
+        <div class="form-group">
+          <app-input
+            label="Program Status"
+            type="select"
+            id="status"
+            placeholder="Select status"
+            fieldType="select"
+            formControlName="status"
+            [options]="statusOptions"
+            [disabled]="isUpdateMode"
+          ></app-input>
+        </div>
+
+        <div class="dates-group">
+          <div class="form-group">
+            <app-input
+              label="Date of Commencement"
+              type="date"
+              id="startDate"
+              placeholder="Select start date"
+              formControlName="startDate"
+            ></app-input>
+          </div>
+          <div class="form-group">
+            <app-input
+              label="Date Completed"
+              type="date"
+              id="endDate"
+              placeholder="Select end date"
+              formControlName="endDate"
+            ></app-input>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="transcripts">
+      <h2>Academic Transcripts</h2>
+      <p>You can upload up to 1 document.</p>
+
+      <div class="file-preview" *ngFor="let file of record.files">
+        <div class="file-content">
+          <button class="delete-button">
+            <img src="assets/icon/remove.svg" alt="Delete" />
+          </button>
+          <div class="file-icon">
+            <img [src]="file.url" alt="Uploaded File" />
+          </div>
+          <p class="file-name">{{ file.name }}</p>
+        </div>
+      </div>
+
+      <div class="upload-box">
+        <input type="file" accept=".pdf,.png,.jpg,.jpeg,.docx" />
+        <div class="upload-icon">
+          <img src="assets/icon/upload.svg" alt="Upload" />
+        </div>
+        <div class="upload-text">
+          <p>Click here or drag your files to upload</p>
+          <p class="supported-formats">
+            Supported formats: PDF, JPEG, JPG, PNG, DOCX (10mb max)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <app-button text="Save changes" [customClasses]="'btn save'">
+        Save changes
+      </app-button>
+      <app-button text="Cancel" [customClasses]="'btn cancel'">
+        Cancel
+      </app-button>
+    </div>
+  </div>
+</div>

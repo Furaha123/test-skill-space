@@ -1,0 +1,43 @@
+<div class="education-section" *ngIf="!showUpdateComponent">
+  <div class="header">
+    <h2 class="title">Educational Records</h2>
+    <button class="add-button" (click)="startAddNewRecord()">
+      <img src="assets/icon/add.svg" alt="Add" />
+      Add new record
+    </button>
+  </div>
+
+  <p class="description">
+    Below, you can manage all educational records you have provided.
+  </p>
+
+  <div class="records-list">
+    <div class="record-card" *ngFor="let record of educationRecords">
+      <div class="record-info">
+        <h3 class="degree">{{ record.degree }}</h3>
+        <p class="institution">{{ record.institution }}</p>
+        <div class="files-info">
+          <img src="assets/icon/file-icon.svg" alt="Files" />
+          <span>{{ record.filesCount }} files uploaded</span>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="action-button update" (click)="startUpdate(record)">
+          <img src="assets/icon/update.svg" alt="Update" />
+          Update
+        </button>
+        <button class="action-button remove">
+          <img src="assets/icon/cancel.svg" alt="Remove" />
+          Remove
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-talent-education-upate
+  *ngIf="showUpdateComponent && selectedRecord"
+  [record]="selectedRecord"
+  [mode]="mode"
+  (close)="closeUpdateComponent()"
+></app-talent-education-upate>

@@ -9,7 +9,7 @@ export class TalentDetailsComponent {
   wordCount = 0;
   maxWordLimit = 250;
   introductionText = "";
-  selectedIcon: string; // Holds the currently selected icon
+  selectedIcon: string;
   isDropdownOpen = false;
 
   icons = [

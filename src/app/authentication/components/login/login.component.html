@@ -5,72 +5,56 @@
     <span>Continue with Google</span>
   </button>
 
-  <!-- Divider -->
   <div class="divider">
     <span class="line"></span>
     <span>OR</span>
     <span class="line"></span>
   </div>
 
-  <h2 class="login-heading">Welcome back!, Login to your account</h2>
+  <h2 class="login-heading">Welcome back! Login to your account</h2>
 
   <!-- Login Form -->
   <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="login-form">
-    <!-- Email Field -->
-    <div class="form-field">
-      <label for="email">Email Address</label>
-      <input
-        type="email"
-        id="email"
-        formControlName="email"
-        placeholder="Enter address here"
-        [class.invalid]="isFieldInvalid('email')"
-      />
-      <div class="input-error" *ngIf="isFieldInvalid('email')">
-        Please enter a valid email address.
-      </div>
-    </div>
+    <app-input
+      [type]="'email'"
+      [label]="'Email Address'"
+      [placeholder]="'Enter address here'"
+      [id]="'email'"
+      [hasError]="isFieldInvalid('email')"
+      formControlName="email"
+      class="input-field"
+    ></app-input>
 
-    <!-- Password Field -->
-    <div class="form-field">
-      <label for="password">Password</label>
-      <input
-        type="password"
-        id="password"
-        formControlName="password"
-        placeholder="******"
-        [class.invalid]="isFieldInvalid('password')"
-      />
-      <div class="input-error" *ngIf="isFieldInvalid('password')">
-        Password must be at least 8 characters long.
-      </div>
-    </div>
+    <app-input
+      [type]="'password'"
+      [label]="'Password'"
+      [placeholder]="'******'"
+      [id]="'password'"
+      [hasError]="isFieldInvalid('password')"
+      formControlName="password"
+      class="input-field"
+    ></app-input>
 
-    <!-- Forgot Password Link -->
+    <app-error-toast
+      *ngIf="showError$ | async as error"
+      title="Login Error"
+      [subText]="error"
+      type="error"
+    ></app-error-toast>
+
     <div class="actions">
-      <a href="#" class="forgot-password">Forgot password?</a>
+      <a routerLink="/auth/forgot-password" class="forgot-password">
+        Forgot password?
+      </a>
     </div>
 
-    <!-- Error Message (Displays on Failed Login) -->
-    <div class="error-message" *ngIf="showError$ | async as error">
-      <div class="accent-line"></div>
-      <img
-        src="assets/icons/error-message.svg"
-        alt="Error Message"
-        class="error-icon"
-      />
-      <div class="error-text">
-        <strong>Error</strong>
-        <p>{{ error }}</p>
-      </div>
-    </div>
-
-    <!-- Login Button -->
-    <button type="submit" class="login-button">Login</button>
+    <app-button type="button" (handleClick)="onSubmit()" class="login-button"
+      >Login</app-button
+    >
   </form>
 
-  <!-- Signup Link -->
   <div class="signup-link">
-    Don’t have an account? <a routerLink="/signup">Sign up instead</a>
+    Don’t have an account?
+    <a routerLink="/auth/register">Sign up instead</a>
   </div>
 </div>

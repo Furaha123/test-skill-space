@@ -1,17 +1,11 @@
-@import "../../../../sass/abstract/mixins";
-@import "../../../../sass/abstract/variables";
-@import "../../../../sass/base/typography";
+@import "../../../../styles.scss";
 
 $component-width: 640px;
 $component-height: 50px;
 $component-padding: 0.4rem;
-$error-message-height: 80px;
 
 .login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @include flex-center();
   width: 100%;
   max-width: $component-width;
   margin: auto;
@@ -38,7 +32,7 @@ $error-message-height: 80px;
     background-color: $neutral-100;
     color: $primary-60;
     cursor: pointer;
-    width: 98%;
+    width: 95%;
     max-width: $component-width;
     height: $component-height;
     border: 1px solid $neutral-80;
@@ -57,8 +51,7 @@ $error-message-height: 80px;
     font-size: $font-size-small;
     width: 99%;
     max-width: $component-width;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
+    margin: 0.5rem 0;
 
     .line {
       flex: 1;
@@ -73,102 +66,13 @@ $error-message-height: 80px;
     max-width: $component-width;
     display: flex;
     flex-direction: column;
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      max-width: $component-width;
-      margin-bottom: 1rem;
-
-      label {
-        @include font($size: $font-size-small, $weight: $font-weight-medium);
-        color: $neutral-4;
-        margin-bottom: 0.5rem;
-      }
-
-      input {
-        width: 97%;
-        height: $component-height;
-        padding: $component-padding;
-        border: 1px solid $neutral-40;
-        border-radius: 0.4rem;
-        @include font($size: $font-size-base);
-        outline: none;
-
-        &.invalid {
-          border-color: $primary-60;
-        }
-
-        &::placeholder {
-          color: $neutral-60;
-          opacity: 0.6;
-        }
-
-        &:focus {
-          border-color: $neutral-40;
-        }
-      }
-
-      .input-error {
-        color: $error-40;
-        font-size: $font-size-small;
-        margin-top: 0.25rem;
-      }
-    }
-
-    .error-message {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      max-width: $component-width;
-      height: $error-message-height;
-      background-color: $error-95;
-      color: $error-40;
-      padding: $component-padding;
-      border: 1px solid $error-40;
-      border-radius: 0.4rem;
-      margin-bottom: 1rem;
-      position: relative;
-      box-sizing: border-box;
-
-      .accent-line {
-        width: 4px;
-        background-color: $primary-60;
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        border-top-left-radius: 0.4rem;
-        border-bottom-left-radius: 0.4rem;
-      }
-
-      .error-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 1rem;
-      }
-
-      .error-text {
-        strong {
-          display: block;
-          @include font($weight: $font-weight-medium);
-          margin-bottom: 0.3rem;
-        }
-
-        p {
-          margin: 0;
-          font-size: $font-size-small;
-        }
-      }
-    }
+    gap: 1rem; // Adds spacing between components
   }
 
   .actions {
     display: flex;
     justify-content: flex-end;
     width: 100%;
-    max-width: $component-width;
     margin-bottom: 1rem;
 
     .forgot-password {
@@ -186,10 +90,24 @@ $error-message-height: 80px;
     @include padding($component-padding);
     @include border-radius(0.4rem);
     @include font($size: $font-size-base, $weight: $font-weight-medium);
-    background-color: $primary-50;
+    background-color: $primary-60;
     color: $neutral-100;
     cursor: pointer;
     border: none;
+    text-align: center;
+
+    &:hover {
+      background-color: darken($primary-60, 5%);
+    }
+
+    &:active {
+      background-color: darken($primary-60, 10%);
+    }
+
+    &:disabled {
+      background-color: lighten($primary-60, 20%);
+      cursor: not-allowed;
+    }
   }
 
   .signup-link {

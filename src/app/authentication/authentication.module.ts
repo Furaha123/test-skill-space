@@ -12,9 +12,8 @@ import { VerificationPageComponent } from "./pages/verification-page/verificatio
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
 import { CreateNewPasswordComponent } from "./components/create-new-password/create-new-password.component";
 import { LoginComponent } from "./components/login/login.component";
-import {MatButtonModule} from '@angular/material/button'
-import {MatIconModule} from '@angular/material/icon'
-
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
 
 import { GoogleButtonComponent } from "./components/google-button/google-button.component";
 

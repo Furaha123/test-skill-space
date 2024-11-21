@@ -6,26 +6,25 @@ import {
   HttpEvent,
 } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { AuthService } from "../services/auth/auth-service.service";
+
+// Define a type for the possible request/response body types
+type HttpRequestBody = unknown;
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
-
   intercept(
-    req: HttpRequest<unknown>,
+    req: HttpRequest<HttpRequestBody>,
     next: HttpHandler,
-  ): Observable<HttpEvent<unknown>> {
-    const token = this.authService.getToken();
+  ): Observable<HttpEvent<HttpRequestBody>> {
+    const token = sessionStorage.getItem("authToken");
 
     if (token) {
-      const cloned = req.clone({
+      const clonedReq = req.clone({
         headers: req.headers.set("Authorization", `Bearer ${token}`),
       });
-      return next.handle(cloned);
+      return next.handle(clonedReq);
     }
 
-    // Removed unnecessary else
     return next.handle(req);
   }
 }

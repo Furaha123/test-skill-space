@@ -13,7 +13,6 @@ import { provideHttpClient, withFetch } from "@angular/common/http";
 import { ToastrModule } from "ngx-toastr";
 import { authReducer } from "./authentication/auth-store/auth.reducers";
 
-// import { ToastrModule } from "ngx-toastr";
 import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { AuthInterceptor } from "./core/interceptor/auth-interceptor.interceptor";
 
@@ -45,7 +44,7 @@ import { AuthEffects } from "./authentication/auth-store/auth.effects";
   providers: [
     provideAnimationsAsync(),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    provideHttpClient(withFetch())
+    provideHttpClient(withFetch()),
   ],
   bootstrap: [AppComponent],
 })

@@ -1,176 +1,280 @@
-import { TestBed, ComponentFixture } from "@angular/core/testing";
-import { ReactiveFormsModule } from "@angular/forms";
-import { StoreModule, Store } from "@ngrx/store";
-import { Router } from "@angular/router";
-import { of } from "rxjs";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  FormsModule,
+} from "@angular/forms";
 import { RouterTestingModule } from "@angular/router/testing";
-import { AuthState } from "../../auth-store/auth.reducer";
-import * as AuthActions from "../../auth-store/auth.actions";
+import { MockStore, provideMockStore } from "@ngrx/store/testing";
 import { LoginComponent } from "./login.component";
+import * as AuthActions from "../../auth-store/auth.actions";
+import { selectError } from "../../auth-store/auth.reducer";
+import {
+  Component,
+  Input,
+  forwardRef,
+  EventEmitter,
+  Output,
+} from "@angular/core";
+
+type FormValue = string;
+type ChangeHandler = (value: FormValue) => void;
+type TouchHandler = () => void;
+
+@Component({
+  selector: "app-input",
+  template:
+    '<input [type]="type" [id]="id" [value]="value" (input)="onChange($event)" (blur)="onTouched()">',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => MockInputComponent),
+      multi: true,
+    },
+  ],
+})
+class MockInputComponent implements ControlValueAccessor {
+  @Input() type = "text";
+  @Input() label = "";
+  @Input() placeholder = "";
+  @Input() id = "";
+  @Input() hasError = false;
+  @Input() formControlName = "";
+
+  value: FormValue = "";
+  onChange: ChangeHandler = () => {};
+  onTouched: TouchHandler = () => {};
+
+  writeValue(value: FormValue): void {
+    this.value = value;
+  }
+
+  registerOnChange(fn: ChangeHandler): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: TouchHandler): void {
+    this.onTouched = fn;
+  }
+}
+
+@Component({
+  selector: "app-button",
+  template: '<button (click)="handleClick.emit()">Login</button>',
+})
+class MockButtonComponent {
+  @Input() type = "button";
+  @Output() handleClick = new EventEmitter<void>();
+}
+
+@Component({
+  selector: "app-error-toast",
+  template: "<div>{{subText}}</div>",
+})
+class MockErrorToastComponent {
+  @Input() title = "";
+  @Input() subText = "";
+  @Input() type = "";
+}
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let store: Store<{ auth: AuthState }>;
-  let router: Router;
+  let store: MockStore;
+  let dispatchSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,
-        StoreModule.forRoot({}),
-        RouterTestingModule,
+      declarations: [
+        LoginComponent,
+        MockInputComponent,
+        MockButtonComponent,
+        MockErrorToastComponent,
       ],
-      declarations: [LoginComponent],
+      imports: [ReactiveFormsModule, FormsModule, RouterTestingModule],
       providers: [
-        {
-          provide: Store,
-          useValue: {
-            dispatch: jest.fn(),
-            select: jest.fn().mockReturnValue(of(null)),
-          },
-        },
+        FormBuilder,
+        provideMockStore({
+          selectors: [{ selector: selectError, value: null }],
+        }),
       ],
     }).compileComponents();
 
+    store = TestBed.inject(MockStore);
+    dispatchSpy = jest.spyOn(store, "dispatch");
+
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    store = TestBed.inject(Store);
-    router = TestBed.inject(Router);
-
-    jest.spyOn(router, "navigate");
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    dispatchSpy.mockClear();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should initialize the form with default values", () => {
-    const loginForm = component.loginForm;
-    expect(loginForm).toBeDefined();
-    expect(loginForm.get("email")?.value).toBe("");
-    expect(loginForm.get("password")?.value).toBe("");
-  });
-
-  it("should initialize showError$ observable", () => {
-    const error$ = of("Login error");
-    jest.spyOn(store, "select").mockReturnValue(error$);
-    component.ngOnInit();
-    fixture.detectChanges();
-    component.showError$.subscribe((error) => {
-      expect(error).toBe("Login error");
+  describe("Form Initialization", () => {
+    it("should initialize the form with empty values", () => {
+      expect(component.loginForm.get("email")?.value).toBe("");
+      expect(component.loginForm.get("password")?.value).toBe("");
     });
-  });
 
-  it("should mark form fields as touched on invalid submit", () => {
-    component.onSubmit();
-    expect(component.loginForm.get("email")?.touched).toBe(true);
-    expect(component.loginForm.get("password")?.touched).toBe(true);
-  });
-
-  it("should return true if the field is invalid and touched or dirty", () => {
-    const control = component.loginForm.get("email");
-    control?.markAsTouched();
-    control?.setErrors({ required: true });
-    expect(component.isFieldInvalid("email")).toBe(true);
-  });
-
-  it("should return false if the field is valid or not touched and dirty", () => {
-    const control = component.loginForm.get("email");
-    control?.markAsUntouched();
-    control?.setErrors(null);
-    expect(component.isFieldInvalid("email")).toBe(false);
-  });
-
-  it("should dispatch login action on valid submit", () => {
-    component.loginForm.setValue({
-      email: "test@example.com",
-      password: "Password123!",
-    });
-    component.onSubmit();
-    expect(store.dispatch).toHaveBeenCalledWith(
-      AuthActions.login({
-        email: "test@example.com",
-        password: "Password123!",
-      }),
-    );
-  });
-
-  it("should navigate to the correct route based on user role", (done) => {
-    const roles = ["admin", "talent", "company", "mentor"];
-    const paths = [
-      "/admin/dashboard",
-      "/talent/dashboard",
-      "/company/dashboard",
-      "/mentor/dashboard",
-    ];
-
-    roles.forEach((role, index) => {
-      jest.spyOn(store, "select").mockReturnValueOnce(of(role));
-      component.loginForm.setValue({
-        email: "test@example.com",
-        password: "Password123!",
+    it("should initialize showError$ observable", () => {
+      let errorMessage: string | null = null;
+      component.showError$.subscribe((error) => {
+        errorMessage = error;
       });
+      expect(errorMessage).toBe(null);
+    });
+  });
+
+  describe("Form Validation", () => {
+    describe("Email Field", () => {
+      it("should be invalid when empty", () => {
+        const emailControl = component.loginForm.get("email");
+        emailControl?.setValue("");
+        emailControl?.markAsTouched();
+        fixture.detectChanges();
+        expect(emailControl?.errors?.["required"]).toBeTruthy();
+      });
+
+      it("should be invalid with incorrect email format", () => {
+        const emailControl = component.loginForm.get("email");
+        emailControl?.setValue("invalid-email");
+        emailControl?.markAsTouched();
+        fixture.detectChanges();
+        expect(emailControl?.errors?.["email"]).toBeTruthy();
+      });
+
+      it("should be valid with correct email format", () => {
+        const emailControl = component.loginForm.get("email");
+        emailControl?.setValue("test@example.com");
+        emailControl?.markAsTouched();
+        fixture.detectChanges();
+        expect(emailControl?.valid).toBeTruthy();
+      });
+    });
+
+    describe("Password Field", () => {
+      it("should be invalid when empty", () => {
+        const passwordControl = component.loginForm.get("password");
+        passwordControl?.setValue("");
+        passwordControl?.markAsTouched();
+        fixture.detectChanges();
+        expect(passwordControl?.errors?.["required"]).toBeTruthy();
+      });
+
+      it("should be invalid when less than 8 characters", () => {
+        const passwordControl = component.loginForm.get("password");
+        passwordControl?.setValue("Short1!");
+        passwordControl?.markAsTouched();
+        fixture.detectChanges();
+        expect(passwordControl?.errors?.["minlength"]).toBeTruthy();
+      });
+
+      it("should be valid with all requirements met", () => {
+        const passwordControl = component.loginForm.get("password");
+        passwordControl?.setValue("Password123!");
+        passwordControl?.markAsTouched();
+        fixture.detectChanges();
+        expect(passwordControl?.valid).toBeTruthy();
+      });
+    });
+  });
+
+  describe("Form Error Display", () => {
+    it("should show error state for invalid email field when touched", () => {
+      const emailControl = component.loginForm.get("email");
+      emailControl?.setValue("invalid-email");
+      emailControl?.markAsTouched();
+      fixture.detectChanges();
+      expect(component.isFieldInvalid("email")).toBeTruthy();
+    });
+
+    it("should not show error state for valid email field", () => {
+      const emailControl = component.loginForm.get("email");
+      emailControl?.setValue("test@example.com");
+      emailControl?.markAsTouched();
+      fixture.detectChanges();
+      expect(component.isFieldInvalid("email")).toBeFalsy();
+    });
+  });
+
+  describe("Form Submission", () => {
+    it("should dispatch login action with valid credentials", () => {
+      const validCredentials = {
+        email: "test@example.com",
+        password: "Password123!",
+      };
+
+      component.loginForm.setValue(validCredentials);
+      fixture.detectChanges();
       component.onSubmit();
-      setTimeout(() => {
-        expect(router.navigate).toHaveBeenCalledWith([paths[index]]);
-        done();
-      }, 0);
+
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        AuthActions.login(validCredentials),
+      );
+    });
+
+    it("should not dispatch login action with invalid credentials", () => {
+      const invalidCredentials = {
+        email: "invalid-email",
+        password: "short",
+      };
+
+      component.loginForm.setValue(invalidCredentials);
+      fixture.detectChanges();
+      component.onSubmit();
+
+      expect(dispatchSpy).not.toHaveBeenCalled();
     });
   });
 
-  it("should handle unknown role and navigate to /login", () => {
-    jest.spyOn(store, "select").mockReturnValue(of("unknown"));
-    component.loginForm.setValue({
-      email: "test@example.com",
-      password: "Password123!",
-    });
-    component.onSubmit();
-    expect(router.navigate).toHaveBeenCalledWith(["/login"]);
-  });
+  describe("Error Handling", () => {
+    it("should display error message from store", () => {
+      const errorMessage = "Invalid credentials";
+      store.overrideSelector(selectError, errorMessage);
+      store.refreshState();
+      fixture.detectChanges();
 
-  it("should show error observable", () => {
-    const error$ = of("Invalid credentials");
-    jest.spyOn(store, "select").mockReturnValueOnce(error$);
-    component.ngOnInit();
-    component.showError$.subscribe((error) => {
-      expect(error).toBe("Invalid credentials");
+      let currentError: string | null = null;
+      component.showError$.subscribe((error) => {
+        currentError = error;
+      });
+
+      expect(currentError).toBe(errorMessage);
     });
   });
 
-  it("should not dispatch login action when form is invalid", () => {
-    component.loginForm.setValue({ email: "invalid", password: "short" });
-    component.onSubmit();
-    expect(store.dispatch).not.toHaveBeenCalled();
-  });
+  describe("Template Integration", () => {
+    it("should render form elements", () => {
+      const compiled = fixture.nativeElement;
+      expect(compiled.querySelector("form")).toBeTruthy();
+      expect(
+        compiled.querySelector('app-input[formControlName="email"]'),
+      ).toBeTruthy();
+      expect(
+        compiled.querySelector('app-input[formControlName="password"]'),
+      ).toBeTruthy();
+      expect(compiled.querySelector("app-button")).toBeTruthy();
+    });
 
-  it("should mark all fields as touched if form is invalid on submit", () => {
-    component.loginForm.setValue({ email: "", password: "" });
-    component.onSubmit();
-    expect(component.loginForm.get("email")?.touched).toBe(true);
-    expect(component.loginForm.get("password")?.touched).toBe(true);
-  });
+    it("should have working router links", () => {
+      const compiled = fixture.nativeElement;
+      const forgotPasswordLink = compiled.querySelector(
+        'a[routerLink="/auth/forgot-password"]',
+      );
+      const signupLink = compiled.querySelector(
+        'a[routerLink="/auth/register"]',
+      );
 
-  it("should handle email validation error correctly", () => {
-    component.loginForm.get("email")?.setValue("");
-    component.onSubmit();
-    expect(component.loginForm.get("email")?.errors?.["required"]).toBeTruthy();
-  });
-
-  it("should handle password validation error correctly", () => {
-    component.loginForm.get("password")?.setValue("short");
-    component.onSubmit();
-    expect(
-      component.loginForm.get("password")?.errors?.["minlength"],
-    ).toBeTruthy();
-  });
-
-  it("should validate password pattern", () => {
-    component.loginForm.get("password")?.setValue("Password");
-    component.onSubmit();
-    expect(
-      component.loginForm.get("password")?.errors?.["pattern"],
-    ).toBeTruthy();
+      expect(forgotPasswordLink).toBeTruthy();
+      expect(signupLink).toBeTruthy();
+    });
   });
 });

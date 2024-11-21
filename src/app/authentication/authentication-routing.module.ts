@@ -24,7 +24,8 @@ const routes: Routes = [
     component: CompanyVerificationPageComponent,
   },
   
-  { path: "login", component: LoginComponent },
+  
+  { path: AUTH_PATHS.login, component: LoginComponent },
 ];
 
 @NgModule({

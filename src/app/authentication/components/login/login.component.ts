@@ -1,10 +1,9 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
-import { Observable } from "rxjs";
 import * as AuthActions from "../../auth-store/auth.actions";
-import { AuthState } from "../../auth-store/auth.reducer";
-import { Router } from "@angular/router";
+import { selectError } from "../../auth-store/auth.reducer";
+import { Observable, of } from "rxjs";
 
 @Component({
   selector: "app-login",
@@ -13,14 +12,12 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  showError$!: Observable<string | null>; // Non-null assertion operator
+  showError$: Observable<string | null> = of("");
 
   constructor(
-    private fb: FormBuilder,
-    private store: Store<{ auth: AuthState }>,
-    private router: Router,
+    private readonly fb: FormBuilder,
+    private readonly store: Store,
   ) {
-    // Initialize the login form with custom validators
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
       password: [
@@ -37,45 +34,19 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Observable to track login errors from NgRx store
-    this.showError$ = this.store.select((state) => state.auth.error);
+    this.showError$ = this.store.select(selectError);
   }
 
-  // Method to check if a form field is invalid and has been touched or dirty
   isFieldInvalid(field: string): boolean {
     const control = this.loginForm.get(field);
     return !!control && control.invalid && (control.touched || control.dirty);
   }
 
-  // Submit handler
   onSubmit() {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.store.dispatch(AuthActions.login({ email, password }));
 
-      // Simulate role-based redirection
-      this.store
-        .select((state) => state.auth.role)
-        .subscribe((role) => {
-          if (role) {
-            switch (role) {
-              case "admin":
-                this.router.navigate(["/admin/dashboard"]);
-                break;
-              case "talent":
-                this.router.navigate(["/talent/dashboard"]);
-                break;
-              case "company":
-                this.router.navigate(["/company/dashboard"]);
-                break;
-              case "mentor":
-                this.router.navigate(["/mentor/dashboard"]);
-                break;
-              default:
-                this.router.navigate(["/login"]);
-            }
-          }
-        });
+      this.store.dispatch(AuthActions.login({ email, password }));
     } else {
       this.loginForm.markAllAsTouched();
     }

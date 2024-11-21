@@ -23,12 +23,9 @@ describe("TalentRegistrationFormComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [TalentRegistrationFormComponent],
-      imports: [
-        ReactiveFormsModule,
-        FormsModule,
-        SharedModule,
-        StoreModule.forRoot({}),
-      ],
+
+      imports: [ReactiveFormsModule, FormsModule, SharedModule, StoreModule.forRoot({})],
+
       providers: [provideMockStore({ initialState })],
       schemas: [NO_ERRORS_SCHEMA],
     }).compileComponents();

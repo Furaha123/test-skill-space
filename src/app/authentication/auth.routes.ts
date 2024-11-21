@@ -1,7 +1,7 @@
 export const AUTH_PATHS = {
   register: "register",
-  verifyTalent: "au-ver",
+  verifyTalent: "talent-verification",
   forgotPassword: "forgot-password",
   reset: "reset-password",
-  verifyCompany: "comp-ver",
+  verifyCompany: "company-verfification",
 } as const;

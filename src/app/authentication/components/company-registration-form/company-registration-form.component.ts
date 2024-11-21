@@ -1,10 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, ElementRef, OnDestroy, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Observable, Subscription } from "rxjs";
 import {
@@ -17,15 +11,13 @@ import {
   templateUrl: "./company-registration-form.component.html",
   styleUrl: "./company-registration-form.component.scss",
 })
-export class CompanyRegistrationFormComponent implements OnInit, OnDestroy {
-  form!: FormGroup;
+export class CompanyRegistrationFormComponent implements OnDestroy {
+  form: FormGroup;
   submitted = false;
-  isLoading$!: Observable<boolean>;
+  isLoading$: Observable<boolean> | null = null;
   @ViewChild("fileInput") fileInput!: ElementRef;
   subscription: Subscription | null = null;
-  constructor(private readonly fb: FormBuilder) {}
-
-  ngOnInit(): void {
+  constructor(private readonly fb: FormBuilder) {
     this.form = this.fb.group({
       name: ["", Validators.required],
       email: ["", [Validators.required, Validators.email]],

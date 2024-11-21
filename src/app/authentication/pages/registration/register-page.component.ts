@@ -1,49 +1,16 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { Router } from "@angular/router";
 import { GoogleAuthService } from "../../services/google-auth.service";
-import { environment } from "../../../../environments/environment.development";
 import { take } from "rxjs";
 import { AuthResponse } from "../../models/auth-response.model";
-
-interface GoogleCredentialResponse {
-  credential: string;
-}
-
-interface DecodedToken {
-  email: string;
-  name: string; // Include the user's name from the decoded token
-}
-
-declare global {
-  interface Window {
-    google: {
-      accounts: {
-        id: {
-          initialize: (config: {
-            client_id: string;
-            callback: (response: GoogleCredentialResponse) => void;
-          }) => void;
-          renderButton: (
-            element: Element | null,
-            options: {
-              theme: string;
-              size: string;
-              width: string;
-            },
-          ) => void;
-          prompt: () => void;
-        };
-      };
-    };
-  }
-}
+import { DecodedToken } from "../../models/google-auth.model";
 
 @Component({
   selector: "app-register-page",
   templateUrl: "./register-page.component.html",
-  styleUrl: "./register-page.component.scss",
+  styleUrls: ["./register-page.component.scss"],
 })
-export class RegisterPageComponent implements OnInit {
+export class RegisterPageComponent {
   currentForm = "talent";
   userName: string | null = null;
 
@@ -51,35 +18,6 @@ export class RegisterPageComponent implements OnInit {
     private readonly googleAuthService: GoogleAuthService,
     private readonly router: Router,
   ) {}
-
-  ngOnInit() {
-    // Initialize Google login with the client ID and callback
-    window.google.accounts.id.initialize({
-      client_id: environment.googleClientId,
-      callback: this.handleCredentialResponse.bind(this),
-    });
-
-    // Render Google login button
-    window.google.accounts.id.renderButton(
-      document.querySelector(".btn-google"),
-      {
-        theme: "outline",
-        size: "large",
-        width: "100%",
-      },
-    );
-
-    // Check if user is already authenticated
-    const token = localStorage.getItem("token");
-    if (token) {
-      this.setUserInfo();
-    }
-  }
-
-  setUserInfo() {
-    const decoded = this.decodeJwtResponse(localStorage.getItem("token")!);
-    this.userName = decoded.name;
-  }
 
   onRegisterCompany() {
     this.currentForm = "company";
@@ -89,11 +27,7 @@ export class RegisterPageComponent implements OnInit {
     this.currentForm = "talent";
   }
 
-  registerWithGoogle() {
-    window.google.accounts.id.prompt();
-  }
-
-  private handleCredentialResponse(response: GoogleCredentialResponse) {
+  handleCredentialResponse(response: { credential: string }) {
     if (response.credential) {
       const decoded = this.decodeJwtResponse(response.credential);
 
@@ -103,7 +37,7 @@ export class RegisterPageComponent implements OnInit {
         .subscribe({
           next: (response: AuthResponse) => {
             const { roles, token } = response.data;
-            localStorage.setItem("token", token); // Save token to localStorage
+            localStorage.setItem("token", token);
 
             if (roles.some((role) => role.toLowerCase() === "talent")) {
               this.router.navigate(["/talent"]);
@@ -116,6 +50,11 @@ export class RegisterPageComponent implements OnInit {
           },
         });
     }
+  }
+
+  private setUserInfo() {
+    const decoded = this.decodeJwtResponse(localStorage.getItem("token")!);
+    this.userName = decoded.name;
   }
 
   private decodeJwtResponse(token: string): DecodedToken {

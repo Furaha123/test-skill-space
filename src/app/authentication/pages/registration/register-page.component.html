@@ -1,10 +1,12 @@
 <section class="section-wrapper">
   <form class="register-form">
     <div>
-      <button (click)="registerWithGoogle()" class="btn-google">
-        <img src="assets/icon/icon-google.svg" alt="google icon" />
-        <span class="text">Sign up with Google</span>
-      </button>
+      <div class="btn-google-c">
+        <app-google-button
+          [buttonText]="'Sign up with Google'"
+          (credentialResponse)="handleCredentialResponse($event)"
+        ></app-google-button>
+      </div>
 
       <!--   OR -->
 

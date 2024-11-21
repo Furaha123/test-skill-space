@@ -1,0 +1,15 @@
+.btn-google {
+  border-radius: 8px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: white;
+}
+
+.text {
+  color: var(--primary-orange);
+  margin: 0 4px;
+  font-size: clamp(8px, 2vw, 16px);
+}

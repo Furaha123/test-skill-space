@@ -4,12 +4,14 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from "@angular/common/http/testing";
-import { provideHttpClient, withFetch } from "@angular/common/http";
+import { provideHttpClient, withFetch, HttpClient } from "@angular/common/http";
 import { AuthResponse } from "../models/auth-response.model";
+import { Observable, of } from "rxjs";
 
 describe("GoogleAuthService", () => {
   let service: GoogleAuthService;
   let httpTestingController: HttpTestingController;
+  let httpClient: HttpClient;
   const baseUrl =
     "https://59cf-102-22-146-226.ngrok-free.app/api/v1/auth/register/google";
 
@@ -21,8 +23,8 @@ describe("GoogleAuthService", () => {
         provideHttpClientTesting(),
       ],
     });
-
     service = TestBed.inject(GoogleAuthService);
+    httpClient = TestBed.inject(HttpClient);
     httpTestingController = TestBed.inject(HttpTestingController);
   });
 
@@ -35,8 +37,75 @@ describe("GoogleAuthService", () => {
   });
 
   describe("postRegistration", () => {
+    // Test using HttpClient spy
+    it("should directly return the http.post call result", () => {
+      const mockToken = "test-token";
+      const mockEmail = "test@example.com";
+      const mockResponse: AuthResponse = {
+        data: {
+          email: mockEmail,
+          roles: ["USER"],
+          token: "jwt-token",
+        },
+        message: "Success",
+        status: "success",
+      };
+
+      // Create a spy that returns an observable
+      const postSpy = jest
+        .spyOn(httpClient, "post")
+        .mockReturnValue(of(mockResponse));
+
+      // Call the method
+      const result = service.postRegistration(mockToken, mockEmail);
+
+      // Verify the post method was called with correct parameters
+      expect(postSpy).toHaveBeenCalledWith(baseUrl, {
+        token: mockToken,
+        email: mockEmail,
+      });
+
+      // Verify that the return value is the same observable
+      result.subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      // Clean up
+      postSpy.mockRestore();
+    });
+
+    // Test using HttpTestingController
+    it("should return Observable<AuthResponse>", (done) => {
+      const mockToken = "test-token";
+      const mockEmail = "test@example.com";
+      const mockResponse: AuthResponse = {
+        data: {
+          email: mockEmail,
+          roles: ["USER"],
+          token: "jwt-token",
+        },
+        message: "Success",
+        status: "success",
+      };
+
+      const result = service.postRegistration(mockToken, mockEmail);
+
+      // Verify it's an Observable
+      expect(result instanceof Observable).toBeTruthy();
+      expect(result.subscribe).toBeDefined();
+
+      result.subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+        done();
+      });
+
+      const req = httpTestingController.expectOne(baseUrl);
+      expect(req.request.method).toBe("POST");
+      req.flush(mockResponse);
+    });
+
+    // Rest of your existing tests...
     it("should send POST request with token and email", (done) => {
-      // Arrange
       const mockToken = "mock-token-123";
       const mockEmail = "test@example.com";
       const mockResponse: AuthResponse = {
@@ -49,7 +118,6 @@ describe("GoogleAuthService", () => {
         status: "success",
       };
 
-      // Act & Assert
       service.postRegistration(mockToken, mockEmail).subscribe({
         next: (response) => {
           expect(response).toEqual(mockResponse);
@@ -58,17 +126,13 @@ describe("GoogleAuthService", () => {
         error: done.fail,
       });
 
-      // Assert HTTP request
       const req = httpTestingController.expectOne(baseUrl);
       expect(req.request.method).toBe("POST");
       expect(req.request.body).toEqual({ token: mockToken, email: mockEmail });
-
-      // Respond with mock data
       req.flush(mockResponse);
     });
 
     it("should handle error response", (done) => {
-      // Arrange
       const mockToken = "invalid-token";
       const mockEmail = "test@example.com";
       const mockErrorResponse = {
@@ -77,7 +141,6 @@ describe("GoogleAuthService", () => {
         error: { message: "Invalid token" },
       };
 
-      // Act & Assert
       service.postRegistration(mockToken, mockEmail).subscribe({
         next: () => {
           done.fail("should have failed with an error");
@@ -91,27 +154,20 @@ describe("GoogleAuthService", () => {
 
       const req = httpTestingController.expectOne(baseUrl);
       expect(req.request.method).toBe("POST");
-
-      // Respond with mock error
       req.flush(mockErrorResponse.error, mockErrorResponse);
     });
 
     it("should send request to correct URL", (done) => {
-      // Arrange
       const mockToken = "mock-token-123";
       const mockEmail = "test@example.com";
 
-      // Act
       service.postRegistration(mockToken, mockEmail).subscribe({
         next: () => done(),
         error: done.fail,
       });
 
-      // Assert
       const req = httpTestingController.expectOne(baseUrl);
       expect(req.request.url).toBe(baseUrl);
-
-      // Complete the request
       req.flush({});
     });
   });

@@ -17,16 +17,16 @@
       width: 30%;
     }
 
-    .btn-google {
+    .btn-google-c {
       @include border-radius(8px);
-      border: 1px solid $primary-grey !important;
-      padding: 0.4rem 0.8rem !important;
+      border: 1px solid $primary-grey;
+      padding: 0.4rem 0.8rem;
 
-      width: 100% !important;
+      width: 100%;
       @include flex-center();
       .text {
-        color: $primary-orange !important;
-        margin: 0 4px !important;
+        color: $primary-orange;
+        margin: 0 4px;
         @include responsive-font-size(8px, 10px, 16px);
       }
     }

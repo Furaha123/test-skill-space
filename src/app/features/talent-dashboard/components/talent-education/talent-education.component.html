@@ -1,7 +1,7 @@
-<div class="education-section">
+<div class="education-section" *ngIf="!showUpdateComponent">
   <div class="header">
     <h2 class="title">Educational Records</h2>
-    <button class="add-button">
+    <button class="add-button" (click)="startAddNewRecord()">
       <img src="assets/icon/add.svg" alt="Add" />
       Add new record
     </button>
@@ -34,3 +34,10 @@
     </div>
   </div>
 </div>
+
+<app-talent-education-upate
+  *ngIf="showUpdateComponent && selectedRecord"
+  [record]="selectedRecord"
+  [mode]="mode"
+  (close)="closeUpdateComponent()"
+></app-talent-education-upate>

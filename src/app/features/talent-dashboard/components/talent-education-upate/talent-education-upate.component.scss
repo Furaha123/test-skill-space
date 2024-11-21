@@ -1,0 +1,240 @@
+@import "../../../../../sass/abstract/mixins";
+@import "../../../../../sass/abstract/variables";
+@import "../../../../../sass/base/typography";
+
+.education-container {
+  display: flex;
+  gap: $spacing-large;
+  padding: $spacing-medium;
+
+  .form-content {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: $spacing-large;
+
+    .educational-records,
+    .transcripts {
+      background-color: $neutral-99;
+      border-radius: 6px;
+      padding: $spacing-large;
+      flex: 1;
+
+      h2 {
+        font-size: $font-size-large;
+        font-weight: $font-weight-bold !important;
+        color: $neutral-0;
+        margin-bottom: $spacing-small;
+      }
+
+      p {
+        color: $neutral-40;
+        font-size: 0.875rem;
+      }
+
+      .form-group {
+        margin-bottom: $spacing-medium;
+
+        ::ng-deep {
+          label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: $neutral-60;
+            font-weight: $font-weight-bold;
+            font-size: 1em;
+          }
+
+          input,
+          select,
+          textarea {
+            width: 100%;
+            padding: $spacing-medium !important;
+            font-size: 1em;
+            border: 2px solid $tertiary-90;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+            height: auto !important;
+            min-height: 48px;
+          }
+
+          textarea {
+            min-height: 150px;
+            resize: vertical;
+            padding: 1rem;
+          }
+
+          .calendar-field {
+            border: 2px solid $tertiary-90;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+          }
+        }
+      }
+
+      .dates-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: $spacing-medium;
+      }
+
+      .file-preview {
+        position: relative;
+        width: 50px;
+        margin-bottom: $spacing-medium;
+
+        .file-content {
+          .delete-button {
+            position: absolute;
+            padding: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white !important;
+            border: none;
+            right: -30px;
+
+            img {
+              width: 24px !important;
+              height: 24px !important;
+              max-width: 100%;
+              max-height: 100%;
+            }
+
+            &:hover {
+              transform: scale(1.1);
+            }
+          }
+
+          .file-icon {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+
+          .file-name {
+            font-size: $font-size-small;
+            color: $neutral-17;
+            font-weight: $font-weight-regular;
+            word-break: break-word;
+            max-width: 100%;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            margin-top: $spacing-medium;
+          }
+        }
+      }
+
+      .upload-box {
+        border: 2px dashed $neutral-92;
+        border-radius: 8px;
+        padding: $spacing-medium;
+        text-align: center;
+        cursor: pointer;
+        display: flex;
+        gap: $spacing-medium;
+        transition: all 0.3s ease;
+        background-color: $neutral-98;
+        position: relative;
+        width: 100%;
+
+        &:hover,
+        &.drag-over {
+          border-color: $primary-60;
+          background-color: $primary-98;
+        }
+
+        .upload-icon {
+          margin-bottom: $spacing-medium;
+
+          img {
+            width: 38px;
+            height: 38px;
+            opacity: 0.6;
+          }
+        }
+
+        .upload-text {
+          p {
+            font-size: $font-size-base;
+            color: $neutral-40;
+            font-weight: $font-weight-medium;
+            text-align: start;
+
+            &.supported-formats {
+              font-size: $font-size-small;
+              color: $neutral-60;
+            }
+          }
+        }
+
+        input[type="file"] {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+          width: 100%;
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: $spacing-medium;
+      margin-top: $spacing-medium;
+
+      ::ng-deep {
+        // Target the button components
+        app-button {
+          .btn {
+            padding: $spacing-medium;
+            width: 170px;
+            font-size: $font-size-base;
+            font-weight: $font-weight-medium;
+            border-radius: 8px;
+            cursor: pointer;
+            transition:
+              background-color 0.3s ease,
+              color 0.3s ease;
+            border: none;
+
+            &.save {
+              background-color: $primary-60;
+              color: $tertiary-100;
+
+              &:hover {
+                background-color: $primary-70;
+              }
+
+              &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+              }
+            }
+
+            &.cancel {
+              background-color: $tertiary-100;
+              color: $primary-40;
+              border: 1px solid $primary-60;
+
+              &:hover {
+                background-color: $tertiary-100;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

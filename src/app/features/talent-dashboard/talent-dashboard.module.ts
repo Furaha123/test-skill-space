@@ -7,9 +7,10 @@ import { TalentDetailsComponent } from "./components/talent-details/talent-detai
 import { TalentProfileComponent } from "./components/talent-profile/talent-profile.component";
 import { SharedModule } from "../../shared/shared.module";
 import { MatTabsModule } from "@angular/material/tabs";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { DashboardTalentComponent } from "./components/dashboard-talent/dashboard-talent.component";
 import { TalentEducationComponent } from "./components/talent-education/talent-education.component";
+import { TalentEducationUpateComponent } from "./components/talent-education-upate/talent-education-upate.component";
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { TalentEducationComponent } from "./components/talent-education/talent-e
     TalentProfileComponent,
     DashboardTalentComponent,
     TalentEducationComponent,
+    TalentEducationUpateComponent,
   ],
   imports: [
     CommonModule,
@@ -25,6 +27,7 @@ import { TalentEducationComponent } from "./components/talent-education/talent-e
     SharedModule,
     MatTabsModule,
     FormsModule,
+    ReactiveFormsModule,
   ],
 })
 export class TalentDashboardModule {}

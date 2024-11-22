@@ -3,5 +3,5 @@ export const AUTH_PATHS = {
   verifyTalent: "talent-verification",
   forgotPassword: "forgot-password",
   reset: "reset-password",
-  verifyCompany: "company-verfification",
+  verifyCompany: "company-verification",
 } as const;

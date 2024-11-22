@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SharedComponent } from "./shared.component";
+import { AuthLayoutComponent } from "./auth-layout.component";
 
-describe("SharedComponent", () => {
-  let component: SharedComponent;
-  let fixture: ComponentFixture<SharedComponent>;
+describe("AuthLayoutComponent", () => {
+  let component: AuthLayoutComponent;
+  let fixture: ComponentFixture<AuthLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SharedComponent],
+      declarations: [AuthLayoutComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SharedComponent);
+    fixture = TestBed.createComponent(AuthLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

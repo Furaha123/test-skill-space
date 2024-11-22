@@ -1,101 +1,106 @@
-<section *ngIf="currentScreen === 'checkMailScreen'" class="check-mail-wrapper">
-  <div>
-    <img src="assets/icon/check-mail.svg" alt="Check mail icon" />
-    <h3 class="check-mail">Check your mail</h3>
-    <p class="sub-text">We have sent the verification code to your Inbox.</p>
-    <div class="pad">
-      <app-button
-        type="button"
-        [isActive]="true"
-        [customClasses]="'btn btn-primary'"
-      >
-        Open mail App
-      </app-button>
-    </div>
-    <app-button
-      type="button"
-      [customClasses]="'btn secondary'"
-      (handleClick)="onContinue()"
-    >
-      Continue to OTP
-    </app-button>
-    <h3 class="text">
-      Didn’t receive mail? Check Spam filter or
-      <span>Try another Email Address</span>
-    </h3>
-  </div>
-</section>
-
-<section
-  *ngIf="currentScreen === 'OTP_Screen'"
-  class="verification-screen-wrapper"
->
-  <div class="wrapper">
-    <h3 class="ver-text">Verification Code</h3>
-    <p>
-      Enter the verification code that we have sent. Kindly check your mail and
-      enter here.
-    </p>
-    <form [formGroup]="form">
-      <div class="fields">
-        <input
-          formControlName="field1"
-          type="number"
-          class="input"
-          placeholder="*"
-        />
-        <input
-          formControlName="field2"
-          type="number"
-          class="input"
-          placeholder="*"
-        />
-        <input
-          formControlName="field3"
-          type="number"
-          class="input"
-          placeholder="*"
-        />
-        <input
-          formControlName="field4"
-          type="number"
-          class="input"
-          placeholder="*"
-        />
-        <input
-          formControlName="field5"
-          type="number"
-          class="input"
-          placeholder="*"
-        />
+<app-auth-layout>
+  <section
+    *ngIf="currentScreen === 'checkMailScreen'"
+    class="check-mail-wrapper"
+  >
+    <div>
+      <img src="assets/icon/check-mail.svg" alt="Check mail icon" />
+      <h3 class="check-mail">Check your mail</h3>
+      <p class="sub-text">We have sent the verification code to your Inbox.</p>
+      <div class="pad">
+        <app-button
+          type="button"
+          [isActive]="true"
+          [customClasses]="'btn btn-primary'"
+        >
+          Open mail App
+        </app-button>
       </div>
-      @if (verrificationError) {
-        <app-error-toast
-          title="Error"
-          subText="The verification code provided is invalid"
-          type="error"
-        ></app-error-toast>
-      }
-      @if (codeExpired) {
-        <h3>
-          Code has expired
-          <span (click)="onRequestNewCode()">Request another one</span>
-        </h3>
-      } @else {
-        <h3>
-          Code expires in <span>{{ formattedTime }}</span>
-        </h3>
-      }
       <app-button
         type="button"
-        [isActive]="true"
-        [isDisabled]="this.form.invalid"
-        [customClasses]="'btn btn-primary'"
-        (handleClick)="OnVerifyOTP()"
+        [customClasses]="'btn secondary'"
+        (handleClick)="onContinue()"
       >
-        Verify
+        Continue to OTP
       </app-button>
-    </form>
-  </div>
-</section>
-<app-loader [isLoading]="isLoading"></app-loader>
+      <h3 class="text">
+        Didn’t receive mail? Check Spam filter or
+        <span>Try another Email Address</span>
+      </h3>
+    </div>
+  </section>
+
+  <section
+    *ngIf="currentScreen === 'OTP_Screen'"
+    class="verification-screen-wrapper"
+  >
+    <div class="wrapper">
+      <h3 class="ver-text">Verification Code</h3>
+      <p>
+        Enter the verification code that we have sent. Kindly check your mail
+        and enter here.
+      </p>
+      <form [formGroup]="form">
+        <div class="fields">
+          <input
+            formControlName="field1"
+            type="number"
+            class="input"
+            placeholder="*"
+          />
+          <input
+            formControlName="field2"
+            type="number"
+            class="input"
+            placeholder="*"
+          />
+          <input
+            formControlName="field3"
+            type="number"
+            class="input"
+            placeholder="*"
+          />
+          <input
+            formControlName="field4"
+            type="number"
+            class="input"
+            placeholder="*"
+          />
+          <input
+            formControlName="field5"
+            type="number"
+            class="input"
+            placeholder="*"
+          />
+        </div>
+        @if (verrificationError) {
+          <app-error-toast
+            title="Error"
+            subText="The verification code provided is invalid"
+            type="error"
+          ></app-error-toast>
+        }
+        @if (codeExpired) {
+          <h3>
+            Code has expired
+            <span (click)="onRequestNewCode()">Request another one</span>
+          </h3>
+        } @else {
+          <h3>
+            Code expires in <span>{{ formattedTime }}</span>
+          </h3>
+        }
+        <app-button
+          type="button"
+          [isActive]="true"
+          [isDisabled]="this.form.invalid"
+          [customClasses]="'btn btn-primary'"
+          (handleClick)="OnVerifyOTP()"
+        >
+          Verify
+        </app-button>
+      </form>
+    </div>
+  </section>
+  <app-loader [isLoading]="isLoading"></app-loader>
+</app-auth-layout>

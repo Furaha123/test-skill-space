@@ -96,3 +96,13 @@ $spacing-xlarge: 2.5rem;
 @mixin transition-base {
   transition: all $transition-timing ease-in-out;
 }
+
+@mixin respond-to($size) {
+  @if map-has-key($breakpoints, $size) {
+    @media (max-width: map-get($breakpoints, $size)) {
+      @content;
+    }
+  } @else {
+    @warn "Invalid breakpoint: #{$size}. Check the $breakpoints map.";
+  }
+}

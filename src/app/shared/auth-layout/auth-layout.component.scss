@@ -1,0 +1,8 @@
+@import "../../../styles.scss";
+
+.section-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background-color: $primary-100;
+  @include flex-center();
+}

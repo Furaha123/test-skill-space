@@ -1,24 +1,25 @@
 import { createFeatureSelector, createSelector } from "@ngrx/store";
-import { UserState } from "./auth.interface";
+import { AuthState } from "./auth.interface";
+import { AppState } from "../../shared/models/app.state.interface";
 
-const selectUserState = createFeatureSelector<UserState>("user");
+const selectUserState = createFeatureSelector<AppState, AuthState>("auth");
 
 export const selectUser = createSelector(
   selectUserState,
-  (state: UserState) => state.user,
+  (state: AuthState) => state.user,
 );
 
 export const selectIsLoading = createSelector(
   selectUserState,
-  (state: UserState) => state.loading,
+  (state: AuthState) => state.loading,
 );
 
 export const selectError = createSelector(
   selectUserState,
-  (state: UserState) => state.error,
+  (state: AuthState) => state.error,
 );
 
 export const selectIsRegistered = createSelector(
   selectUserState,
-  (state: UserState) => state.isRegistered,
+  (state: AuthState) => state.isRegistered,
 );

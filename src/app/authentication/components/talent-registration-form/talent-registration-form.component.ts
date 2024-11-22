@@ -9,6 +9,7 @@ import * as UserActions from "../../auth-store/auth.actions";
 import * as UserSelectors from "../../auth-store/auth.selectors";
 import { Store } from "@ngrx/store";
 import { Talent } from "../../../shared/models/talent.interface";
+import { AppState } from "../../../shared/models/app.state.interface";
 
 @Component({
   selector: "app-talent-registration-form",
@@ -26,7 +27,7 @@ export class TalentRegistrationFormComponent implements OnInit, OnDestroy {
   constructor(
     private readonly fb: FormBuilder,
 
-    private readonly store: Store,
+    private readonly store: Store<AppState>,
   ) {}
 
   ngOnInit(): void {

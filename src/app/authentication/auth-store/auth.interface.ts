@@ -1,13 +1,13 @@
 import { Talent } from "../../shared/models/talent.interface";
 
-export interface UserState {
+export interface AuthState {
   user: Talent | null;
   loading: boolean;
   error: string | null;
   isRegistered: boolean;
 }
 
-export const initialUserState: UserState = {
+export const initialUserState: AuthState = {
   user: null,
   loading: false,
   error: null,

@@ -1,1 +1,108 @@
-<h1>Compony registration works!</h1>
+@if (isLoading$ | async) {
+  <app-loader [color]="'accent'" [isLoading]="true"></app-loader>
+}
+
+<section class="form-wrapper">
+  <h5>Register your company</h5>
+
+  <form class="register-form" [formGroup]="form">
+    <!--  Company name field   -->
+
+    <app-input
+      label="Company name"
+      formControlName="name"
+      id="name"
+      placeholder="Enter  your company name here"
+      type="text"
+      [hasError]="isControlInvalid('name')"
+    ></app-input>
+
+    <!--  Password field   -->
+    <app-input
+      label="Password"
+      id="password"
+      formControlName="password"
+      type="password"
+      placeholder="Enter your password"
+      [hasError]="isControlInvalid('password')"
+    ></app-input>
+
+    <!-- Confimr Password field   -->
+    <app-input
+      label="Confirm password"
+      formControlName="passwordConfirm"
+      id="confirm"
+      type="passwordConfirm"
+      placeholder="Confirm your password"
+      [hasError]="isControlInvalid('passwordConfirm')"
+    ></app-input>
+    <!-- Company website field   -->
+    <app-input
+      label="Website"
+      formControlName="website"
+      id="website"
+      type="text"
+      placeholder="Enter website here"
+      [hasError]="isControlInvalid('website')"
+    ></app-input>
+
+    <!-- Registration certificate field   -->
+    <div (click)="certificateInput.click()">
+      <label for="certificate">Certificate</label>
+      <div class="file-input-wrapper">
+        <input
+          type="file"
+          #certificateInput
+          name="certificate"
+          id="cert"
+          placeholder="place"
+          (change)="onAddCertificate($event, 'certificate')"
+          accept=".pdf, .docx"
+        />
+        <img src="assets/icons/upload.svg" alt="upload icon" class="icon" />
+      </div>
+
+      <div *ngIf="this.form.get('certificate')?.errors">
+        <h4>This ting is requred</h4>
+      </div>
+    </div>
+
+    <!-- Email Address field   -->
+
+    <app-input
+      label="Email Address"
+      formControlName="email"
+      id="email"
+      type="text"
+      placeholder="Enter address here"
+      [hasError]="isControlInvalid('email')"
+    ></app-input>
+
+    <!-- Contact Information field   -->
+
+    <app-input
+      label="Contact Information"
+      formControlName="phoneNumber"
+      id="phoneNumber"
+      type="number"
+      placeholder="+250 *** *** ***"
+      [hasError]="isControlInvalid('phoneNumber')"
+    ></app-input>
+    <!-- Company Logo field   -->
+
+    <label for="logo">Company Logo</label>
+    <div class="file-input-wrapper">
+      <input type="file" name="log" id="logo" />
+      <img src="assets/icons/upload.svg" alt="upload logo" class="icon" />
+    </div>
+
+    <app-button
+      type="button"
+      [isActive]="true"
+      [customClasses]="'btn talent-register-btn'"
+      [isDisabled]="form.invalid"
+      (handleClick)="onSubmit()"
+      >Submit for approval
+    </app-button>
+  </form>
+</section>

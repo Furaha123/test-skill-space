@@ -3,13 +3,13 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from "@angular/common/http/testing";
-import { AuthServiceService } from "./auth-service.service";
+import { AuthService } from "./auth-service.service";
 import { environment } from "../../../../environments/environment";
 import { Talent } from "../../../shared/models/talent.interface";
 import { ResponseInterface } from "../../../shared/models/response.interface";
 
-describe("AuthServiceService", () => {
-  let service: AuthServiceService;
+describe("AuthService", () => {
+  let service: AuthService;
   let httpMock: HttpTestingController;
 
   const mockTalent: Talent = {
@@ -28,10 +28,10 @@ describe("AuthServiceService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [AuthServiceService],
+      providers: [AuthService],
     });
 
-    service = TestBed.inject(AuthServiceService);
+    service = TestBed.inject(AuthService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 

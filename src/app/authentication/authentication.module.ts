@@ -11,11 +11,10 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { VerificationPageComponent } from "./pages/verification-page/verification-page.component";
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
 import { CreateNewPasswordComponent } from "./components/create-new-password/create-new-password.component";
-import { StoreModule } from "@ngrx/store";
-import { userReducer } from "./auth-store/auth.reducers";
-import { EffectsModule } from "@ngrx/effects";
-import { UserEffects } from "./auth-store/auth.effects";
+
 import { GoogleButtonComponent } from "./components/google-button/google-button.component";
+
+import { CompanyVerificationPageComponent } from "./pages/company-verification-page/company-verification-page.component";
 
 @NgModule({
   declarations: [
@@ -26,6 +25,7 @@ import { GoogleButtonComponent } from "./components/google-button/google-button.
     ForgotPasswordComponent,
     CreateNewPasswordComponent,
     GoogleButtonComponent,
+    CompanyVerificationPageComponent,
   ],
 
   imports: [
@@ -35,8 +35,6 @@ import { GoogleButtonComponent } from "./components/google-button/google-button.
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    StoreModule.forFeature("user", userReducer),
-    EffectsModule.forFeature([UserEffects]),
   ],
 })
 export class AuthenticationModule {}

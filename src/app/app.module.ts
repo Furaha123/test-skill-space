@@ -11,6 +11,8 @@ import { SharedModule } from "./shared/shared.module";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { provideHttpClient, withFetch } from "@angular/common/http";
 import { ToastrModule } from "ngx-toastr";
+import { authReducer } from "./authentication/auth-store/auth.reducers";
+import { AuthEffects } from "./authentication/auth-store/auth.effects";
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,8 +21,8 @@ import { ToastrModule } from "ngx-toastr";
     SharedModule,
 
     AppRoutingModule,
-    StoreModule.forRoot(),
-    EffectsModule.forRoot([]),
+    StoreModule.forRoot({ auth: authReducer }),
+    EffectsModule.forRoot([AuthEffects]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: !isDevMode(), // Restrict extension to log-only mode

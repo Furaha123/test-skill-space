@@ -1,4 +1,4 @@
-<section class="section-wrapper">
+<app-auth-layout>
   <form class="register-form">
     <div>
       <div class="btn-google-c">
@@ -30,7 +30,7 @@
         <app-button
           type="button"
           [isActive]="currentForm === 'talent'"
-          [customClasses]="'btn talent-register-btn'"
+          [customClasses]="'btn secondary'"
           (handleClick)="onRegisterTalent()"
         >
           Register as talent
@@ -56,4 +56,4 @@
       </div>
     </div>
   </form>
-</section>
+</app-auth-layout>

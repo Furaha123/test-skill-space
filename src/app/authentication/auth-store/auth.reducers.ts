@@ -2,7 +2,7 @@ import { createReducer, on } from "@ngrx/store";
 import * as UserActions from "./auth.actions";
 import { initialUserState } from "./auth.interface";
 
-export const userReducer = createReducer(
+export const authReducer = createReducer(
   initialUserState,
 
   on(UserActions.registerUser, (state, { user }) => ({

@@ -1,0 +1,36 @@
+@import "../../../../styles.scss";
+
+.form-wrapper {
+  margin-top: 8px;
+  h5 {
+    @include font(Roboto, 400, 23px);
+    margin: 4px 0.1px;
+  }
+}
+
+.file-input-wrapper {
+  width: 100%;
+  border: 1px solid $primary-grey;
+  position: relative;
+  padding: 0.3rem;
+  margin: 0.6rem 0 0.8rem 0;
+
+  @include border-radius(4px);
+
+  .icon {
+    position: absolute;
+    margin-top: 4px;
+    margin-left: 4px;
+    top: 0;
+  }
+}
+
+[type="file"]::file-selector-button {
+  width: 50%;
+  cursor: pointer;
+
+  background-color: transparent;
+  color: black;
+  border: none;
+  border-radius: 0;
+}

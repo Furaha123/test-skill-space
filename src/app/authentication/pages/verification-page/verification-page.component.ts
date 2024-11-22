@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { AuthServiceService } from "../../../core/services/auth/auth-service.service";
+import { AuthService } from "../../../core/services/auth/auth-service.service";
 import { Store } from "@ngrx/store";
 import * as UserSelectors from "../../auth-store/auth.selectors";
 import { Observable, Subject, takeUntil } from "rxjs";
@@ -8,6 +8,7 @@ import { Talent } from "../../../shared/models/talent.interface";
 import { HttpErrorResponse } from "@angular/common/http";
 import { ToastrService } from "ngx-toastr";
 import { Router } from "@angular/router";
+import { AppState } from "../../../shared/models/app.state.interface";
 
 @Component({
   selector: "app-verification-page",
@@ -24,21 +25,28 @@ export class VerificationPageComponent implements OnInit, OnDestroy {
   codeExpired = false;
   currentScreen = "checkMailScreen";
   userEmail = "";
-  form!: FormGroup;
+  form: FormGroup;
   user$: Observable<Talent | null> = this.store.select(
     UserSelectors.selectUser,
   );
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly authService: AuthServiceService,
-    private readonly store: Store,
+    private readonly authService: AuthService,
+    private readonly store: Store<AppState>,
     private readonly toastr: ToastrService,
     private readonly router: Router,
-  ) {}
+  ) {
+    this.form = this.fb.group({
+      field1: ["", [Validators.required, Validators.maxLength(1)]],
+      field2: ["", [Validators.required, Validators.maxLength(1)]],
+      field3: ["", [Validators.required, Validators.maxLength(1)]],
+      field4: ["", [Validators.required, Validators.maxLength(1)]],
+      field5: ["", [Validators.required, Validators.maxLength(1)]],
+    });
+  }
 
   ngOnInit(): void {
-    this.initForm();
     this.subscribeToUserEmail();
   }
 
@@ -48,16 +56,6 @@ export class VerificationPageComponent implements OnInit, OnDestroy {
     if (this.timer) {
       clearInterval(this.timer);
     }
-  }
-
-  private initForm(): void {
-    this.form = this.fb.group({
-      field1: ["", [Validators.required, Validators.maxLength(1)]],
-      field2: ["", [Validators.required, Validators.maxLength(1)]],
-      field3: ["", [Validators.required, Validators.maxLength(1)]],
-      field4: ["", [Validators.required, Validators.maxLength(1)]],
-      field5: ["", [Validators.required, Validators.maxLength(1)]],
-    });
   }
 
   private subscribeToUserEmail(): void {

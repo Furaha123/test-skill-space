@@ -1,6 +1,7 @@
 @import "../../../../styles.scss";
 .alert {
   &-container {
+    min-width: 100%;
     display: flex;
     justify-content: center;
   }

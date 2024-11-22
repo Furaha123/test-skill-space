@@ -131,3 +131,15 @@ $z-index-modal: -99;
 
 $success-60: #ebf4ec;
 $success-50: #388e3c;
+
+$breakpoints: (
+  "xs": 480px,
+  // Extra small devices
+  "sm": 768px,
+  // Small devices
+  "md": 1024px,
+  // Medium devices
+  "lg": 1200px,
+  // Large devices
+  "xl": 1440px // Extra large devices,,
+);

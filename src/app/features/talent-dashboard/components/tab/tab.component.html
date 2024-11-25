@@ -1,0 +1,21 @@
+<div class="navigation-container">
+  <div class="breadcrumb">
+    <div
+      class="breadcrumb__item"
+      (click)="onBackToRecords()"
+      style="cursor: pointer"
+    >
+      <h2>Educational Records</h2>
+    </div>
+    <div class="breadcrumb__item breadcrumb__item--icon">
+      <img
+        src="assets/icon/arrow-right.svg"
+        alt="Icon"
+        class="breadcrumb__icon"
+      />
+    </div>
+    <div class="breadcrumb__item breadcrumb__item--active">
+      <span>{{ universityName || "Unknown University" }}</span>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { EducationRecord } from "../../models/education.record.interface";
@@ -9,8 +9,9 @@ import { EducationRecord } from "../../models/education.record.interface";
   styleUrls: ["./talent-education-upate.component.scss"],
 })
 export class TalentEducationUpateComponent implements OnInit {
-  @Input() record!: EducationRecord;
+  @Input() record: EducationRecord | null = null;
   @Input() mode: "add" | "update" = "add";
+  @Output() closed = new EventEmitter<void>();
 
   educationForm: FormGroup;
   qualificationOptions = [
@@ -20,7 +21,7 @@ export class TalentEducationUpateComponent implements OnInit {
   ];
   statusOptions = ["Graduated", "In Progress", "Completed"];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private readonly fb: FormBuilder) {
     this.educationForm = this.fb.group({
       institution: ["", Validators.required],
       address: [""],
@@ -50,5 +51,15 @@ export class TalentEducationUpateComponent implements OnInit {
     const field = this.educationForm.get(fieldName);
     return Boolean(field?.invalid && field?.touched);
   }
-  onSave() {}
+
+  onBack(): void {
+    this.closed.emit();
+  }
+
+  onCancel(): void {
+    this.closed.emit();
+  }
+  navigateBackToList(): void {
+    this.closed.emit();
+  }
 }

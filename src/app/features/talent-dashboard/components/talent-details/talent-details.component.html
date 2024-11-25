@@ -182,77 +182,186 @@
 
     <div class="social-media-section">
       <h2 class="section-title">Social Media Pages</h2>
-      <div class="content-wrapper">
-        <div class="icons-input-group">
-          <div class="icon-dropdown">
-            <div
-              class="icon-select"
-              (click)="toggleDropdown()"
-              [class.active]="isDropdownOpen"
-            >
-              <img
-                *ngIf="selectedIcon"
-                [src]="getIconImage(selectedIcon)"
-                class="selected-icon"
-                alt=""
-              />
-            </div>
-
-            <div class="dropdown-menu" *ngIf="isDropdownOpen">
+      <form [formGroup]="profileForm">
+        <!-- Always show at least one input field -->
+        <div class="content-wrapper" *ngIf="socialMediaLinks.length === 0">
+          <div class="icons-input-group">
+            <div class="icon-dropdown">
               <div
-                *ngFor="let icon of icons"
-                class="dropdown-item"
-                (click)="selectIcon(icon.name)"
+                class="icon-select"
+                (click)="toggleDropdown()"
+                [class.active]="isDropdownOpen"
               >
                 <img
-                  [src]="icon.imageUrl"
-                  class="option-icon"
-                  [alt]="icon.name"
+                  *ngIf="selectedIcon"
+                  [src]="getIconImage(selectedIcon)"
+                  class="selected-icon"
+                  alt=""
                 />
               </div>
+
+              <div class="dropdown-menu" *ngIf="isDropdownOpen">
+                <div
+                  *ngFor="let icon of icons"
+                  class="dropdown-item"
+                  (click)="selectIcon(icon.name)"
+                >
+                  <img
+                    [src]="icon.imageUrl"
+                    class="option-icon"
+                    [alt]="icon.name"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="url-input">
+              <input
+                type="url"
+                class="social-url-input"
+                placeholder="https://pinterest.com/yourlink"
+              />
             </div>
           </div>
-
-          <div class="url-input">
-            <input
-              type="url"
-              class="social-url-input"
-              placeholder="https://pinterest.com/yourlink"
-            />
+          <div class="action-buttons">
+            <button
+              type="button"
+              class="icon-button plus"
+              (click)="addSocialMedia()"
+            >
+              <img src="assets/icon/plus.svg" alt="Add Website" />
+            </button>
           </div>
         </div>
-        <div class="action-buttons">
-          <button class="icon-button minus">
-            <img src="assets/icon/minus.svg" alt="Remove Website" />
-          </button>
-          <button class="icon-button plus">
-            <img src="assets/icon/plus.svg" alt="Add Website" />
-          </button>
+
+        <!-- Existing dynamic fields -->
+        <div
+          class="content-wrapper"
+          *ngFor="let socialMedia of socialMediaLinks.controls; let i = index"
+          [formGroup]="getSocialMediaGroup(i)"
+        >
+          <div class="icons-input-group">
+            <div class="icon-dropdown">
+              <div
+                class="icon-select"
+                (click)="toggleDropdown()"
+                [class.active]="isDropdownOpen"
+              >
+                <img
+                  *ngIf="socialMedia.get('icon')?.value"
+                  [src]="getIconImage(socialMedia.get('icon')?.value)"
+                  class="selected-icon"
+                  alt=""
+                />
+              </div>
+
+              <div class="dropdown-menu" *ngIf="isDropdownOpen">
+                <div
+                  *ngFor="let icon of icons"
+                  class="dropdown-item"
+                  (click)="
+                    selectIcon(icon.name);
+                    socialMedia.get('icon')?.setValue(icon.name)
+                  "
+                >
+                  <img
+                    [src]="icon.imageUrl"
+                    class="option-icon"
+                    [alt]="icon.name"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="url-input">
+              <input
+                type="url"
+                class="social-url-input"
+                placeholder="https://pinterest.com/yourlink"
+                formControlName="url"
+              />
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button
+              type="button"
+              class="icon-button minus"
+              (click)="removeSocialMedia(i)"
+            >
+              <img src="assets/icon/minus.svg" alt="Remove Website" />
+            </button>
+            <button
+              type="button"
+              class="icon-button plus"
+              *ngIf="i === socialMediaLinks.length - 1"
+              (click)="addSocialMedia()"
+            >
+              <img src="assets/icon/plus.svg" alt="Add Website" />
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
 
     <div class="social-media-section">
       <h2 class="section-title">Portfolio Links</h2>
-      <div class="content-wrapper">
-        <div class="icons-input-group">
-          <div class="url-input">
-            <input
-              type="url"
-              class="social-url-input"
-              placeholder="https://pinterest.com/yourlink"
-            />
+      <form [formGroup]="profileForm">
+        <!-- Always show at least one input field -->
+        <div class="content-wrapper" *ngIf="portfolioLinks.length === 0">
+          <div class="icons-input-group">
+            <div class="url-input">
+              <input
+                type="url"
+                class="social-url-input"
+                placeholder="https://myportfolio.com/yourlink"
+              />
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button
+              type="button"
+              class="icon-button plus"
+              (click)="addPortfolio()"
+            >
+              <img src="assets/icon/plus.svg" alt="Add Website" />
+            </button>
           </div>
         </div>
-        <div class="action-buttons">
-          <button class="icon-button minus">
-            <img src="assets/icon/minus.svg" alt="Remove Website" />
-          </button>
-          <button class="icon-button plus">
-            <img src="assets/icon/plus.svg" alt="Add Website" />
-          </button>
+
+        <div
+          class="content-wrapper"
+          *ngFor="let portfolio of portfolioLinks.controls; let i = index"
+          [formGroup]="getPortfolioGroup(i)"
+        >
+          <div class="icons-input-group">
+            <div class="url-input">
+              <input
+                type="url"
+                class="social-url-input"
+                placeholder="https://myportfolio.com/yourlink"
+                formControlName="url"
+              />
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button
+              type="button"
+              class="icon-button minus"
+              (click)="removePortfolio(i)"
+            >
+              <img src="assets/icon/minus.svg" alt="Remove Website" />
+            </button>
+            <button
+              type="button"
+              class="icon-button plus"
+              *ngIf="i === portfolioLinks.length - 1"
+              (click)="addPortfolio()"
+            >
+              <img src="assets/icon/plus.svg" alt="Add Website" />
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </div>

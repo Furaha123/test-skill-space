@@ -6,7 +6,6 @@
   display: flex;
   gap: $spacing-large;
   padding: $spacing-medium;
-
   .form-content {
     display: grid;
     grid-template-columns: 3fr 2fr;
@@ -195,7 +194,6 @@
       margin-top: $spacing-medium;
 
       ::ng-deep {
-        // Target the button components
         app-button {
           .btn {
             padding: $spacing-medium;

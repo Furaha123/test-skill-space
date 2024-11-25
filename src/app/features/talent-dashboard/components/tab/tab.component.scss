@@ -1,0 +1,30 @@
+@import "../../../../../sass/abstract/mixins";
+@import "../../../../../sass/abstract/variables";
+@import "../../../../../sass/base/typography";
+
+.navigation-container {
+  padding: 12px 20px;
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+
+    font-family: Arial, sans-serif;
+    .breadcrumb__item {
+      padding: 4px;
+      h2 {
+        font-size: $font-size-xlarge;
+        font-weight: $font-weight-bold !important;
+        color: $neutral-60;
+
+        margin-bottom: $spacing-small;
+        font-family: inherit;
+      }
+      span {
+        margin-left: $spacing-medium;
+        color: $neutral-50;
+        font-weight: $font-weight-bold !important;
+        font-size: $spacing-medium;
+      }
+    }
+  }
+}

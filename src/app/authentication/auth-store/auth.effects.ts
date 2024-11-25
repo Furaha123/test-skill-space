@@ -114,7 +114,7 @@ export class AuthEffects {
         ofType(AuthActions.registerUserSuccess),
         tap(() => {
           this.toastr.success("Registration successful!", "Success");
-          this.router.navigateByUrl("/auth/au-ver");
+          this.router.navigateByUrl("/auth/login");
         }),
       ),
     { dispatch: false },

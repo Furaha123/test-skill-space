@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { DashboardTalentComponent } from "./components/dashboard-talent/dashboard-talent.component";
 import { TalentEducationComponent } from "./components/talent-education/talent-education.component";
 import { TalentEducationUpateComponent } from "./components/talent-education-upate/talent-education-upate.component";
+import { TabComponent } from "./components/tab/tab.component";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { TalentEducationUpateComponent } from "./components/talent-education-upa
     DashboardTalentComponent,
     TalentEducationComponent,
     TalentEducationUpateComponent,
+    TabComponent,
   ],
   imports: [
     CommonModule,

@@ -43,12 +43,37 @@ export class RegisterPageComponent {
 
             if (roles.some((role) => role.toLowerCase() === "talent")) {
               this.router.navigate(["/talent"]);
+            } else if (roles.some((role) => role.toLowerCase() === "admin")) {
+              this.router.navigate(["/admin-dashboard"]);
             }
-
+            this.toastr.success("Successfully registered and logged in");
             this.setUserInfo();
           },
           error: (error) => {
-            this.toastr.error("Failed to register", error.message);
+            if (error?.error?.message && error.status === 409) {
+              this.googleAuthService
+                .postLogin(response.credential, decoded.email)
+                .pipe(take(1))
+                .subscribe({
+                  next: (response: AuthResponse) => {
+                    const { roles, token } = response.data;
+                    localStorage.setItem("token", token);
+
+                    if (roles.some((role) => role.toLowerCase() === "talent")) {
+                      this.router.navigate(["/talent"]);
+                    } else if (
+                      roles.some((role) => role.toLowerCase() === "admin")
+                    ) {
+                      this.router.navigate(["/admin-dashboard"]);
+                    }
+                    this.toastr.success("Successfully logged in");
+                    this.setUserInfo();
+                  },
+                  error: (error) => {
+                    this.toastr.error(error?.error?.message);
+                  },
+                });
+            }
           },
         });
     }

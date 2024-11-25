@@ -64,6 +64,7 @@ describe("RegisterPageComponent", () => {
 
     const mockGoogleAuthService = {
       postRegistration: jest.fn(),
+      postLogin: jest.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -196,6 +197,168 @@ describe("RegisterPageComponent", () => {
       expect(navigateSpy).toHaveBeenCalledWith(["/talent"]);
     });
 
+    it("should handle successful registration for admin role", () => {
+      // Arrange
+      const adminResponse = {
+        ...mockAuthResponse,
+        data: { ...mockAuthResponse.data, roles: ["ADMIN"] },
+      };
+      const navigateSpy = jest.spyOn(router, "navigate");
+      jest
+        .spyOn(googleAuthService, "postRegistration")
+        .mockReturnValue(of(adminResponse));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(navigateSpy).toHaveBeenCalledWith(["/admin-dashboard"]);
+    });
+
+    it("should handle registration error with status 409 and login successfully", () => {
+      // Arrange
+      const errorResponse = {
+        error: { message: "User already exists" },
+        status: 409,
+      };
+      const loginResponse: AuthResponse = {
+        data: {
+          email: "john@example.com",
+          roles: ["TALENT"],
+          token: "jwt-token-123",
+        },
+        message: "Success",
+        status: "success",
+      };
+      const navigateSpy = jest.spyOn(router, "navigate");
+      jest
+        .spyOn(googleAuthService, "postRegistration")
+        .mockReturnValue(throwError(() => errorResponse));
+      jest
+        .spyOn(googleAuthService, "postLogin")
+        .mockReturnValue(of(loginResponse));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(googleAuthService.postRegistration).toHaveBeenCalledWith(
+        mockCredential.credential,
+        "john@example.com",
+      );
+      expect(googleAuthService.postLogin).toHaveBeenCalledWith(
+        mockCredential.credential,
+        "john@example.com",
+      );
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        "token",
+        loginResponse.data.token,
+      );
+      expect(navigateSpy).toHaveBeenCalledWith(["/talent"]);
+    });
+
+    it("should handle registration error with status 409 and login successfully for admin role", () => {
+      // Arrange
+      const errorResponse = {
+        error: { message: "User already exists" },
+        status: 409,
+      };
+      const loginResponse: AuthResponse = {
+        data: {
+          email: "john@example.com",
+          roles: ["ADMIN"],
+          token: "jwt-token-123",
+        },
+        message: "Success",
+        status: "success",
+      };
+      const navigateSpy = jest.spyOn(router, "navigate");
+      jest
+        .spyOn(googleAuthService, "postRegistration")
+        .mockReturnValue(throwError(() => errorResponse));
+      jest
+        .spyOn(googleAuthService, "postLogin")
+        .mockReturnValue(of(loginResponse));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(googleAuthService.postLogin).toHaveBeenCalledWith(
+        mockCredential.credential,
+        "john@example.com",
+      );
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        "token",
+        loginResponse.data.token,
+      );
+      expect(navigateSpy).toHaveBeenCalledWith(["/admin-dashboard"]);
+    });
+
+    it("should handle registration error with status 409 and login error", () => {
+      // Arrange
+      const errorResponse = {
+        error: { message: "User already exists" },
+        status: 409,
+      };
+      const loginErrorMessage = "Login failed";
+      jest
+        .spyOn(googleAuthService, "postRegistration")
+        .mockReturnValue(throwError(() => errorResponse));
+      jest
+        .spyOn(googleAuthService, "postLogin")
+        .mockReturnValue(throwError(() => new Error(loginErrorMessage)));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(googleAuthService.postRegistration).toHaveBeenCalledWith(
+        mockCredential.credential,
+        "john@example.com",
+      );
+      expect(googleAuthService.postLogin).toHaveBeenCalledWith(
+        mockCredential.credential,
+        "john@example.com",
+      );
+    });
+
+    it("should not process empty credential", () => {
+      // Arrange
+      const postRegistrationSpy = jest.spyOn(
+        googleAuthService,
+        "postRegistration",
+      );
+
+      // Act
+      component.handleCredentialResponse({ credential: "" });
+
+      // Assert
+      expect(postRegistrationSpy).not.toHaveBeenCalled();
+    });
+
+    it("should handle successful registration for talent role", () => {
+      // Arrange
+      const navigateSpy = jest.spyOn(router, "navigate");
+      jest
+        .spyOn(googleAuthService, "postRegistration")
+        .mockReturnValue(of(mockAuthResponse));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(googleAuthService.postRegistration).toHaveBeenCalledWith(
+        mockCredential.credential,
+        "john@example.com",
+      );
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        "token",
+        mockAuthResponse.data.token,
+      );
+      expect(navigateSpy).toHaveBeenCalledWith(["/talent"]);
+    });
+
     it("should not navigate for non-talent role", () => {
       // Arrange
       const nonTalentResponse = {
@@ -212,33 +375,6 @@ describe("RegisterPageComponent", () => {
 
       // Assert
       expect(navigateSpy).not.toHaveBeenCalled();
-    });
-
-    it("should handle registration error", () => {
-      // Arrange
-      const errorMessage = "Registration failed";
-      const postRegistrationSpy = jest
-        .spyOn(googleAuthService, "postRegistration")
-        .mockReturnValue(throwError(() => errorMessage));
-
-      // Wrap the call in a try-catch since we expect it to throw
-      try {
-        // Act
-        component.handleCredentialResponse(mockCredential);
-      } catch (error) {
-        // Assert
-        expect(error).toBeInstanceOf(Error);
-        if (error instanceof Error) {
-          expect(error.message).toBe(errorMessage);
-        }
-      }
-
-      // Verify the service was called
-      expect(postRegistrationSpy).toHaveBeenCalled();
-      // Verify no navigation occurred
-      expect(router.navigate).not.toHaveBeenCalled();
-      // Verify localStorage wasn't updated
-      expect(localStorage.setItem).not.toHaveBeenCalled();
     });
 
     it("should not process empty credential", () => {

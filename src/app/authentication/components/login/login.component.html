@@ -1,8 +1,10 @@
 <div class="login-container">
   <!-- Google Login Button -->
   <button class="google-login">
-    <img src="assets/icons/google-symbol.svg" alt="Google Icon" />
-    <span>Continue with Google</span>
+    <app-google-button
+      [buttonText]="'Sign up with Google'"
+      (credentialResponse)="handleCredentialResponse($event)"
+    ></app-google-button>
   </button>
 
   <div class="divider">

@@ -18,6 +18,12 @@ import {
   EventEmitter,
   Output,
 } from "@angular/core";
+import { provideHttpClient } from "@angular/common/http";
+import { ToastrService } from "ngx-toastr";
+import { AuthResponse } from "../../models/auth-response.model";
+import { Router } from "@angular/router";
+import { GoogleAuthService } from "../../services/google-auth.service";
+import { of, throwError } from "rxjs";
 
 type FormValue = string;
 type ChangeHandler = (value: FormValue) => void;
@@ -84,8 +90,54 @@ describe("LoginComponent", () => {
   let fixture: ComponentFixture<LoginComponent>;
   let store: MockStore;
   let dispatchSpy: jest.SpyInstance;
+  let router: Router;
+  let googleAuthService: GoogleAuthService;
+
+  // Mock the Google API
+  const mockGoogle = {
+    accounts: {
+      id: {
+        initialize: jest.fn(),
+        renderButton: jest.fn(),
+        prompt: jest.fn(),
+      },
+    },
+  };
+
+  // Mock JWT token for testing
+  const mockJwtToken =
+    "header.eyJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG5AZXhhbXBsZS5jb20ifQ.signature";
+
+  // Mock localStorage
+  const mockLocalStorage = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+  };
+
+  // Mock ToastrService
+  const mockToastrService = {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    warning: jest.fn(),
+  };
 
   beforeEach(async () => {
+    // Mock window.google
+    Object.defineProperty(window, "google", {
+      value: mockGoogle,
+      writable: true,
+    });
+
+    // Mock localStorage
+    Object.defineProperty(window, "localStorage", {
+      value: mockLocalStorage,
+    });
+
+    const mockGoogleAuthService = {
+      postLogin: jest.fn(),
+    };
+
     await TestBed.configureTestingModule({
       declarations: [
         LoginComponent,
@@ -96,14 +148,25 @@ describe("LoginComponent", () => {
       imports: [ReactiveFormsModule, FormsModule, RouterTestingModule],
       providers: [
         FormBuilder,
+        provideHttpClient(),
         provideMockStore({
           selectors: [{ selector: selectError, value: null }],
         }),
+        {
+          provide: ToastrService,
+          useValue: mockToastrService,
+        },
+        {
+          provide: GoogleAuthService,
+          useValue: mockGoogleAuthService,
+        },
       ],
     }).compileComponents();
 
     store = TestBed.inject(MockStore);
     dispatchSpy = jest.spyOn(store, "dispatch");
+    router = TestBed.inject(Router);
+    googleAuthService = TestBed.inject(GoogleAuthService);
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -275,6 +338,156 @@ describe("LoginComponent", () => {
 
       expect(forgotPasswordLink).toBeTruthy();
       expect(signupLink).toBeTruthy();
+    });
+  });
+
+  describe("handleCredentialResponse", () => {
+    const mockCredential = {
+      credential: mockJwtToken,
+    };
+
+    const mockAuthResponse: AuthResponse = {
+      data: {
+        email: "john@example.com",
+        roles: ["TALENT"],
+        token: "jwt-token-123",
+      },
+      message: "Success",
+      status: "success",
+    };
+
+    beforeEach(() => {
+      // Reset localStorage mock
+      mockLocalStorage.setItem.mockClear();
+      mockLocalStorage.getItem.mockClear();
+    });
+
+    it("should handle successful login for talent role", () => {
+      // Arrange
+      const navigateSpy = jest.spyOn(router, "navigate");
+      jest
+        .spyOn(googleAuthService, "postLogin")
+        .mockReturnValue(of(mockAuthResponse));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(googleAuthService.postLogin).toHaveBeenCalledWith(
+        mockCredential.credential,
+        "john@example.com",
+      );
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        "token",
+        mockAuthResponse.data.token,
+      );
+      expect(navigateSpy).toHaveBeenCalledWith(["/talent"]);
+    });
+
+    it("should handle successful login for admin role", () => {
+      // Arrange
+      const adminResponse = {
+        ...mockAuthResponse,
+        data: { ...mockAuthResponse.data, roles: ["ADMIN"] },
+      };
+      const navigateSpy = jest.spyOn(router, "navigate");
+      jest
+        .spyOn(googleAuthService, "postLogin")
+        .mockReturnValue(of(adminResponse));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(navigateSpy).toHaveBeenCalledWith(["/admin-dashboard"]);
+    });
+
+    it("should handle login error", () => {
+      // Arrange
+      const errorMessage = "Login failed";
+      const postLoginSpy = jest
+        .spyOn(googleAuthService, "postLogin")
+        .mockReturnValue(throwError(() => new Error(errorMessage)));
+
+      // Act
+      component.handleCredentialResponse(mockCredential);
+
+      // Assert
+      expect(postLoginSpy).toHaveBeenCalled();
+      expect(mockToastrService.error).toHaveBeenCalledWith(
+        "Failed to login",
+        errorMessage,
+      );
+    });
+
+    it("should not process empty credential", () => {
+      // Arrange
+      const postLoginSpy = jest.spyOn(googleAuthService, "postLogin");
+
+      // Act
+      component.handleCredentialResponse({ credential: "" });
+
+      // Assert
+      expect(postLoginSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("setUserInfo", () => {
+    it("should set userName from decoded token", () => {
+      // Arrange
+      mockLocalStorage.getItem.mockReturnValue(mockJwtToken);
+
+      // Act
+      component["setUserInfo"]();
+
+      // Assert
+      expect(component.userName).toBe("John Doe");
+      expect(mockLocalStorage.getItem).toHaveBeenCalledWith("token");
+    });
+
+    it("should handle null token", () => {
+      // Arrange
+      mockLocalStorage.getItem.mockReturnValue(null);
+
+      // Act & Assert
+      expect(() => {
+        component["setUserInfo"]();
+      }).toThrow();
+    });
+  });
+
+  describe("decodeJwtResponse", () => {
+    it("should correctly decode JWT token", () => {
+      // Act
+      const decoded = component["decodeJwtResponse"](mockJwtToken);
+
+      // Assert
+      expect(decoded).toEqual({
+        name: "John Doe",
+        email: "john@example.com",
+      });
+    });
+
+    it("should throw error for invalid token", () => {
+      // Act & Assert
+      expect(() => {
+        component["decodeJwtResponse"]("invalid-token");
+      }).toThrow();
+    });
+
+    it("should handle token with special characters", () => {
+      // Arrange
+      const tokenWithSpecialChars =
+        "header.eyJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG4rMUBleGFtcGxlLmNvbSJ9.signature";
+
+      // Act
+      const decoded = component["decodeJwtResponse"](tokenWithSpecialChars);
+
+      // Assert
+      expect(decoded).toEqual({
+        name: "John Doe",
+        email: "john+1@example.com",
+      });
     });
   });
 });

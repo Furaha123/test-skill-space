@@ -12,3 +12,20 @@ export const registerUserFailure = createAction(
   "[User] Register User Failure",
   props<{ error: string }>(),
 );
+
+export const login = createAction(
+  "[Auth] Login",
+  props<{ email: string; password: string }>(),
+);
+
+export const loginSuccess = createAction(
+  "[Auth] Login Success",
+  props<{ token: string; roles: string[] }>(),
+);
+
+export const loginFailure = createAction(
+  "[Auth] Login Failure",
+  props<{ error: string }>(),
+);
+
+export const tokenCleared = createAction("[Auth] Token Cleared");

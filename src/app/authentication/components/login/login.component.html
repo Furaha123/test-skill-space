@@ -1,0 +1,60 @@
+<div class="login-container">
+  <!-- Google Login Button -->
+  <button class="google-login">
+    <img src="assets/icons/google-symbol.svg" alt="Google Icon" />
+    <span>Continue with Google</span>
+  </button>
+
+  <div class="divider">
+    <span class="line"></span>
+    <span>OR</span>
+    <span class="line"></span>
+  </div>
+
+  <h2 class="login-heading">Welcome back! Login to your account</h2>
+
+  <!-- Login Form -->
+  <form (ngSubmit)="onSubmit()" [formGroup]="loginForm" class="login-form">
+    <app-input
+      [type]="'email'"
+      [label]="'Email Address'"
+      [placeholder]="'Enter address here'"
+      [id]="'email'"
+      [hasError]="isFieldInvalid('email')"
+      formControlName="email"
+      class="input-field"
+    ></app-input>
+
+    <app-input
+      [type]="'password'"
+      [label]="'Password'"
+      [placeholder]="'******'"
+      [id]="'password'"
+      [hasError]="isFieldInvalid('password')"
+      formControlName="password"
+      class="input-field"
+    ></app-input>
+
+    <app-error-toast
+      *ngIf="showError$ | async as error"
+      title="Login Error"
+      [subText]="error"
+      type="error"
+    ></app-error-toast>
+
+    <div class="actions">
+      <a routerLink="/auth/forgot-password" class="forgot-password">
+        Forgot password?
+      </a>
+    </div>
+
+    <app-button type="button" (handleClick)="onSubmit()" class="login-button"
+      >Login</app-button
+    >
+  </form>
+
+  <div class="signup-link">
+    Don’t have an account?
+    <a routerLink="/auth/register">Sign up instead</a>
+  </div>
+</div>

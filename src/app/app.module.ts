@@ -12,6 +12,10 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { provideHttpClient, withFetch } from "@angular/common/http";
 import { ToastrModule } from "ngx-toastr";
 import { authReducer } from "./authentication/auth-store/auth.reducers";
+
+import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
+import { AuthInterceptor } from "./core/interceptor/auth-interceptor.interceptor";
+
 import { AuthEffects } from "./authentication/auth-store/auth.effects";
 
 @NgModule({
@@ -21,8 +25,10 @@ import { AuthEffects } from "./authentication/auth-store/auth.effects";
     SharedModule,
 
     AppRoutingModule,
+    HttpClientModule,
     StoreModule.forRoot({ auth: authReducer }),
     EffectsModule.forRoot([AuthEffects]),
+
     StoreDevtoolsModule.instrument({
       maxAge: 25, // Retains last 25 states
       logOnly: !isDevMode(), // Restrict extension to log-only mode
@@ -35,7 +41,11 @@ import { AuthEffects } from "./authentication/auth-store/auth.effects";
     BrowserAnimationsModule, // required animations module
     ToastrModule.forRoot(),
   ],
-  providers: [provideAnimationsAsync(), provideHttpClient(withFetch())],
+  providers: [
+    provideAnimationsAsync(),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    provideHttpClient(withFetch()),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

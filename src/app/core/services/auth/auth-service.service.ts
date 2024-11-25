@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Talent } from "../../../shared/models/talent.interface";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { ResponseInterface } from "../../../shared/models/response.interface";
-import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  readonly apiUrl = environment.apiUrl;
+  private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   talentRegister(user: Talent): Observable<ResponseInterface> {
     return this.http.post<ResponseInterface>(
@@ -37,5 +37,23 @@ export class AuthService {
         email,
       },
     );
+  }
+
+  login(
+    email: string,
+    password: string,
+  ): Observable<{
+    status: string;
+    message: string;
+    data: { token: string; roles: string[] };
+  }> {
+    const headers = new HttpHeaders({ "Content-Type": "application/json" });
+    const body = { email, password };
+
+    return this.http.post<{
+      status: string;
+      message: string;
+      data: { token: string; roles: string[] };
+    }>(`${this.apiUrl}/auth/login`, body, { headers });
   }
 }

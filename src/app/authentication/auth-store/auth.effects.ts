@@ -1,37 +1,117 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { ToastrService } from "ngx-toastr";
-import { catchError, map, mergeMap, of, tap } from "rxjs";
-import * as UserActions from "./auth.actions";
 import { AuthService } from "../../core/services/auth/auth-service.service";
+import * as AuthActions from "./auth.actions";
+import { catchError, map, mergeMap, tap, of } from "rxjs";
 import { Router } from "@angular/router";
+import { LoginResponse, LoginError } from "../auth-store/auth.interface";
+import { ToastrService } from "ngx-toastr";
 
 @Injectable()
 export class AuthEffects {
   constructor(
-    private actions$: Actions,
-    private authService: AuthService,
-    private toastr: ToastrService,
+    private readonly actions$: Actions,
+    private readonly authService: AuthService,
     private readonly router: Router,
+    private readonly toastr: ToastrService,
   ) {}
-  registerUser$ = createEffect(() =>
+
+  // Custom error handling
+  private handleAPIError(): never {
+    const errorMessage = "An unexpected error occurred. Please try again.";
+    throw new Error(errorMessage);
+  }
+
+  private createLoginError(error: LoginError): string {
+    return error?.message || "An unexpected error occurred. Please try again.";
+  }
+
+  login$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(UserActions.registerUser),
-      mergeMap(({ user }) =>
-        this.authService.talentRegister(user).pipe(
-          map(() => UserActions.registerUserSuccess()),
-          catchError((error) =>
-            of(UserActions.registerUserFailure({ error: error.error.message })),
+      ofType(AuthActions.login),
+      mergeMap((action) =>
+        this.authService.login(action.email, action.password).pipe(
+          tap((response: LoginResponse) => {
+            if (
+              response.status === "Success" &&
+              response.data?.token &&
+              response.data?.roles
+            ) {
+              const { token, roles } = response.data;
+              sessionStorage.setItem("authToken", token);
+              sessionStorage.setItem("authRoles", JSON.stringify(roles));
+            } else {
+              this.handleAPIError();
+            }
+          }),
+          map((response: LoginResponse) => {
+            const { token, roles } = response.data!;
+            return AuthActions.loginSuccess({ token, roles });
+          }),
+          catchError((error: LoginError) =>
+            of(
+              AuthActions.loginFailure({
+                error: this.createLoginError(error),
+              }),
+            ),
           ),
         ),
       ),
     ),
   );
 
-  showSuccessToast$ = createEffect(
+  loginSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(UserActions.registerUserSuccess),
+        ofType(AuthActions.loginSuccess),
+        tap(({ roles }) => {
+          if (roles && roles.length > 0) {
+            this.handleRoleNavigation(roles);
+          } else {
+            this.router.navigate(["/login"]);
+            throw new Error("Missing or invalid roles in login response");
+          }
+        }),
+      ),
+    { dispatch: false },
+  );
+
+  private handleRoleNavigation(roles: string[]) {
+    const roleRouteMap: Record<string, string> = {
+      SYSTEM_ADMIN: "/admin-dashboard",
+      TALENT: "/talent/dashboard",
+      COMPANY_ADMIN: "/company/dashboard",
+      MENTOR: "/mentor/dashboard",
+    };
+
+    const matchingRole = roles.find((role) => roleRouteMap[role]);
+    const route = matchingRole ? roleRouteMap[matchingRole] : "/login";
+
+    if (!matchingRole) {
+      throw new Error(`Unexpected roles: ${roles.join(", ")}`);
+    }
+
+    this.router.navigate([route]);
+  }
+
+  registerUser$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.registerUser),
+      mergeMap(({ user }) =>
+        this.authService.talentRegister(user).pipe(
+          map(() => AuthActions.registerUserSuccess()),
+          catchError((error) =>
+            of(AuthActions.registerUserFailure({ error: error.error.message })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  showRegistrationSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.registerUserSuccess),
         tap(() => {
           this.toastr.success("Registration successful!", "Success");
           this.router.navigateByUrl("/auth/au-ver");
@@ -43,7 +123,7 @@ export class AuthEffects {
   showErrorToast$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(UserActions.registerUserFailure),
+        ofType(AuthActions.registerUserFailure),
         tap(({ error }) => {
           this.toastr.error(error || "Registration failed!", "Error");
         }),

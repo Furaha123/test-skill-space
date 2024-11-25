@@ -1,0 +1,126 @@
+@import "../../../../styles.scss";
+
+$component-width: 640px;
+$component-height: 50px;
+$component-padding: 0.4rem;
+
+.login-container {
+  @include flex-center();
+  width: 100%;
+  max-width: $component-width;
+  margin: auto;
+  height: 100vh;
+  padding: 2rem 0;
+
+  .login-heading {
+    @include font(
+      $family: $font-secondary,
+      $weight: $font-weight-bold,
+      $size: $font-size-large
+    );
+    color: $neutral-4;
+    margin-bottom: 1rem;
+    width: 100%;
+    text-align: left;
+  }
+
+  .google-login {
+    @include flex-center;
+    @include padding($component-padding);
+    @include border-radius(0.4rem);
+    @include font($size: $font-size-base, $weight: $font-weight-medium);
+    background-color: $neutral-100;
+    color: $primary-60;
+    cursor: pointer;
+    width: 95%;
+    max-width: $component-width;
+    height: $component-height;
+    border: 1px solid $neutral-80;
+    margin-bottom: 0.5rem;
+
+    img {
+      width: 20px;
+      height: 20px;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .divider {
+    @include flex-center;
+    color: $neutral-60;
+    font-size: $font-size-small;
+    width: 99%;
+    max-width: $component-width;
+    margin: 0.5rem 0;
+
+    .line {
+      flex: 1;
+      height: 1px;
+      background-color: $neutral-80;
+      margin: 0 0.5rem;
+    }
+  }
+
+  .login-form {
+    width: 100%;
+    max-width: $component-width;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; // Adds spacing between components
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 1rem;
+
+    .forgot-password {
+      color: $primary-60;
+      font-size: $font-size-small;
+      text-decoration: underline;
+      font-style: italic;
+    }
+  }
+
+  .login-button {
+    width: 100%;
+    max-width: $component-width;
+    height: $component-height;
+    @include padding($component-padding);
+    @include border-radius(0.4rem);
+    @include font($size: $font-size-base, $weight: $font-weight-medium);
+    background-color: $primary-60;
+    color: $neutral-100;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+
+    &:hover {
+      background-color: darken($primary-60, 5%);
+    }
+
+    &:active {
+      background-color: darken($primary-60, 10%);
+    }
+
+    &:disabled {
+      background-color: lighten($primary-60, 20%);
+      cursor: not-allowed;
+    }
+  }
+
+  .signup-link {
+    width: 100%;
+    max-width: $component-width;
+    margin-top: 1rem;
+    font-size: $font-size-small;
+    color: $neutral-4;
+    text-align: center;
+
+    a {
+      color: $primary-60;
+      text-decoration: none;
+    }
+  }
+}

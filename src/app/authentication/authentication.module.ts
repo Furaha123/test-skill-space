@@ -11,6 +11,9 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { VerificationPageComponent } from "./pages/verification-page/verification-page.component";
 import { ForgotPasswordComponent } from "./components/forgot-password/forgot-password.component";
 import { CreateNewPasswordComponent } from "./components/create-new-password/create-new-password.component";
+import { LoginComponent } from "./components/login/login.component";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
 
 import { GoogleButtonComponent } from "./components/google-button/google-button.component";
 
@@ -26,6 +29,7 @@ import { CompanyVerificationPageComponent } from "./pages/company-verification-p
     CreateNewPasswordComponent,
     GoogleButtonComponent,
     CompanyVerificationPageComponent,
+     LoginComponent
   ],
 
   imports: [
@@ -35,6 +39,8 @@ import { CompanyVerificationPageComponent } from "./pages/company-verification-p
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatButtonModule,
+    MatIconModule,
   ],
 })
 export class AuthenticationModule {}

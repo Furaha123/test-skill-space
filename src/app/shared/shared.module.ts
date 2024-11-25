@@ -36,6 +36,7 @@ import { AuthLayoutComponent } from "./auth-layout/auth-layout.component";
     CountryCodesComponent,
     CalendarComponent,
     AuthLayoutComponent,
+    ErrorToastComponent,
   ],
 })
 export class SharedModule {}

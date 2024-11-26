@@ -5,7 +5,7 @@ $component-height: 50px;
 $component-padding: 0.4rem;
 
 .login-container {
-  @include flex-center();
+  @include flex-column();
   width: 100%;
   max-width: $component-width;
   margin: auto;

@@ -102,13 +102,13 @@ export class AuthEffects {
           map(() => AuthActions.registerUserSuccess()),
           catchError(() => {
             this.toastr.error(
-              "An unexpected error occured, please try again?",
+              "An unexpected error occurred. Please try again.",
               "Error",
             );
 
             return of(
               AuthActions.registerUserFailure({
-                error: "An unexpected error occured, please try again?",
+                error: "Failed to register your account. Please try again",
               }),
             );
           }),
@@ -125,13 +125,13 @@ export class AuthEffects {
           map(() => AuthActions.registerCompanySuccess()),
           catchError(() => {
             this.toastr.error(
-              "An unexpected error occured, please try again?",
+              "An unexpected error occured. Please try again",
               "Error",
             );
 
             return of(
               AuthActions.registerCompanyFailure({
-                error: "An unexpected error occured, please try again?",
+                error: "Failed to register your account. Please try again",
               }),
             );
           }),

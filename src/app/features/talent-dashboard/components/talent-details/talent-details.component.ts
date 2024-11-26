@@ -1,10 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
 import { Component, OnInit } from "@angular/core";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { TalentProfileService } from "../../services/talent-profile.service";
 import { PersonalDetails } from "../../models/personal.detalis.interface";
-import { ToastrService } from "ngx-toastr";
-import { Observable, EMPTY } from "rxjs";
-import { tap, catchError } from "rxjs/operators";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Observable } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
+
+interface FileUpload {
+  file: File;
+  previewUrl?: string;
+  name: string;
+}
+
+interface SocialMedia {
+  name: string;
+  url: string;
+}
 
 @Component({
   selector: "app-talent-details",
@@ -12,13 +24,17 @@ import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
   styleUrls: ["./talent-details.component.scss"],
 })
 export class TalentDetailsComponent implements OnInit {
+  profileForm!: FormGroup;
   personalDetails$: Observable<PersonalDetails> | null = null;
+  isDropdownOpen: { [key: number]: boolean } = {};
+  selectedIcons: { [key: number]: string } = {};
   wordCount = 0;
   maxWordLimit = 250;
-  introductionText = "";
-  selectedIcon = "Behance";
-  isDropdownOpen = false;
-  profileForm: FormGroup;
+
+  profileUpload: FileUpload | null = null;
+  cvUpload: FileUpload | null = null;
+  imagePreviewUrl: string | null = null;
+  cvFileName: string | null = null;
 
   icons = [
     { name: "Behance", imageUrl: "assets/icon/social/behance.png" },
@@ -30,70 +46,107 @@ export class TalentDetailsComponent implements OnInit {
   ];
 
   constructor(
-    private readonly talentProfileService: TalentProfileService,
-    private readonly toastr: ToastrService,
     private readonly fb: FormBuilder,
+    public readonly talentProfileService: TalentProfileService,
   ) {
-    this.profileForm = this.fb.group({
-      socialMediaLinks: this.fb.array([]),
-      portfolioLinks: this.fb.array([]),
-    });
+    this.initializeForm();
   }
 
   ngOnInit(): void {
-    this.initializeForm();
-    this.fetchPersonalDetails();
+    this.profileForm.get("introduction")?.valueChanges.subscribe((value) => {
+      this.wordCount = value ? value.trim().split(/\s+/).length : 0;
+    });
+    this.fetchTalentDetails();
   }
-
+  public fetchTalentDetails(): void {
+    this.personalDetails$ = this.talentProfileService.getPersonalDetails();
+    this.personalDetails$.subscribe({
+      next: (details) => {
+        if (details) {
+          this.profileForm.patchValue({
+            firstName: details.firstName,
+            lastName: details.lastName,
+            introduction: details.introduction,
+            dateOfBirth: details.birthDate,
+            nationality: details.nationality,
+            currentLocation: details.currentLocation,
+            phoneNumber: details.phoneNumber,
+            phoneVisibility: details.phoneVisibility,
+          });
+          if (details.socialMedia?.length) {
+            this.populateSocialMediaLinks(details.socialMedia);
+          }
+          if (details.portfolios?.length) {
+            this.populatePortfolioLinks(details.portfolios);
+          }
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error("Error fetching talent details:", error);
+      },
+    });
+  }
   private initializeForm(): void {
-    this.addSocialMedia();
+    this.profileForm = this.fb.group({
+      profilePicture: [null],
+      cv: [null],
+      firstName: ["", Validators.required],
+      lastName: ["", Validators.required],
+      introduction: ["", [Validators.required, Validators.maxLength(250)]],
+      dateOfBirth: ["", Validators.required],
+      nationality: ["", Validators.required],
+      currentLocation: ["", Validators.required],
+      phoneNumber: ["", Validators.required],
+      phoneVisibility: ["private", Validators.required],
+      socialMedia: this.fb.array([]),
+      portfolioLinks: this.fb.array([]),
+    });
 
+    this.addSocialMedia();
     this.addPortfolio();
   }
 
-  private fetchPersonalDetails(): void {
-    this.personalDetails$ = this.talentProfileService.getPersonalDetails().pipe(
-      tap((details) => {
-        this.introductionText = details.introduction ?? "";
-        this.wordCount = this.introductionText.trim().length;
-        this.toastr.success("Personal Details fetched successfully", "Success");
-      }),
-      catchError((err) => {
-        const errorMessage =
-          err.error?.message ?? "Failed to fetch personal details";
-        this.handleError(errorMessage);
-        return EMPTY;
-      }),
-    );
-  }
-
-  private handleError(message: string): void {
-    this.toastr.error(message, "Error");
-  }
-
-  getIconImage(iconName: string): string | undefined {
-    return this.icons.find((icon) => icon.name === iconName)?.imageUrl;
-  }
-
-  onTextChange(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    if (textarea) {
-      this.wordCount = textarea.value.trim().split(/\s+/).length;
-      this.introductionText = textarea.value;
+  public populateSocialMediaLinks(socialMedia: SocialMedia[]): void {
+    const socialMediaArray = this.socialMedia;
+    while (socialMediaArray.length) {
+      socialMediaArray.removeAt(0);
     }
+
+    socialMedia.forEach((link, index) => {
+      socialMediaArray.push(
+        this.fb.group({
+          name: [link.name, Validators.required],
+          url: [
+            link.url,
+            [Validators.required, Validators.pattern(/^https?:\/\/.+$/)],
+          ],
+        }),
+      );
+      this.selectedIcons[index] = link.name;
+      this.isDropdownOpen[index] = false;
+    });
   }
 
-  toggleDropdown(): void {
-    this.isDropdownOpen = !this.isDropdownOpen;
+  public populatePortfolioLinks(portfolios: { url: string }[]): void {
+    const portfolioLinksArray = this.portfolioLinks;
+    while (portfolioLinksArray.length) {
+      portfolioLinksArray.removeAt(0);
+    }
+
+    portfolios.forEach((link) => {
+      portfolioLinksArray.push(
+        this.fb.group({
+          url: [
+            link.url,
+            [Validators.required, Validators.pattern(/^https?:\/\/.+$/)],
+          ],
+        }),
+      );
+    });
   }
 
-  selectIcon(iconName: string): void {
-    this.selectedIcon = iconName;
-    this.isDropdownOpen = false;
-  }
-
-  get socialMediaLinks(): FormArray {
-    return this.profileForm.get("socialMediaLinks") as FormArray;
+  get socialMedia(): FormArray {
+    return this.profileForm.get("socialMedia") as FormArray;
   }
 
   get portfolioLinks(): FormArray {
@@ -102,18 +155,168 @@ export class TalentDetailsComponent implements OnInit {
 
   addSocialMedia(): void {
     const socialMediaForm = this.fb.group({
-      icon: [this.selectedIcon || "", Validators.required],
+      name: ["", Validators.required],
       url: ["", [Validators.required, Validators.pattern(/^https?:\/\/.+$/)]],
     });
-    this.socialMediaLinks.push(socialMediaForm);
+
+    const newIndex = this.socialMedia.length;
+    this.socialMedia.push(socialMediaForm);
+    this.selectedIcons[newIndex] = "";
+    this.isDropdownOpen[newIndex] = false;
+  }
+
+  public isValidFileType(file: File, type: "image" | "cv"): boolean {
+    const allowedTypes = {
+      image: ["image/jpeg", "image/jpg", "image/png"],
+      cv: ["application/pdf"],
+    };
+    return allowedTypes[type].includes(file.type);
+  }
+
+  public isValidFileSize(file: File): boolean {
+    const maxSize = 5 * 1024 * 1024;
+    return file.size <= maxSize;
+  }
+
+  public createFilePreview(file: File): void {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreviewUrl = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  onFileSelected(event: any, type: "image" | "cv"): void {
+    const file = event.target.files[0];
+    const fileUpload: FileUpload = {
+      file,
+      name: file.name,
+    };
+
+    if (type === "image") {
+      this.createFilePreview(file);
+      this.profileUpload = fileUpload;
+    } else {
+      this.cvUpload = fileUpload;
+      this.cvFileName = fileUpload.name;
+    }
+
+    this.profileForm.patchValue({
+      [type === "image" ? "profilePicture" : "cv"]: file,
+    });
+
+    console.log(`${type === "image" ? "Profile picture" : "CV"} selected:`, {
+      name: file.name,
+      type: file.type,
+      size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+    });
+  }
+
+  toggleDropdown(index: number): void {
+    Object.keys(this.isDropdownOpen).forEach((key) => {
+      if (Number(key) !== index) {
+        this.isDropdownOpen[Number(key)] = false;
+      }
+    });
+    this.isDropdownOpen[index] = !this.isDropdownOpen[index];
+  }
+
+  selectIcon(iconName: string, index: number): void {
+    this.selectedIcons[index] = iconName;
+    this.isDropdownOpen[index] = false;
+    const socialMediaGroup = this.getSocialMediaGroup(index);
+    socialMediaGroup.patchValue({ name: iconName });
   }
 
   removeSocialMedia(index: number): void {
-    if (this.socialMediaLinks.length > 1) {
-      this.socialMediaLinks.removeAt(index);
+    if (this.socialMedia.length > 1) {
+      this.socialMedia.removeAt(index);
+      delete this.selectedIcons[index];
+      delete this.isDropdownOpen[index];
+      this.reindexTrackingObjects();
     } else {
-      this.socialMediaLinks.at(0).reset();
+      this.socialMedia.at(0).reset();
+      this.selectedIcons[0] = "";
     }
+  }
+
+  removeFile(type: "image" | "cv"): void {
+    if (type === "image") {
+      this.profileUpload = null;
+      this.imagePreviewUrl = null;
+      this.profileForm.patchValue({ profilePicture: null });
+    } else {
+      this.cvUpload = null;
+      this.cvFileName = null;
+      this.profileForm.patchValue({ cv: null });
+    }
+  }
+
+  public reindexTrackingObjects(): void {
+    const newSelectedIcons: { [key: number]: string } = {};
+    const newIsDropdownOpen: { [key: number]: boolean } = {};
+
+    this.socialMedia.controls.forEach((_, index) => {
+      if (this.selectedIcons[index + 1] !== undefined) {
+        newSelectedIcons[index] = this.selectedIcons[index + 1];
+        newIsDropdownOpen[index] = this.isDropdownOpen[index + 1];
+      }
+    });
+
+    this.selectedIcons = newSelectedIcons;
+    this.isDropdownOpen = newIsDropdownOpen;
+  }
+
+  openFileSelector(type: "image" | "cv"): void {
+    const selector =
+      type === "image" ? ".profile-upload input" : ".cv-upload input";
+    const fileInput = document.querySelector(selector) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  handleDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  handleDrop(event: DragEvent, type: "image" | "cv"): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+
+      const transferEvent = {
+        target: {
+          files: [file],
+        },
+      };
+
+      this.onFileSelected(transferEvent, type);
+    }
+  }
+
+  getSelectedIcon(index: number): string {
+    return this.selectedIcons[index] || "";
+  }
+
+  isDropdownOpenForIndex(index: number): boolean {
+    return this.isDropdownOpen[index] || false;
+  }
+
+  getIconImage(iconName: string): string | undefined {
+    return this.icons.find((icon) => icon.name === iconName)?.imageUrl;
+  }
+
+  getSocialMediaGroup(index: number): FormGroup {
+    return this.socialMedia.at(index) as FormGroup;
+  }
+
+  getPortfolioGroup(index: number): FormGroup {
+    return this.portfolioLinks.at(index) as FormGroup;
   }
 
   addPortfolio(): void {
@@ -131,11 +334,48 @@ export class TalentDetailsComponent implements OnInit {
     }
   }
 
-  getSocialMediaGroup(index: number): FormGroup {
-    return this.socialMediaLinks.at(index) as FormGroup;
+  isSocialMediaValid(index: number): boolean {
+    const group = this.getSocialMediaGroup(index);
+    return group.valid && group.touched;
   }
 
-  getPortfolioGroup(index: number): FormGroup {
-    return this.portfolioLinks.at(index) as FormGroup;
+  isSocialMediaInvalid(index: number): boolean {
+    const group = this.getSocialMediaGroup(index);
+    return group.invalid && group.touched;
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup | FormArray): void {
+    Object.values(formGroup.controls).forEach((control) => {
+      if (control instanceof FormGroup || control instanceof FormArray) {
+        this.markFormGroupTouched(control);
+      } else {
+        control.markAsTouched();
+      }
+    });
+  }
+
+  handleUpdate(): void {
+    const formValue = { ...this.profileForm.value };
+    formValue.socialMedia = formValue.socialMedia.map((item: any) => ({
+      name: item.name,
+      url: item.url,
+    }));
+
+    console.log("Form Value Before Submit:", formValue);
+
+    this.talentProfileService.patchPersonalDetails(formValue).subscribe({
+      next: (updatedDetails) => {
+        console.log("Personal Details Updated Successfully:", updatedDetails);
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error("Error updating personal details:", err);
+        console.error("Error details:", err.error);
+      },
+    });
+  }
+
+  onDateOfBirthSelected(selectedDate: Date): void {
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+    this.profileForm.patchValue({ dateOfBirth: formattedDate });
   }
 }

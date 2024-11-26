@@ -1,14 +1,26 @@
-<div class="talent-details">
+<div class="talent-details" [formGroup]="profileForm">
   <div class="profile-left-section">
     <div class="profile-details">
       <h2>Profile picture</h2>
       <p>This is what will be displayed on your profile.</p>
-      <img src="assets/icon/profile.svg" alt="" />
+
+      <img
+        [src]="imagePreviewUrl || 'assets/icon/profile.svg'"
+        alt="Profile Preview"
+        class="profile-preview"
+      />
+
       <div class="profile-upload">
-        <div class="upload-box">
+        <div
+          class="upload-box"
+          (click)="openFileSelector('image')"
+          (dragover)="handleDragOver($event)"
+          (drop)="handleDrop($event, 'image')"
+        >
           <input
             type="file"
             accept=".png, .jpg, .jpeg"
+            (change)="onFileSelected($event, 'image')"
             style="display: none"
             class="resize-input"
           />
@@ -34,11 +46,21 @@
         <div class="name-inputs">
           <div class="input-group">
             <label for="first-name">First Name</label>
-            <input type="text" id="first-name" placeholder="Enter First Name" />
+            <input
+              type="text"
+              id="first-name"
+              placeholder="Enter First Name"
+              formControlName="firstName"
+            />
           </div>
           <div class="input-group">
             <label for="last-name">Last Name</label>
-            <input type="text" id="last-name" placeholder="Enter Last Name" />
+            <input
+              type="text"
+              id="last-name"
+              placeholder="Enter Last Name"
+              formControlName="lastName"
+            />
           </div>
         </div>
       </div>
@@ -54,11 +76,9 @@
         <div class="textarea-container">
           <textarea
             id="introduction"
-            placeholder="Driven and results-oriented professional with a passion for innovation. Experienced in project management and problem-solving, I thrive in dynamic environments, delivering high-quality solutions that drive success."
+            formControlName="introduction"
+            placeholder="Driven and results-oriented professional..."
             rows="6"
-            maxlength="250"
-            [ngModel]="introductionText"
-            (ngModelChange)="onTextChange($event)"
           ></textarea>
           <div class="word-count">
             <span id="word-count">{{ wordCount }}</span
@@ -70,41 +90,48 @@
     <div class="display-names">
       <h2>Upload your C.V</h2>
       <p>You can upload up to 1 document.</p>
-      <div class="talent-logo">
-        <div class="file-preview">
+      <div class="cv-upload">
+        <div class="file-preview" *ngIf="cvUpload">
           <div class="file-content">
-            <button class="delete-button">
+            <button
+              class="delete-button"
+              type="button"
+              (click)="removeFile('cv')"
+            >
               <img src="assets/icon/remove.svg" alt="Delete" />
             </button>
-            <div class="file-icon">
-              <img src="assets/images/pdft-sample.png" alt="Uploaded Logo" />
-            </div>
-            <p class="file-name">Logo Uploaded</p>
+
+            <p class="file-name">{{ cvUpload.name }}</p>
           </div>
         </div>
 
-        <div class="upload-box">
+        <!-- Upload Box Section -->
+        <div
+          class="upload-box"
+          *ngIf="!cvUpload"
+          (click)="openFileSelector('cv')"
+          (dragover)="handleDragOver($event)"
+          (drop)="handleDrop($event, 'cv')"
+        >
           <input
             type="file"
-            accept=".png, .jpg, .jpeg"
+            accept=".pdf"
+            (change)="onFileSelected($event, 'cv')"
             style="display: none"
             class="resize-input"
           />
           <div class="upload-icon">
-            <img src="assets/icon/upload.svg" alt="Upload Logo" />
+            <img src="assets/icon/upload.svg" alt="Upload CV" />
           </div>
           <div class="upload-text">
-            <p>Click here or drag your logo to upload</p>
-            <p class="supported-formats">
-              Supported formats: PNG, JPG, JPEG (5mb max)
-            </p>
+            <p>Click here or drag your CV to upload</p>
+            <p class="supported-formats">Supported format: PDF (5mb max)</p>
           </div>
         </div>
       </div>
     </div>
-
     <div class="save-btn cancel-btn">
-      <button class="btn save">Save changes</button>
+      <button class="btn save" (click)="handleUpdate()">Save changes</button>
       <button class="btn cancel">Cancel</button>
     </div>
   </div>
@@ -114,7 +141,9 @@
       <h2>Date of Birth</h2>
       <div class="date-input">
         <div class="calendar">
-          <app-calendar></app-calendar>
+          <app-calendar
+            (dateOfBirth)="onDateOfBirthSelected($event)"
+          ></app-calendar>
         </div>
       </div>
     </div>
@@ -124,10 +153,10 @@
       <p>The country where you claim your citizenship.</p>
       <div class="date-input">
         <div class="dropdown">
-          <select class="country-select">
-            <option value="us">United States</option>
-            <option value="ca">Canada</option>
-            <option value="uk">United Kingdom</option>
+          <select class="country-select" formControlName="nationality">
+            <option value="rwanda">Rwanda</option>
+            <option value="ghan">Ghan</option>
+            <option value="german">German</option>
           </select>
         </div>
       </div>
@@ -140,6 +169,7 @@
             <input
               type="text"
               id="current-location"
+              formControlName="currentLocation"
               placeholder="Kigali"
               class="current-location-input"
             />
@@ -152,18 +182,24 @@
       <h2>Phone Number</h2>
       <p>You can set this as private/public to control who sees it.</p>
       <div class="phone-input-group">
-        <div class="country-code">
-          <div class="country-codes">
-            <app-country-codes />
-          </div>
-        </div>
         <div class="phone-number">
-          <input type="tel" id="phone" class="resize-input" />
+          <input
+            type="tel"
+            id="phone"
+            class="resize-input"
+            formControlName="phoneNumber"
+          />
         </div>
       </div>
       <div class="checkbox-group">
         <div class="checkbox">
-          <input type="checkbox" id="public" class="checkbox-input" />
+          <input
+            type="radio"
+            id="public"
+            formControlName="phoneVisibility"
+            value="public"
+            class="checkbox-input"
+          />
           <label for="public" class="checkbox-label">
             <div class="checkbox-box"></div>
             <p>Public</p>
@@ -179,134 +215,92 @@
         </div>
       </div>
     </div>
-
     <div class="social-media-section">
       <h2 class="section-title">Social Media Pages</h2>
-      <form [formGroup]="profileForm">
-        <!-- Always show at least one input field -->
-        <div class="content-wrapper" *ngIf="socialMediaLinks.length === 0">
-          <div class="icons-input-group">
-            <div class="icon-dropdown">
-              <div
-                class="icon-select"
-                (click)="toggleDropdown()"
-                [class.active]="isDropdownOpen"
-              >
-                <img
-                  *ngIf="selectedIcon"
-                  [src]="getIconImage(selectedIcon)"
-                  class="selected-icon"
-                  alt=""
-                />
-              </div>
 
-              <div class="dropdown-menu" *ngIf="isDropdownOpen">
-                <div
-                  *ngFor="let icon of icons"
-                  class="dropdown-item"
-                  (click)="selectIcon(icon.name)"
-                >
-                  <img
-                    [src]="icon.imageUrl"
-                    class="option-icon"
-                    [alt]="icon.name"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div class="url-input">
-              <input
-                type="url"
-                class="social-url-input"
-                placeholder="https://pinterest.com/yourlink"
+      <div
+        class="content-wrapper"
+        *ngFor="let socialMediaControl of socialMedia.controls; let i = index"
+        [formGroup]="getSocialMediaGroup(i)"
+      >
+        <div class="icons-input-group">
+          <div class="icon-dropdown">
+            <div
+              class="icon-select"
+              (click)="toggleDropdown(i)"
+              [class.active]="isDropdownOpenForIndex(i)"
+            >
+              <img
+                *ngIf="getSelectedIcon(i)"
+                [src]="getIconImage(getSelectedIcon(i))"
+                class="selected-icon"
+                alt=""
               />
             </div>
+
+            <div class="dropdown-menu" *ngIf="isDropdownOpenForIndex(i)">
+              <div
+                *ngFor="let icon of icons"
+                class="dropdown-item"
+                (click)="selectIcon(icon.name, i)"
+              >
+                <img
+                  [src]="icon.imageUrl"
+                  class="option-icon"
+                  [alt]="icon.name"
+                />
+              </div>
+            </div>
           </div>
-          <div class="action-buttons">
-            <button
-              type="button"
-              class="icon-button plus"
-              (click)="addSocialMedia()"
-            >
-              <img src="assets/icon/plus.svg" alt="Add Website" />
-            </button>
+
+          <div class="url-input">
+            <input
+              type="url"
+              formControlName="url"
+              class="social-url-input"
+              [class.invalid]="isSocialMediaInvalid(i)"
+              placeholder="https://platform.com/yourprofile"
+            />
+            <div class="error-message" *ngIf="isSocialMediaInvalid(i)">
+              Please enter a valid URL starting with http:// or https://
+            </div>
           </div>
         </div>
 
-        <!-- Existing dynamic fields -->
-        <div
-          class="content-wrapper"
-          *ngFor="let socialMedia of socialMediaLinks.controls; let i = index"
-          [formGroup]="getSocialMediaGroup(i)"
+        <div class="action-buttons">
+          <button
+            type="button"
+            class="icon-button minus"
+            (click)="removeSocialMedia(i)"
+          >
+            <img src="assets/icon/minus.svg" alt="Remove Website" />
+          </button>
+          <button
+            type="button"
+            class="icon-button plus"
+            *ngIf="i === socialMedia.length - 1"
+            (click)="addSocialMedia()"
+          >
+            <img src="assets/icon/plus.svg" alt="Add Website" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Add initial social media if empty -->
+      <div class="content-wrapper" *ngIf="socialMedia.length === 0">
+        <button
+          type="button"
+          class="icon-button plus"
+          (click)="addSocialMedia()"
         >
-          <div class="icons-input-group">
-            <div class="icon-dropdown">
-              <div
-                class="icon-select"
-                (click)="toggleDropdown()"
-                [class.active]="isDropdownOpen"
-              >
-                <img
-                  *ngIf="socialMedia.get('icon')?.value"
-                  [src]="getIconImage(socialMedia.get('icon')?.value)"
-                  class="selected-icon"
-                  alt=""
-                />
-              </div>
-
-              <div class="dropdown-menu" *ngIf="isDropdownOpen">
-                <div
-                  *ngFor="let icon of icons"
-                  class="dropdown-item"
-                  (click)="
-                    selectIcon(icon.name);
-                    socialMedia.get('icon')?.setValue(icon.name)
-                  "
-                >
-                  <img
-                    [src]="icon.imageUrl"
-                    class="option-icon"
-                    [alt]="icon.name"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div class="url-input">
-              <input
-                type="url"
-                class="social-url-input"
-                placeholder="https://pinterest.com/yourlink"
-                formControlName="url"
-              />
-            </div>
-          </div>
-          <div class="action-buttons">
-            <button
-              type="button"
-              class="icon-button minus"
-              (click)="removeSocialMedia(i)"
-            >
-              <img src="assets/icon/minus.svg" alt="Remove Website" />
-            </button>
-            <button
-              type="button"
-              class="icon-button plus"
-              *ngIf="i === socialMediaLinks.length - 1"
-              (click)="addSocialMedia()"
-            >
-              <img src="assets/icon/plus.svg" alt="Add Website" />
-            </button>
-          </div>
-        </div>
-      </form>
+          <img src="assets/icon/plus.svg" alt="Add Social Media" />
+        </button>
+      </div>
     </div>
 
     <div class="social-media-section">
       <h2 class="section-title">Portfolio Links</h2>
       <form [formGroup]="profileForm">
-        <!-- Always show at least one input field -->
         <div class="content-wrapper" *ngIf="portfolioLinks.length === 0">
           <div class="icons-input-group">
             <div class="url-input">

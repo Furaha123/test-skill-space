@@ -12,15 +12,15 @@ export interface PersonalDetails {
   nationality: string | null;
   currentLocation: string | null;
   phoneNumber: string | null;
-  phoneVisibility: boolean | null;
+  phoneVisibility: "public" | "private" | null;
   socialMedia: SocialMedia[];
-  profilePictureUrl: string | null;
+  profilePicture: string | null;
   cvUrl: string | null;
   portfolios: Portfolio[];
 }
 
 export interface SocialMedia {
-  platform: string;
+  name: string;
   url: string;
 }
 

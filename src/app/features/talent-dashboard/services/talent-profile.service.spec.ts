@@ -5,10 +5,11 @@ import {
 } from "@angular/common/http/testing";
 import { TalentProfileService } from "./talent-profile.service";
 import { PersonalDetails } from "../models/personal.detalis.interface";
+import { environment } from "../../../../environments/environment.development";
 
 describe("TalentProfileService", () => {
   let service: TalentProfileService;
-  let httpMock: HttpTestingController;
+  let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -17,62 +18,201 @@ describe("TalentProfileService", () => {
     });
 
     service = TestBed.inject(TalentProfileService);
-    httpMock = TestBed.inject(HttpTestingController);
+    httpTestingController = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpTestingController.verify();
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should fetch personal details successfully", () => {
-    const mockResponse = {
-      status: "Success",
-      message: "Got personal Details Successfully",
-      data: {
-        firstName: "John",
-        lastName: "Doe",
-        introduction: "Hello, I'm John Doe.",
-        birthDate: "1990-01-01",
-        nationality: "American",
-        currentLocation: "New York",
-        phoneNumber: "123-456-7890",
-        phoneVisibility: true,
-        socialMedia: [],
-        profilePictureUrl: null,
-        cvUrl: null,
-        portfolios: [],
-      } as PersonalDetails,
-    };
+  describe("getPersonalDetails", () => {
+    it("should fetch personal details successfully", () => {
+      const mockResponse = {
+        status: "success",
+        message: "Personal details fetched successfully",
+        data: {
+          firstName: "John",
+          lastName: "Doe",
+          introduction: "Test introduction",
+          birthDate: "1990-01-01",
+          nationality: "American",
+          currentLocation: "New York",
+          phoneNumber: "123-456-7890",
+          phoneVisibility: "public",
+          socialMedia: [],
+          profilePicture: "",
+          cvUrl: "",
+          portfolios: [],
+        },
+      };
 
-    service.getPersonalDetails().subscribe((details) => {
-      expect(details).toEqual(mockResponse.data);
+      service.getPersonalDetails().subscribe((details: PersonalDetails) => {
+        expect(details).toEqual(mockResponse.data);
+      });
+
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      expect(req.request.method).toBe("GET");
+
+      req.flush(mockResponse);
     });
 
-    const req = httpMock.expectOne(
-      `${service.apiUrl}/talent/talentId/personal-details`,
-    );
-    expect(req.request.method).toBe("GET");
-    expect(req.request.headers.get("Content-Type")).toBe("application/json");
-    expect(req.request.headers.get("Accept")).toBe("application/json");
-    expect(req.request.headers.get("ngrok-skip-browser-warning")).toBe("true");
+    it("should handle HTTP error response", () => {
+      const errorMessage = "Error occurred while fetching personal details";
 
-    req.flush(mockResponse);
+      service.getPersonalDetails().subscribe(
+        () => fail("Expected an error, not personal details"),
+        (error) => {
+          expect(error).toBe(errorMessage);
+        },
+      );
+
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      expect(req.request.method).toBe("GET");
+
+      req.flush(
+        { error: errorMessage },
+        { status: 500, statusText: "Internal Server Error" },
+      );
+    });
+
+    it("should handle generic error if no error message is returned", () => {
+      service.getPersonalDetails().subscribe(
+        () => fail("Expected an error, not personal details"),
+        (error) => {
+          expect(error).toBeTruthy();
+        },
+      );
+
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      expect(req.request.method).toBe("GET");
+
+      req.flush(null, { status: 500, statusText: "Internal Server Error" });
+    });
+
+    it("should log responses to the console", () => {
+      const consoleSpy = jest.spyOn(console, "log");
+      const mockResponse = {
+        status: "success",
+        message: "Fetched successfully",
+        data: {},
+      };
+
+      service.getPersonalDetails().subscribe();
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      req.flush(mockResponse);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Response from backend:",
+        mockResponse,
+      );
+    });
   });
 
-  it("should handle error when fetching personal details", () => {
-    const errorMessage = "simulated network error";
+  describe("patchPersonalDetails", () => {
+    const mockUpdate = {
+      firstName: "Jane",
+      lastName: "Doe",
+    };
 
-    service.getPersonalDetails().subscribe({
-      next: () => fail("expected an error, not personal details"),
-      error: (error) => {
-        expect(error).toBeTruthy();
-      },
+    it("should patch personal details successfully", () => {
+      const mockResponse = {
+        status: "success",
+        message: "Details updated",
+        data: {
+          ...mockUpdate,
+          introduction: "Updated intro",
+          birthDate: "2000-01-01",
+          nationality: "Canadian",
+          currentLocation: "Toronto",
+          phoneNumber: "987-654-3210",
+          phoneVisibility: "public",
+          socialMedia: [],
+          profilePicture: "",
+          cvUrl: "",
+          portfolios: [],
+        },
+      };
+
+      service.patchPersonalDetails(mockUpdate).subscribe((details) => {
+        expect(details).toEqual(mockResponse.data);
+      });
+
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      expect(req.request.method).toBe("PATCH");
+      expect(req.request.body).toEqual(mockUpdate);
+
+      req.flush(mockResponse);
     });
 
-    const req = httpMock.expectOne(
-      `${service.apiUrl}/talent/talentId/personal-details`,
-    );
+    it("should handle errors when patching personal details", () => {
+      const errorMessage = "Error updating personal details";
 
-    req.flush(errorMessage, { status: 500, statusText: "Server Error" });
+      service.patchPersonalDetails(mockUpdate).subscribe(
+        () => fail("Expected an error, not personal details"),
+        (error) => {
+          expect(error).toBe(errorMessage);
+        },
+      );
+
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      expect(req.request.method).toBe("PATCH");
+
+      req.flush(
+        { error: errorMessage },
+        { status: 500, statusText: "Internal Server Error" },
+      );
+    });
+
+    it("should handle generic error if no error message is returned", () => {
+      service.patchPersonalDetails(mockUpdate).subscribe(
+        () => fail("Expected an error, not personal details"),
+        (error) => {
+          expect(error).toBeTruthy();
+        },
+      );
+
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      expect(req.request.method).toBe("PATCH");
+
+      req.flush(null, { status: 500, statusText: "Internal Server Error" });
+    });
+
+    it("should log responses to the console", () => {
+      const consoleSpy = jest.spyOn(console, "log");
+      const mockResponse = {
+        status: "success",
+        message: "Updated successfully",
+        data: {},
+      };
+
+      service.patchPersonalDetails(mockUpdate).subscribe();
+      const req = httpTestingController.expectOne(
+        `${environment.apiUrl}/talent/2dcbb3fc-5531-445c-abbd-48012f9ef935/personal-details`,
+      );
+      req.flush(mockResponse);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Response from backend:",
+        mockResponse,
+      );
+    });
   });
 });

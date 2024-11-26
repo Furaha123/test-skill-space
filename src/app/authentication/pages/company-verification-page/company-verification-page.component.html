@@ -51,12 +51,12 @@
               maxlength="1"
               [formControl]="otpControls.at(i)"
               (keyup)="onOtpInput($event)"
-              [class.invalid]="verificationFailed"
+              [class.invalid]="verificationError"
               placeholder="*"
             />
           </ng-container>
         </div>
-        @if (verrificationError) {
+        @if (verificationError) {
           <app-error-toast
             title="Error"
             subText="The verification code provided is invalid"
@@ -66,16 +66,19 @@
         @if (codeExpired) {
           <h3>
             Code has expired
-            <span>Request another one</span>
+            <span (click)="onRequestNewCode()">Request another one</span>
           </h3>
         } @else {
-          <h3>Code expires in <span>10:00</span></h3>
+          <h3>
+            Code expires in <span>{{ formattedTime }}</span>
+          </h3>
         }
         <app-button
           type="button"
           [isActive]="true"
           [isDisabled]="this.form.invalid"
           [customClasses]="'btn btn-primary'"
+          (handleClick)="onSubmit()"
         >
           Verify
         </app-button>

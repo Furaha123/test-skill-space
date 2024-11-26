@@ -1,7 +1,7 @@
 <app-auth-layout>
   <form class="register-form">
     <div>
-      <div class="btn-google-c">
+      <div class="btn-google-c" *ngIf="currentForm !== 'company'">
         <app-google-button
           [buttonText]="'Sign up with Google'"
           (credentialResponse)="handleCredentialResponse($event)"
@@ -10,7 +10,7 @@
 
       <!--   OR -->
 
-      <div class="lines">
+      <div class="lines" *ngIf="currentForm !== 'company'">
         <div class="line"></div>
         <span class="text-or">OR</span>
         <div class="line"></div>

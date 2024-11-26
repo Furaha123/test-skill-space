@@ -47,7 +47,7 @@
     ></app-input>
 
     <!-- Registration certificate field   -->
-    <div (click)="certificateInput.click()">
+    <div>
       <label for="certificate">Certificate</label>
       <div class="file-input-wrapper">
         <input
@@ -56,15 +56,19 @@
           name="certificate"
           id="cert"
           placeholder="place"
-          (change)="onAddCertificate($event, 'certificate')"
-          accept=".pdf, .docx"
+          (change)="onFileChange($event, 'certificate')"
+          accept=".pdf, .png, .jpeg"
         />
         <img src="assets/icons/upload.svg" alt="upload icon" class="icon" />
       </div>
 
-      <div *ngIf="this.form.get('certificate')?.errors">
-        <h4>This ting is requred</h4>
-      </div>
+      @if (certificateSizeExceeded) {
+        <app-error-toast
+          [type]="'error'"
+          title="File Size"
+          subText="Exceeded 5MB size limit"
+        ></app-error-toast>
+      }
     </div>
 
     <!-- Email Address field   -->
@@ -90,10 +94,36 @@
     ></app-input>
     <!-- Company Logo field   -->
 
-    <label for="logo">Company Logo</label>
-    <div class="file-input-wrapper">
-      <input type="file" name="log" id="logo" />
-      <img src="assets/icons/upload.svg" alt="upload logo" class="icon" />
+    <div>
+      <label for="certificate">Certificate</label>
+      <div class="file-input-wrapper">
+        <input
+          type="file"
+          #logoInput
+          name="certificate"
+          id="logo"
+          placeholder="place"
+          (change)="onFileChange($event, 'logo')"
+          accept=".png, .jpeg, .jpg"
+        />
+        <img src="assets/icons/upload.svg" alt="upload icon" class="icon" />
+      </div>
+
+      <div
+        *ngIf="
+          this.form.get('certificate')?.errors &&
+          this.form.get('certificate')?.touched
+        "
+      >
+        <h4>This ting is requred</h4>
+      </div>
+      @if (logoSizeExceed) {
+        <app-error-toast
+          [type]="'error'"
+          title="File Size"
+          subText="Exceeded 5MB size limit"
+        ></app-error-toast>
+      }
     </div>
 
     <app-button

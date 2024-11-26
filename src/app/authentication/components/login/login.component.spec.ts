@@ -10,7 +10,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { MockStore, provideMockStore } from "@ngrx/store/testing";
 import { LoginComponent } from "./login.component";
 import * as AuthActions from "../../auth-store/auth.actions";
-import { selectError } from "../../auth-store/auth.reducer";
+
 import {
   Component,
   Input,
@@ -24,6 +24,7 @@ import { AuthResponse } from "../../models/auth-response.model";
 import { Router } from "@angular/router";
 import { GoogleAuthService } from "../../services/google-auth.service";
 import { of, throwError } from "rxjs";
+import { selectError } from "../../auth-store/auth.selectors";
 
 type FormValue = string;
 type ChangeHandler = (value: FormValue) => void;

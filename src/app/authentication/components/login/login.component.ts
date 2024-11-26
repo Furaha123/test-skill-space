@@ -62,31 +62,33 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  handleCredentialResponse(response: { credential: string }) {
-    if (response.credential) {
-      const decoded = this.decodeJwtResponse(response.credential);
-
-      this.googleAuthService
-        .postLogin(response.credential, decoded.email)
-        .pipe(take(1))
-        .subscribe({
-          next: (response: AuthResponse) => {
-            const { roles, token } = response.data;
-            localStorage.setItem("token", token);
-
-            if (roles.some((role) => role.toLowerCase() === "talent")) {
-              this.router.navigate(["/talent"]);
-            } else if (roles.some((role) => role.toLowerCase() === "admin")) {
-              this.router.navigate(["/admin-dashboard"]);
-            }
-            this.toastr.success("Successfully logged in");
-            this.setUserInfo();
-          },
-          error: (error) => {
-            this.toastr.error("Failed to login", error.message);
-          },
-        });
+  handleCredentialResponse({ credential }: { credential: string }) {
+    if (!credential) {
+      this.toastr.error("No credentials provided");
+      return;
     }
+    const decoded = this.decodeJwtResponse(credential);
+
+    this.googleAuthService
+      .postLogin(credential, decoded.email)
+      .pipe(take(1))
+      .subscribe({
+        next: (response: AuthResponse) => {
+          const { roles, token } = response.data;
+          localStorage.setItem("token", token);
+
+          if (roles.some((role) => role.toLowerCase() === "talent")) {
+            this.router.navigate(["/talent"]);
+          } else if (roles.some((role) => role.toLowerCase() === "admin")) {
+            this.router.navigate(["/admin-dashboard"]);
+          }
+          this.toastr.success("Successfully logged in");
+          this.setUserInfo();
+        },
+        error: (error) => {
+          this.toastr.error("Failed to login", error.message);
+        },
+      });
   }
 
   private setUserInfo() {

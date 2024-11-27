@@ -9,6 +9,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { ToastrService } from "ngx-toastr";
 import { Router } from "@angular/router";
 import { AppState } from "../../../shared/models/app.state.interface";
+import { Company } from "../../../shared/models/company.interface";
 
 @Component({
   selector: "app-verification-page",
@@ -26,7 +27,7 @@ export class VerificationPageComponent implements OnInit, OnDestroy {
   currentScreen = "checkMailScreen";
   userEmail = "";
   form: FormGroup;
-  user$: Observable<Talent | null> = this.store.select(
+  user$: Observable<Talent | Company | null> = this.store.select(
     UserSelectors.selectUser,
   );
 

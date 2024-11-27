@@ -100,9 +100,41 @@ export class AuthEffects {
       mergeMap(({ user }) =>
         this.authService.talentRegister(user).pipe(
           map(() => AuthActions.registerUserSuccess()),
-          catchError((error) =>
-            of(AuthActions.registerUserFailure({ error: error.error.message })),
-          ),
+          catchError(() => {
+            this.toastr.error(
+              "An unexpected error occurred. Please try again.",
+              "Error",
+            );
+
+            return of(
+              AuthActions.registerUserFailure({
+                error: "Failed to register your account. Please try again",
+              }),
+            );
+          }),
+        ),
+      ),
+    ),
+  );
+
+  registerCompany$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.registerCompany),
+      mergeMap(({ company }) =>
+        this.authService.companyRegister(company).pipe(
+          map(() => AuthActions.registerCompanySuccess()),
+          catchError(() => {
+            this.toastr.error(
+              "An unexpected error occured. Please try again",
+              "Error",
+            );
+
+            return of(
+              AuthActions.registerCompanyFailure({
+                error: "Failed to register your account. Please try again",
+              }),
+            );
+          }),
         ),
       ),
     ),
@@ -114,18 +146,18 @@ export class AuthEffects {
         ofType(AuthActions.registerUserSuccess),
         tap(() => {
           this.toastr.success("Registration successful!", "Success");
-          this.router.navigateByUrl("/auth/login");
+          this.router.navigateByUrl("/auth/talent-verification");
         }),
       ),
     { dispatch: false },
   );
-
-  showErrorToast$ = createEffect(
+  showCompanyRegistrationSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.registerUserFailure),
-        tap(({ error }) => {
-          this.toastr.error(error || "Registration failed!", "Error");
+        ofType(AuthActions.registerCompanySuccess),
+        tap(() => {
+          this.toastr.success("Registration successful!", "Success");
+          this.router.navigateByUrl("/auth/company-verification");
         }),
       ),
     { dispatch: false },

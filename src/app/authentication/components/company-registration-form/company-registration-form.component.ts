@@ -1,10 +1,15 @@
-import { Component, ElementRef, OnDestroy, ViewChild } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Observable, Subscription } from "rxjs";
 import {
   passwordPattern,
   phoneNumberPattern,
 } from "../../../core/utils/patterns";
+import { Store } from "@ngrx/store";
+import { AppState } from "../../../shared/models/app.state.interface";
+import * as AuthActions from "../../auth-store/auth.actions";
+import * as AuthSelectors from "../../auth-store/auth.selectors";
+import { Company } from "../../../shared/models/company.interface";
 
 @Component({
   selector: "app-company-registration-form",
@@ -14,10 +19,20 @@ import {
 export class CompanyRegistrationFormComponent implements OnDestroy {
   form: FormGroup;
   submitted = false;
-  isLoading$: Observable<boolean> | null = null;
-  @ViewChild("fileInput") fileInput!: ElementRef;
+  isLoading$: Observable<boolean> | null = this.store.select(
+    AuthSelectors.selectIsLoading,
+  );
+  error$: Observable<string | null> = this.store.select(
+    AuthSelectors.selectError,
+  );
   subscription: Subscription | null = null;
-  constructor(private readonly fb: FormBuilder) {
+  private readonly MAX_FILE_SIZE = 5 * 1024 * 1024;
+  logoSizeExceed = false;
+  certificateSizeExceeded = false;
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly store: Store<AppState>,
+  ) {
     this.form = this.fb.group({
       name: ["", Validators.required],
       email: ["", [Validators.required, Validators.email]],
@@ -30,7 +45,7 @@ export class CompanyRegistrationFormComponent implements OnDestroy {
       ],
       password: [
         "",
-        [Validators.required, Validators.pattern(passwordPattern)],
+        [Validators.pattern(passwordPattern), Validators.required],
       ],
       passwordConfirm: [
         "",
@@ -57,28 +72,51 @@ export class CompanyRegistrationFormComponent implements OnDestroy {
     );
   }
 
-  onAddCertificate(event: Event, fileType: "logo" | "certificate") {
+  onFileChange(event: Event, fileType: "logo" | "certificate"): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
 
-      this.readFile(file, fileType);
+    if (!input.files || input.files.length === 0) {
+      return;
     }
-  }
 
-  readFile(file: File, fileType: "logo" | "certificate"): void {
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      this.form.patchValue({
-        [fileType]: e.target?.result as string,
-      });
-    };
-    reader.readAsDataURL(file);
+    const file = input.files[0];
+    const isLogo = fileType === "logo";
+    const isSizeExceeded = file.size > this.MAX_FILE_SIZE;
+
+    // Handle size exceedance
+    if (isSizeExceeded) {
+      if (isLogo) {
+        this.logoSizeExceed = true;
+      } else {
+        this.certificateSizeExceeded = true;
+      }
+      return;
+    }
+    if (isLogo) {
+      this.logoSizeExceed = false;
+    } else {
+      this.certificateSizeExceeded = false;
+    }
+    this.form.patchValue({
+      [fileType]: file,
+    });
   }
 
   onSubmit(): void {
     if (this.form.valid) {
       this.submitted = true;
+      const formValues = this.form.getRawValue();
+      const company: Company = {
+        email: formValues.email,
+        password: formValues.password,
+        name: formValues.name,
+        websiteUrl: formValues.website,
+        contactInformation: formValues.phoneNumber,
+        logo: formValues.logo,
+        certificates: formValues.certificate,
+      };
+
+      this.store.dispatch(AuthActions.registerCompany({ company }));
     }
   }
 

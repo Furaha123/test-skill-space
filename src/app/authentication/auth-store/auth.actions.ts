@@ -1,5 +1,6 @@
 import { createAction, props } from "@ngrx/store";
 import { Talent } from "../../shared/models/talent.interface";
+import { Company } from "../../shared/models/company.interface";
 
 export const registerUser = createAction(
   "[User] Register User",
@@ -13,6 +14,20 @@ export const registerUserFailure = createAction(
   props<{ error: string }>(),
 );
 
+// Company registration actions
+
+export const registerCompany = createAction(
+  "[Auth] Register Company",
+  props<{ company: Company }>(),
+);
+export const registerCompanySuccess = createAction(
+  "[Auth] Register Company Success",
+);
+
+export const registerCompanyFailure = createAction(
+  "[Auth] Register Company Failure",
+  props<{ error: string }>(),
+);
 export const login = createAction(
   "[Auth] Login",
   props<{ email: string; password: string }>(),

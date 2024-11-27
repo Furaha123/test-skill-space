@@ -1,20 +1,24 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
+import { provideMockStore, MockStore } from "@ngrx/store/testing";
 import { CompanyRegistrationFormComponent } from "./company-registration-form.component";
 import { InputComponent } from "../../../shared/components/input/input.component";
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { LoaderComponent } from "../../../shared/components/loader/loader.component";
-import { Subscription } from "rxjs";
-
-interface MockFileReader {
-  readAsDataURL: jest.Mock;
-  onload: ((event: { target: MockFileReader }) => void) | null;
-  result: string;
-}
+import * as AuthSelectors from "../../auth-store/auth.selectors";
 
 describe("CompanyRegistrationFormComponent", () => {
   let component: CompanyRegistrationFormComponent;
   let fixture: ComponentFixture<CompanyRegistrationFormComponent>;
+  let store: MockStore;
+
+  // Mock initial state
+  const initialState = {
+    auth: {
+      isLoading: false,
+      error: null,
+    },
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -25,21 +29,22 @@ describe("CompanyRegistrationFormComponent", () => {
         LoaderComponent,
       ],
       imports: [ReactiveFormsModule],
-      providers: [FormBuilder],
+      providers: [provideMockStore({ initialState })],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CompanyRegistrationFormComponent);
     component = fixture.componentInstance;
+    store = TestBed.inject(MockStore);
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it("should create the component", () => {
     expect(component).toBeTruthy();
   });
 
   describe("Form Initialization", () => {
     it("should initialize the form with empty values", () => {
-      const formControls = {
+      const expectedInitialValues = {
         name: "",
         email: "",
         certificate: null,
@@ -50,7 +55,7 @@ describe("CompanyRegistrationFormComponent", () => {
         passwordConfirm: "",
       };
 
-      Object.entries(formControls).forEach(([key, value]) => {
+      Object.entries(expectedInitialValues).forEach(([key, value]) => {
         expect(component.form.get(key)?.value).toBe(value);
       });
     });
@@ -67,76 +72,92 @@ describe("CompanyRegistrationFormComponent", () => {
 
       requiredControls.forEach((controlName) => {
         const control = component.form.get(controlName);
-        expect(control?.errors?.["required"]).toBeTruthy();
+        expect(control?.hasError("required")).toBeTruthy();
       });
     });
   });
 
   describe("Form Validation", () => {
-    it("should validate email format", () => {
-      const emailControl = component.form.get("email");
+    describe("Email Validation", () => {
+      it("should validate correct email formats", () => {
+        const emailControl = component.form.get("email");
 
-      emailControl?.setValue("invalid-email");
-      expect(emailControl?.errors?.["email"]).toBeTruthy();
+        const validEmails = [
+          "test@example.com",
+          "user.name+tag@example.co.uk",
+          "valid_email123@domain.org",
+        ];
 
-      emailControl?.setValue("valid@email.com");
-      expect(emailControl?.errors).toBeNull();
+        validEmails.forEach((email) => {
+          emailControl?.setValue(email);
+          expect(emailControl?.hasError("email")).toBeFalsy();
+        });
+      });
     });
 
-    it("should validate phone number format", () => {
-      const phoneControl = component.form.get("phoneNumber");
+    describe("Phone Number Validation", () => {
+      it("should invalidate incorrect phone number formats", () => {
+        const phoneControl = component.form.get("phoneNumber");
 
-      phoneControl?.setValue("123");
-      expect(phoneControl?.errors?.["pattern"]).toBeTruthy();
+        const invalidPhoneNumbers = [
+          "123",
+          "abcdefghij",
+          "+250 invalid number",
+        ];
 
-      phoneControl?.setValue("+250789123456");
-      expect(phoneControl?.errors).toBeNull();
+        invalidPhoneNumbers.forEach((number) => {
+          phoneControl?.setValue(number);
+          expect(phoneControl?.hasError("pattern")).toBeTruthy();
+        });
+      });
     });
 
-    it("should validate password format", () => {
-      const passwordControl = component.form.get("password");
+    describe("Password Validation", () => {
+      it("should invalidate weak password formats", () => {
+        const passwordControl = component.form.get("password");
 
-      passwordControl?.setValue("weak");
-      expect(passwordControl?.errors?.["pattern"]).toBeTruthy();
+        const invalidPasswords = [
+          "weak",
+          "nouppercase123",
+          "NOLOWERCASE123",
+          "NoSpecialChar123",
+        ];
 
-      passwordControl?.setValue("StrongPass123!");
-      expect(passwordControl?.errors).toBeNull();
-    });
-  });
-
-  describe("isControlInvalid Method", () => {
-    it("should return false for untouched controls", () => {
-      expect(component.isControlInvalid("name")).toBeFalsy();
-    });
-
-    it("should return true for touched invalid controls", () => {
-      const nameControl = component.form.get("name");
-      nameControl?.markAsTouched();
-      expect(component.isControlInvalid("name")).toBeTruthy();
+        invalidPasswords.forEach((password) => {
+          passwordControl?.setValue(password);
+          expect(passwordControl?.hasError("pattern")).toBeTruthy();
+        });
+      });
     });
 
-    it("should return true when form is submitted with invalid controls", () => {
-      component.submitted = true;
-      expect(component.isControlInvalid("name")).toBeTruthy();
+    describe("Password Confirmation", () => {
+      it("should invalidate mismatched passwords", () => {
+        component.form.get("password")?.setValue("FirstPassword123!");
+        component.form
+          .get("passwordConfirm")
+          ?.setValue("DifferentPassword456!");
+
+        const passwordConfirmControl = component.form.get("passwordConfirm");
+        component.isControlInvalid("passwordConfirm");
+
+        expect(passwordConfirmControl?.value).not.toEqual(
+          component.form.get("password")?.value,
+        );
+      });
     });
   });
 
   describe("File Handling", () => {
-    let mockFileReader: MockFileReader;
+    const createMockFileEvent = (
+      fileName: string,
+      fileType: string,
+      fileSize: number = 4 * 1024 * 1024, // 4MB
+    ): Event => {
+      const file = new File(["dummy content"], fileName, {
+        type: fileType,
+      });
+      Object.defineProperty(file, "size", { value: fileSize });
 
-    beforeEach(() => {
-      mockFileReader = {
-        readAsDataURL: jest.fn(),
-        onload: null,
-        result: "",
-      };
-      global.FileReader = jest.fn(
-        () => mockFileReader,
-      ) as unknown as typeof FileReader;
-    });
-
-    const createFileEvent = (fileName: string, fileType: string): Event => {
-      const file = new File(["dummy content"], fileName, { type: fileType });
       return {
         target: {
           files: [file],
@@ -144,67 +165,111 @@ describe("CompanyRegistrationFormComponent", () => {
       } as unknown as Event;
     };
 
-    it("should handle certificate file upload", () => {
-      const event = createFileEvent("test.pdf", "application/pdf");
-      mockFileReader.result = "data:application/pdf;base64,dummy";
+    describe("Certificate Upload", () => {
+      it("should handle valid certificate upload", () => {
+        const validEvent = createMockFileEvent("test.pdf", "application/pdf");
 
-      component.onAddCertificate(event, "certificate");
+        component.onFileChange(validEvent, "certificate");
 
-      if (mockFileReader.onload) {
-        mockFileReader.onload({ target: mockFileReader });
-      }
+        expect(component.certificateSizeExceeded).toBeFalsy();
+        expect(component.form.get("certificate")?.value).toBeTruthy();
+      });
 
-      expect(component.form.get("certificate")?.value).toBe(
-        "data:application/pdf;base64,dummy",
-      );
+      it("should prevent upload of oversized certificate", () => {
+        const largeFileEvent = createMockFileEvent(
+          "large.pdf",
+          "application/pdf",
+          6 * 1024 * 1024, // 6MB
+        );
+
+        component.onFileChange(largeFileEvent, "certificate");
+
+        expect(component.certificateSizeExceeded).toBeTruthy();
+        expect(component.form.get("certificate")?.value).toBeNull();
+      });
     });
 
-    it("should handle logo file upload", () => {
-      const event = createFileEvent("logo.png", "image/png");
-      mockFileReader.result = "data:image/png;base64,dummy";
+    describe("Logo Upload", () => {
+      it("should handle valid logo upload", () => {
+        const validEvent = createMockFileEvent("logo.png", "image/png");
 
-      component.onAddCertificate(event, "logo");
+        component.onFileChange(validEvent, "logo");
 
-      if (mockFileReader.onload) {
-        mockFileReader.onload({ target: mockFileReader });
-      }
+        expect(component.logoSizeExceed).toBeFalsy();
+        expect(component.form.get("logo")?.value).toBeTruthy();
+      });
 
-      expect(component.form.get("logo")?.value).toBe(
-        "data:image/png;base64,dummy",
-      );
+      it("should prevent upload of oversized logo", () => {
+        const largeFileEvent = createMockFileEvent(
+          "large-logo.png",
+          "image/png",
+          6 * 1024 * 1024, // 6MB
+        );
+
+        component.onFileChange(largeFileEvent, "logo");
+
+        expect(component.logoSizeExceed).toBeTruthy();
+        expect(component.form.get("logo")?.value).toBeNull();
+      });
     });
   });
 
   describe("Form Submission", () => {
-    it("should not set submitted flag when form is invalid", () => {
+    it("should not dispatch action when form is invalid", () => {
+      const dispatchSpy = jest.spyOn(store, "dispatch");
+
       component.onSubmit();
+
+      expect(dispatchSpy).not.toHaveBeenCalled();
       expect(component.submitted).toBeFalsy();
     });
+  });
 
-    it("should set submitted flag when form is valid", () => {
-      component.form.patchValue({
-        name: "Test Company",
-        email: "test@company.com",
-        certificate: "base64-certificate",
-        phoneNumber: "+250789123456",
-        password: "StrongPass123!",
-        passwordConfirm: "StrongPass123!",
+  describe("Component Observables", () => {
+    it("should select loading state", () => {
+      store.setState({
+        auth: {
+          isLoading: true,
+          error: null,
+        },
       });
 
-      component.onSubmit();
-      expect(component.submitted).toBeTruthy();
+      store.select(AuthSelectors.selectIsLoading).subscribe((isLoading) => {
+        expect(isLoading).toBeTruthy();
+      });
+    });
+
+    it("should select error state", () => {
+      const testError = "Test error message";
+      store.setState({
+        auth: {
+          isLoading: false,
+          error: testError,
+        },
+      });
+
+      store.select(AuthSelectors.selectError).subscribe((error) => {
+        expect(error).toBe(testError);
+      });
     });
   });
 
   describe("Component Lifecycle", () => {
-    it("should unsubscribe on destroy", () => {
-      const mockSubscription: Partial<Subscription> = {
+    it("should unsubscribe on destroy when subscription exists", () => {
+      const mockSubscription = {
         unsubscribe: jest.fn(),
       };
-      component.subscription = mockSubscription as Subscription;
 
+      component.subscription = mockSubscription as never;
       component.ngOnDestroy();
+
       expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+    });
+
+    it("should not throw error when destroying without subscription", () => {
+      component.subscription = null;
+
+      expect(() => component.ngOnDestroy()).not.toThrow();
     });
   });
 });

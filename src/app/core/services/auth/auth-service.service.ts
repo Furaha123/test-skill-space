@@ -4,6 +4,7 @@ import { environment } from "../../../../environments/environment";
 import { Talent } from "../../../shared/models/talent.interface";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { ResponseInterface } from "../../../shared/models/response.interface";
+import { Company } from "../../../shared/models/company.interface";
 
 @Injectable({
   providedIn: "root",
@@ -14,9 +15,11 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {}
 
   talentRegister(user: Talent): Observable<ResponseInterface> {
+    const headers = new HttpHeaders({ "Content-Type": "application/json" });
     return this.http.post<ResponseInterface>(
       `${this.apiUrl}/talent/register`,
       user,
+      { headers },
     );
   }
 
@@ -55,5 +58,14 @@ export class AuthService {
       message: string;
       data: { token: string; roles: string[] };
     }>(`${this.apiUrl}/auth/login`, body, { headers });
+  }
+
+  companyRegister(company: Company): Observable<ResponseInterface> {
+    const headers = new HttpHeaders({ "Content-Type": "application/json" });
+    return this.http.post<ResponseInterface>(
+      `${this.apiUrl}/companys/register`,
+      company,
+      { headers },
+    );
   }
 }

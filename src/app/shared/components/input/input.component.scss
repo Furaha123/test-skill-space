@@ -6,7 +6,7 @@
 
   .input-label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 2px;
     @include font(Archivo, 400, 16px);
   }
 
@@ -19,8 +19,8 @@
   .textarea-field,
   .select-field {
     width: 100%;
-    margin: 4px 0;
-    padding: 4px 8px;
+    margin: 2px 0 0;
+    padding: 8px;
     border: 1px solid $primary-grey;
     @include border-radius(4px);
     caret-color: $primary-orange;

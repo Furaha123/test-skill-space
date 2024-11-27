@@ -2,13 +2,14 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import * as AuthActions from "../../auth-store/auth.actions";
-import { selectError } from "../../auth-store/auth.reducer";
 import { Observable, of, take } from "rxjs";
 import { GoogleAuthService } from "../../services/google-auth.service";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
 import { DecodedToken } from "../../models/google-auth.model";
 import { AuthResponse } from "../../models/auth-response.model";
+import * as AuthSelectors from "../../auth-store/auth.selectors";
+import { AppState } from "../../../shared/models/app.state.interface";
 
 @Component({
   selector: "app-login",
@@ -23,10 +24,10 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly store: Store,
     private readonly googleAuthService: GoogleAuthService,
     private readonly router: Router,
     private readonly toastr: ToastrService,
+    private readonly store: Store<AppState>,
   ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
@@ -44,7 +45,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showError$ = this.store.select(selectError);
+    this.showError$ = this.store.select(AuthSelectors.selectError);
   }
 
   isFieldInvalid(field: string): boolean {

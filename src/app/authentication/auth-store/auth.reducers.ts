@@ -1,28 +1,62 @@
 import { createReducer, on } from "@ngrx/store";
-import * as UserActions from "./auth.actions";
-import { initialUserState } from "./auth.interface";
+import * as AuthActions from "./auth.actions";
+import { initialState } from "./auth.interface";
 
 export const authReducer = createReducer(
-  initialUserState,
+  initialState,
 
-  on(UserActions.registerUser, (state, { user }) => ({
+  on(AuthActions.registerUser, (state, { user }) => ({
     ...state,
     loading: true,
     error: null,
-    user,
+    user: {
+      ...user,
+      password: "*********",
+    },
   })),
 
-  on(UserActions.registerUserSuccess, (state) => ({
+  on(AuthActions.registerUserSuccess, (state) => ({
     ...state,
     loading: false,
     isRegistered: true,
     error: null,
   })),
 
-  on(UserActions.registerUserFailure, (state, { error }) => ({
+  on(AuthActions.registerUserFailure, (state, { error }) => ({
     ...state,
     loading: false,
     error,
     isRegistered: false,
   })),
+
+  on(AuthActions.registerCompany, (state, { company }) => ({
+    ...state,
+    loading: true,
+    user: {
+      ...company,
+      password: "*********",
+    },
+  })),
+  on(AuthActions.registerCompanySuccess, (state) => ({
+    ...state,
+    loading: false,
+    error: null,
+  })),
+  on(AuthActions.registerCompanyFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+
+  on(AuthActions.loginSuccess, (state) => ({
+    ...state,
+    error: null,
+  })),
+
+  on(AuthActions.loginFailure, (state, { error }) => ({
+    ...state,
+    error,
+  })),
+
+  on(AuthActions.tokenCleared, () => initialState),
 );

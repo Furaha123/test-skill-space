@@ -1,111 +1,201 @@
 import { TestBed } from "@angular/core/testing";
 import {
-  HttpClientTestingModule,
-  HttpTestingController,
-} from "@angular/common/http/testing";
-import {
-  HttpClient,
-  HTTP_INTERCEPTORS,
-  HttpRequest,
+  HttpErrorResponse,
   HttpHandler,
+  HttpHeaders,
+  HttpRequest,
   HttpResponse,
 } from "@angular/common/http";
-import { AuthInterceptor } from "./auth-interceptor.interceptor";
-import { of } from "rxjs";
-
-type HttpRequestBody = Record<string, unknown>;
-type HttpResponseBody = Record<string, unknown>;
+import { AuthInterceptor } from "../interceptor/auth-interceptor.interceptor";
+import { ToastrService } from "ngx-toastr";
+import { of, throwError } from "rxjs";
 
 describe("AuthInterceptor", () => {
-  let httpMock: HttpTestingController;
-  let httpClient: HttpClient;
-
-  const mockToken = "mock-jwt-token";
-  const testUrl = "/api/test";
+  let interceptor: AuthInterceptor;
+  let mockToastr: jest.Mocked<ToastrService>;
+  let mockHandler: jest.Mocked<HttpHandler>;
 
   beforeEach(() => {
+    mockToastr = {
+      error: jest.fn(),
+    } as unknown as jest.Mocked<ToastrService>;
+
+    mockHandler = {
+      handle: jest.fn(),
+    } as unknown as jest.Mocked<HttpHandler>;
+
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
-        AuthInterceptor, // Explicitly provide the AuthInterceptor itself
-        {
-          provide: HTTP_INTERCEPTORS,
-          useClass: AuthInterceptor,
-          multi: true, // Register it as an interceptor
-        },
+        AuthInterceptor,
+        { provide: ToastrService, useValue: mockToastr },
       ],
     });
 
-    httpMock = TestBed.inject(HttpTestingController);
-    httpClient = TestBed.inject(HttpClient);
+    interceptor = TestBed.inject(AuthInterceptor);
+    sessionStorage.clear();
   });
 
   afterEach(() => {
-    httpMock.verify(); // Ensure no unmatched requests
-    sessionStorage.clear(); // Clear sessionStorage after each test
+    jest.clearAllMocks();
+    sessionStorage.clear();
   });
 
   it("should be created", () => {
-    const interceptor = TestBed.inject(AuthInterceptor); // Explicitly test the interceptor
     expect(interceptor).toBeTruthy();
   });
 
-  it("should add Authorization header if token exists in sessionStorage", () => {
-    sessionStorage.setItem("authToken", mockToken);
+  describe("intercept", () => {
+    it("should add auth token to headers if token exists", (done) => {
+      const token = "test-token";
+      sessionStorage.setItem("authToken", token);
+      const request = new HttpRequest<unknown>("GET", "test-url");
 
-    httpClient.get(testUrl).subscribe();
+      mockHandler.handle.mockReturnValue(of(new HttpResponse()));
 
-    const req = httpMock.expectOne(testUrl);
-    expect(req.request.headers.has("Authorization")).toBeTruthy();
-    expect(req.request.headers.get("Authorization")).toBe(
-      `Bearer ${mockToken}`,
-    );
-    req.flush({}); // Simulate successful backend response
-  });
-
-  it("should not add Authorization header if token does not exist", () => {
-    httpClient.get(testUrl).subscribe();
-
-    const req = httpMock.expectOne(testUrl);
-    expect(req.request.headers.has("Authorization")).toBeFalsy();
-    req.flush({}); // Simulate successful backend response
-  });
-
-  it("should clone the request with Authorization header when token exists", () => {
-    sessionStorage.setItem("authToken", mockToken);
-
-    const handler: HttpHandler = {
-      handle: jest.fn((req: HttpRequest<HttpRequestBody>) => {
-        // Return a mock Observable<HttpEvent<HttpResponseBody>>
-        expect(req.headers.get("Authorization")).toBe(`Bearer ${mockToken}`);
-        return of(
-          new HttpResponse<HttpResponseBody>({ status: 200, body: {} }),
+      interceptor.intercept(request, mockHandler).subscribe(() => {
+        const modifiedRequest = mockHandler.handle.mock
+          .calls[0][0] as HttpRequest<unknown>;
+        expect(modifiedRequest.headers.get("Authorization")).toBe(
+          `Bearer ${token}`,
         );
-      }),
-    };
+        done();
+      });
+    });
 
-    const interceptor = new AuthInterceptor();
-    const request = new HttpRequest<HttpRequestBody>("GET", testUrl);
+    it("should not modify headers if no token exists", (done) => {
+      const request = new HttpRequest<unknown>("GET", "test-url");
+      mockHandler.handle.mockReturnValue(of(new HttpResponse()));
 
-    interceptor.intercept(request, handler).subscribe();
-    expect(handler.handle).toHaveBeenCalledTimes(1);
+      interceptor.intercept(request, mockHandler).subscribe(() => {
+        expect(mockHandler.handle).toHaveBeenCalledWith(request);
+        done();
+      });
+    });
   });
 
-  it("should pass the request as is if token does not exist", () => {
-    const handler: HttpHandler = {
-      handle: jest.fn((req: HttpRequest<HttpRequestBody>) => {
-        // Return a mock Observable<HttpEvent<HttpResponseBody>>
-        expect(req.headers.has("Authorization")).toBeFalsy();
-        return of(
-          new HttpResponse<HttpResponseBody>({ status: 200, body: {} }),
-        );
-      }),
-    };
+  describe("error handling", () => {
+    const request = new HttpRequest<unknown>("GET", "test-url");
 
-    const interceptor = new AuthInterceptor();
-    const request = new HttpRequest<HttpRequestBody>("GET", testUrl);
+    it("should handle client-side error", (done) => {
+      const errorEvent = new ErrorEvent("Network error", {
+        message: "Test client error",
+      });
+      const errorResponse = new HttpErrorResponse({
+        error: errorEvent,
+      });
 
-    interceptor.intercept(request, handler).subscribe();
-    expect(handler.handle).toHaveBeenCalledTimes(1);
+      mockHandler.handle.mockReturnValue(throwError(() => errorResponse));
+
+      interceptor.intercept(request, mockHandler).subscribe({
+        error: (error) => {
+          expect(mockToastr.error).toHaveBeenCalledWith(
+            "Test client error",
+            "Error",
+          );
+          expect(error).toBe(errorResponse);
+          done();
+        },
+      });
+    });
+
+    it("should handle server-side error with object response", (done) => {
+      const errorResponse = new HttpErrorResponse({
+        error: { message: "Test server error" },
+        status: 500,
+      });
+
+      mockHandler.handle.mockReturnValue(throwError(() => errorResponse));
+
+      interceptor.intercept(request, mockHandler).subscribe({
+        error: (error) => {
+          expect(mockToastr.error).toHaveBeenCalledWith(
+            "Test server error",
+            "Error",
+          );
+          expect(error).toBe(errorResponse);
+          done();
+        },
+      });
+    });
+
+    describe("password reset errors", () => {
+      [
+        { status: 400, title: "Password Error" },
+        { status: 401, title: "Invalid Request" },
+        { status: 404, title: "Reset Link Error" },
+        { status: 500, title: "Password Reset Error" },
+      ].forEach(({ status, title }) => {
+        it(`should handle password reset ${status} error`, (done) => {
+          const resetRequest = new HttpRequest<unknown>(
+            "POST",
+            "/auth/reset-password",
+            null,
+            {
+              headers: new HttpHeaders(),
+              reportProgress: false,
+            },
+          );
+          const errorResponse = new HttpErrorResponse({
+            error: { message: "Reset password error" },
+            status,
+            url: "/auth/reset-password",
+          });
+
+          mockHandler.handle.mockReturnValue(throwError(() => errorResponse));
+
+          interceptor.intercept(resetRequest, mockHandler).subscribe({
+            error: (error) => {
+              expect(mockToastr.error).toHaveBeenCalledWith(
+                "Reset password error",
+                title,
+              );
+              expect(error).toBe(errorResponse);
+              done();
+            },
+          });
+        });
+      });
+    });
+
+    it("should handle server error with non-object error response", (done) => {
+      const errorResponse = new HttpErrorResponse({
+        error: "String error",
+        status: 500,
+        statusText: "Error",
+      });
+
+      mockHandler.handle.mockReturnValue(throwError(() => errorResponse));
+
+      interceptor.intercept(request, mockHandler).subscribe({
+        error: (error) => {
+          expect(mockToastr.error).toHaveBeenCalledWith(
+            errorResponse.message,
+            "Error",
+          );
+          expect(error).toBe(errorResponse);
+          done();
+        },
+      });
+    });
+
+    it("should handle error with null error object", (done) => {
+      const errorResponse = new HttpErrorResponse({
+        error: null,
+        status: 500,
+      });
+
+      mockHandler.handle.mockReturnValue(throwError(() => errorResponse));
+
+      interceptor.intercept(request, mockHandler).subscribe({
+        error: (error) => {
+          expect(mockToastr.error).toHaveBeenCalledWith(
+            errorResponse.message,
+            "Error",
+          );
+          expect(error).toBe(errorResponse);
+          done();
+        },
+      });
+    });
   });
 });

@@ -7,6 +7,12 @@ import {
   FormControl,
 } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Store } from "@ngrx/store";
+import { AppState } from "../../../shared/models/app.state.interface";
+import * as AuthActions from "../../auth-store/auth.actions";
+import * as AuthSelectors from "../../auth-store/auth.selectors";
+import { Observable, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-forgot-password",
@@ -14,8 +20,8 @@ import { Router } from "@angular/router";
   styleUrls: ["./forgot-password.component.scss"],
 })
 export class ForgotPasswordComponent implements OnDestroy {
-  forgotPasswordForm: FormGroup;
-  otpForm: FormGroup;
+  forgotPasswordForm: FormGroup = this.initForgotPasswordForm();
+  otpForm: FormGroup = this.initOtpForm();
   isEmailSubmitted = false;
   showOtpScreen = false;
   verificationSuccessful = false;
@@ -24,19 +30,42 @@ export class ForgotPasswordComponent implements OnDestroy {
   displayTime = "09:59";
   timerExpired = false;
   interval: ReturnType<typeof setInterval> | null = null;
-  predefinedOtp = "123456";
+  tryNewEmailClicked = false;
+  previousEmail = "";
+  loading$: Observable<boolean>;
+  error$: Observable<string | null>;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly router: Router,
+    private readonly store: Store<AppState>,
   ) {
-    this.forgotPasswordForm = this.fb.group({
+    this.loading$ = this.store.select(AuthSelectors.selectIsLoading);
+    this.error$ = this.store.select(AuthSelectors.selectError);
+
+    this.store
+      .select(AuthSelectors.selectPasswordResetOtpVerified)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((verified) => {
+        if (verified) {
+          this.verificationSuccessful = true;
+          this.verificationFailed = false;
+          this.clearTimer();
+        }
+      });
+  }
+
+  private initForgotPasswordForm(): FormGroup {
+    return this.fb.group({
       email: ["", [Validators.required, Validators.email]],
     });
+  }
 
-    this.otpForm = this.fb.group({
+  private initOtpForm(): FormGroup {
+    return this.fb.group({
       otp: this.fb.array(
-        Array(6)
+        Array(5)
           .fill("")
           .map(() =>
             this.fb.control("", [
@@ -50,6 +79,8 @@ export class ForgotPasswordComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.clearTimer();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   public clearTimer(): void {
@@ -91,7 +122,11 @@ export class ForgotPasswordComponent implements OnDestroy {
 
   onSubmit(): void {
     if (this.forgotPasswordForm.valid) {
+      const email = this.forgotPasswordForm.get("email")?.value;
+      this.store.dispatch(AuthActions.forgotPassword({ email }));
       this.isEmailSubmitted = true;
+      this.tryNewEmailClicked = false;
+      this.previousEmail = email;
     } else {
       this.forgotPasswordForm.markAllAsTouched();
     }
@@ -117,14 +152,12 @@ export class ForgotPasswordComponent implements OnDestroy {
   verifyOtp(): void {
     if (this.otpForm.valid) {
       const otpValue = this.otpControls.value.join("");
-      if (otpValue === this.predefinedOtp) {
-        this.verificationSuccessful = true;
-        this.verificationFailed = false;
-        this.clearTimer();
-      } else {
-        this.verificationFailed = true;
-        this.verificationSuccessful = false;
-      }
+      this.store.dispatch(
+        AuthActions.verifyPasswordResetOtp({
+          email: this.previousEmail,
+          otp: otpValue,
+        }),
+      );
     } else {
       this.otpForm.markAllAsTouched();
     }
@@ -135,15 +168,20 @@ export class ForgotPasswordComponent implements OnDestroy {
   }
 
   requestNewCode(): void {
+    this.store.dispatch(
+      AuthActions.requestNewOtp({ email: this.previousEmail }),
+    );
     this.otpControls.controls.forEach((control) => {
       control.enable();
       control.reset();
     });
     this.startCountdown();
+    this.verificationFailed = false;
   }
 
   resetForm(): void {
-    this.isEmailSubmitted = false;
+    this.isEmailSubmitted = true;
+    this.tryNewEmailClicked = true;
     this.showOtpScreen = false;
     this.verificationSuccessful = false;
     this.verificationFailed = false;
@@ -158,5 +196,43 @@ export class ForgotPasswordComponent implements OnDestroy {
 
   get otpControls(): FormArray<FormControl> {
     return this.otpForm.get("otp") as FormArray<FormControl>;
+  }
+
+  handleBackNavigation(): void {
+    if (this.showOtpScreen) {
+      this.showOtpScreen = false;
+      this.clearTimer();
+      this.otpForm.reset();
+      this.verificationFailed = false;
+    } else if (this.isEmailSubmitted) {
+      this.isEmailSubmitted = false;
+      this.tryNewEmailClicked = false;
+      this.forgotPasswordForm.reset();
+    } else {
+      this.router.navigate(["/auth/login"]);
+    }
+  }
+
+  getBackButtonText(): string {
+    if (this.showOtpScreen) {
+      return "Back ";
+    } else if (this.isEmailSubmitted) {
+      return "Back ";
+    }
+    return "Back";
+  }
+
+  shouldShowBackButton(): boolean {
+    return !this.verificationSuccessful;
+  }
+
+  cancelTryNewEmail(): void {
+    this.tryNewEmailClicked = false;
+    this.isEmailSubmitted = true;
+    if (this.previousEmail) {
+      this.forgotPasswordForm.patchValue({
+        email: this.previousEmail,
+      });
+    }
   }
 }

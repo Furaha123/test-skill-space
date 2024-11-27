@@ -4,7 +4,7 @@ import { AuthService } from "../../core/services/auth/auth-service.service";
 import * as AuthActions from "./auth.actions";
 import { catchError, map, mergeMap, tap, of } from "rxjs";
 import { Router } from "@angular/router";
-import { LoginResponse, LoginError } from "../auth-store/auth.interface";
+import { LoginResponse, LoginError } from "./auth.interface";
 import { ToastrService } from "ngx-toastr";
 
 @Injectable()
@@ -15,16 +15,6 @@ export class AuthEffects {
     private readonly router: Router,
     private readonly toastr: ToastrService,
   ) {}
-
-  // Custom error handling
-  private handleAPIError(): never {
-    const errorMessage = "An unexpected error occurred. Please try again.";
-    throw new Error(errorMessage);
-  }
-
-  private createLoginError(error: LoginError): string {
-    return error?.message || "An unexpected error occurred. Please try again.";
-  }
 
   login$ = createEffect(() =>
     this.actions$.pipe(
@@ -37,21 +27,20 @@ export class AuthEffects {
               response.data?.token &&
               response.data?.roles
             ) {
-              const { token, roles } = response.data;
-              sessionStorage.setItem("authToken", token);
-              sessionStorage.setItem("authRoles", JSON.stringify(roles));
-            } else {
-              this.handleAPIError();
+              sessionStorage.setItem("authToken", response.data.token);
+              sessionStorage.setItem(
+                "authRoles",
+                JSON.stringify(response.data.roles),
+              );
             }
           }),
-          map((response: LoginResponse) => {
-            const { token, roles } = response.data!;
-            return AuthActions.loginSuccess({ token, roles });
-          }),
+          map((response: LoginResponse) =>
+            AuthActions.loginSuccess(response.data!),
+          ),
           catchError((error: LoginError) =>
             of(
               AuthActions.loginFailure({
-                error: this.createLoginError(error),
+                error: error.message || "Login failed",
               }),
             ),
           ),
@@ -60,22 +49,161 @@ export class AuthEffects {
     ),
   );
 
-  loginSuccess$ = createEffect(
+  forgotPassword$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.forgotPassword),
+      mergeMap(({ email }) =>
+        this.authService.forgotPassword(email).pipe(
+          map((response) =>
+            AuthActions.forgotPasswordSuccess({ message: response.message }),
+          ),
+          catchError((error) =>
+            of(
+              AuthActions.forgotPasswordFailure({
+                error:
+                  error.error?.message ||
+                  "Something went wrong, please try again",
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  verifyResetOtp$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.verifyResetOtp),
+      mergeMap(({ email, otp }) =>
+        this.authService.verifyOTP({ email, otp }).pipe(
+          map((response) =>
+            AuthActions.verifyResetOtpSuccess({ message: response.message }),
+          ),
+          catchError((error) =>
+            of(
+              AuthActions.verifyResetOtpFailure({
+                error: error.error?.message || "OTP verification failed",
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  verifyPasswordResetOtp$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.verifyPasswordResetOtp),
+      mergeMap(({ otp }) =>
+        this.authService.verifyPasswordResetOtp(otp).pipe(
+          map((response) =>
+            AuthActions.verifyPasswordResetOtpSuccess({
+              message: response.message,
+            }),
+          ),
+          catchError((error) =>
+            of(
+              AuthActions.verifyPasswordResetOtpFailure({
+                error:
+                  error.error?.message ||
+                  "Password reset OTP verification failed",
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  resetPassword$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.resetPassword),
+      mergeMap(({ newPassword }) =>
+        this.authService.resetPassword(newPassword).pipe(
+          tap((response) => {
+            if (response.status === "Success") {
+              this.router.navigate(["/auth/login"]);
+            }
+          }),
+          map((response) =>
+            AuthActions.resetPasswordSuccess({ message: response.message }),
+          ),
+          catchError((error) =>
+            of(
+              AuthActions.resetPasswordFailure({
+                error: error.error?.message || "Failed to reset password",
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  requestNewOtp$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.requestNewOtp),
+      mergeMap(({ email }) =>
+        this.authService.requestNewOTP(email).pipe(
+          map((response) =>
+            AuthActions.requestNewOtpSuccess({ message: response.message }),
+          ),
+          catchError((error) =>
+            of(
+              AuthActions.requestNewOtpFailure({
+                error: error.error?.message || "Failed to request new OTP",
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  showRegistrationSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.loginSuccess),
-        tap(({ roles }) => {
-          if (roles && roles.length > 0) {
-            this.handleRoleNavigation(roles);
-          } else {
-            this.router.navigate(["/login"]);
-            throw new Error("Missing or invalid roles in login response");
-          }
+        ofType(AuthActions.registerUserSuccess),
+        tap(() => {
+          this.toastr.success("Registration successful!", "Success");
+          this.router.navigateByUrl("/auth/talent-verification");
         }),
       ),
     { dispatch: false },
   );
 
+  showSuccessToast$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(
+          AuthActions.forgotPasswordSuccess,
+          AuthActions.verifyResetOtpSuccess,
+          AuthActions.verifyPasswordResetOtpSuccess,
+          AuthActions.resetPasswordSuccess,
+          AuthActions.requestNewOtpSuccess,
+        ),
+        tap(({ message }) => {
+          this.toastr.success(message, "Success");
+        }),
+      ),
+    { dispatch: false },
+  );
+  showCompanyRegistrationSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(
+          AuthActions.forgotPasswordFailure,
+          AuthActions.verifyResetOtpFailure,
+          AuthActions.verifyPasswordResetOtpFailure,
+          AuthActions.resetPasswordFailure,
+          AuthActions.requestNewOtpFailure,
+        ),
+        tap(({ error }) => {
+          this.toastr.error(error, "Error");
+        }),
+      ),
+    { dispatch: false },
+  );
   private handleRoleNavigation(roles: string[]) {
     const roleRouteMap: Record<string, string> = {
       SYSTEM_ADMIN: "/admin-dashboard",
@@ -138,28 +266,5 @@ export class AuthEffects {
         ),
       ),
     ),
-  );
-
-  showRegistrationSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.registerUserSuccess),
-        tap(() => {
-          this.toastr.success("Registration successful!", "Success");
-          this.router.navigateByUrl("/auth/talent-verification");
-        }),
-      ),
-    { dispatch: false },
-  );
-  showCompanyRegistrationSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(AuthActions.registerCompanySuccess),
-        tap(() => {
-          this.toastr.success("Registration successful!", "Success");
-          this.router.navigateByUrl("/auth/company-verification");
-        }),
-      ),
-    { dispatch: false },
   );
 }

@@ -23,6 +23,13 @@ export class AuthService {
     );
   }
 
+  forgotPassword(email: string): Observable<ResponseInterface> {
+    return this.http.post<ResponseInterface>(
+      `${this.apiUrl}/auth/forget-password`,
+      { email },
+    );
+  }
+
   verifyOTP(otp: {
     email?: string;
     otp: string;
@@ -33,12 +40,24 @@ export class AuthService {
     );
   }
 
+  verifyPasswordResetOtp(otp: string): Observable<ResponseInterface> {
+    return this.http.post<ResponseInterface>(
+      `${this.apiUrl}/auth/verify-password-reset-otp`,
+      otp,
+    );
+  }
+
+  resetPassword(newPassword: string): Observable<ResponseInterface> {
+    return this.http.post<ResponseInterface>(
+      `${this.apiUrl}/auth/reset-password`,
+      newPassword,
+    );
+  }
+
   requestNewOTP(email: string): Observable<ResponseInterface> {
     return this.http.post<ResponseInterface>(
       `${this.apiUrl}/otp/generate-new`,
-      {
-        email,
-      },
+      { email },
     );
   }
 

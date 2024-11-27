@@ -106,8 +106,7 @@ $spacing-xlarge: 2.5rem;
     @warn "Invalid breakpoint: #{$size}. Check the $breakpoints map.";
   }
 }
-
-@mixin flex-column() {
+@mixin flex-column {
   display: flex;
   flex-direction: column;
 }

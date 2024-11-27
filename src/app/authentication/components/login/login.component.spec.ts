@@ -10,7 +10,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { MockStore, provideMockStore } from "@ngrx/store/testing";
 import { LoginComponent } from "./login.component";
 import * as AuthActions from "../../auth-store/auth.actions";
-
+import * as AuthSelectors from "../../auth-store/auth.selectors";
 import {
   Component,
   Input,
@@ -24,7 +24,6 @@ import { AuthResponse } from "../../models/auth-response.model";
 import { Router } from "@angular/router";
 import { GoogleAuthService } from "../../services/google-auth.service";
 import { of, throwError } from "rxjs";
-import { selectError } from "../../auth-store/auth.selectors";
 
 type FormValue = string;
 type ChangeHandler = (value: FormValue) => void;
@@ -151,7 +150,7 @@ describe("LoginComponent", () => {
         FormBuilder,
         provideHttpClient(),
         provideMockStore({
-          selectors: [{ selector: selectError, value: null }],
+          selectors: [{ selector: AuthSelectors.selectError, value: null }],
         }),
         {
           provide: ToastrService,
@@ -302,7 +301,7 @@ describe("LoginComponent", () => {
   describe("Error Handling", () => {
     it("should display error message from store", () => {
       const errorMessage = "Invalid credentials";
-      store.overrideSelector(selectError, errorMessage);
+      store.overrideSelector(AuthSelectors.selectError, errorMessage);
       store.refreshState();
       fixture.detectChanges();
 
@@ -317,7 +316,8 @@ describe("LoginComponent", () => {
 
   describe("Template Integration", () => {
     it("should render form elements", () => {
-      const compiled = fixture.nativeElement;
+      const compiled = fixture.debugElement.nativeElement;
+
       expect(compiled.querySelector("form")).toBeTruthy();
       expect(
         compiled.querySelector('app-input[formControlName="email"]'),
@@ -370,10 +370,8 @@ describe("LoginComponent", () => {
         .spyOn(googleAuthService, "postLogin")
         .mockReturnValue(of(mockAuthResponse));
 
-      // Act
       component.handleCredentialResponse(mockCredential);
 
-      // Assert
       expect(googleAuthService.postLogin).toHaveBeenCalledWith(
         mockCredential.credential,
         "john@example.com",
@@ -396,10 +394,8 @@ describe("LoginComponent", () => {
         .spyOn(googleAuthService, "postLogin")
         .mockReturnValue(of(adminResponse));
 
-      // Act
       component.handleCredentialResponse(mockCredential);
 
-      // Assert
       expect(navigateSpy).toHaveBeenCalledWith(["/admin-dashboard"]);
     });
 
@@ -410,10 +406,8 @@ describe("LoginComponent", () => {
         .spyOn(googleAuthService, "postLogin")
         .mockReturnValue(throwError(() => new Error(errorMessage)));
 
-      // Act
       component.handleCredentialResponse(mockCredential);
 
-      // Assert
       expect(postLoginSpy).toHaveBeenCalled();
       expect(mockToastrService.error).toHaveBeenCalledWith(
         "Failed to login",
@@ -425,10 +419,8 @@ describe("LoginComponent", () => {
       // Arrange
       const postLoginSpy = jest.spyOn(googleAuthService, "postLogin");
 
-      // Act
       component.handleCredentialResponse({ credential: "" });
 
-      // Assert
       expect(postLoginSpy).not.toHaveBeenCalled();
     });
   });
@@ -438,10 +430,8 @@ describe("LoginComponent", () => {
       // Arrange
       mockLocalStorage.getItem.mockReturnValue(mockJwtToken);
 
-      // Act
       component["setUserInfo"]();
 
-      // Assert
       expect(component.userName).toBe("John Doe");
       expect(mockLocalStorage.getItem).toHaveBeenCalledWith("token");
     });
@@ -450,7 +440,6 @@ describe("LoginComponent", () => {
       // Arrange
       mockLocalStorage.getItem.mockReturnValue(null);
 
-      // Act & Assert
       expect(() => {
         component["setUserInfo"]();
       }).toThrow();
@@ -462,7 +451,6 @@ describe("LoginComponent", () => {
       // Act
       const decoded = component["decodeJwtResponse"](mockJwtToken);
 
-      // Assert
       expect(decoded).toEqual({
         name: "John Doe",
         email: "john@example.com",
@@ -470,7 +458,6 @@ describe("LoginComponent", () => {
     });
 
     it("should throw error for invalid token", () => {
-      // Act & Assert
       expect(() => {
         component["decodeJwtResponse"]("invalid-token");
       }).toThrow();
@@ -481,10 +468,8 @@ describe("LoginComponent", () => {
       const tokenWithSpecialChars =
         "header.eyJuYW1lIjoiSm9obiBEb2UiLCJlbWFpbCI6ImpvaG4rMUBleGFtcGxlLmNvbSJ9.signature";
 
-      // Act
       const decoded = component["decodeJwtResponse"](tokenWithSpecialChars);
 
-      // Assert
       expect(decoded).toEqual({
         name: "John Doe",
         email: "john+1@example.com",

@@ -9,10 +9,7 @@ export const authReducer = createReducer(
     ...state,
     loading: true,
     error: null,
-    user: {
-      ...user,
-      password: "*********",
-    },
+    user,
   })),
 
   on(AuthActions.registerUserSuccess, (state) => ({
@@ -48,15 +45,123 @@ export const authReducer = createReducer(
     error,
   })),
 
+  on(AuthActions.login, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
   on(AuthActions.loginSuccess, (state) => ({
     ...state,
+    loading: false,
     error: null,
   })),
 
   on(AuthActions.loginFailure, (state, { error }) => ({
     ...state,
+    loading: false,
     error,
   })),
 
-  on(AuthActions.tokenCleared, () => initialState),
+  on(AuthActions.forgotPassword, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  on(AuthActions.forgotPasswordSuccess, (state, { message }) => ({
+    ...state,
+    loading: false,
+    error: null,
+    successMessage: message,
+  })),
+
+  on(AuthActions.forgotPasswordFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+
+  on(AuthActions.verifyResetOtp, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  on(AuthActions.verifyResetOtpSuccess, (state, { message }) => ({
+    ...state,
+    loading: false,
+    error: null,
+    successMessage: message,
+    otpVerified: true,
+  })),
+
+  on(AuthActions.verifyResetOtpFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+    otpVerified: false,
+  })),
+
+  on(AuthActions.verifyPasswordResetOtp, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  on(AuthActions.verifyPasswordResetOtpSuccess, (state, { message }) => ({
+    ...state,
+    loading: false,
+    error: null,
+    successMessage: message,
+    otpVerified: true,
+  })),
+
+  on(AuthActions.verifyPasswordResetOtpFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+    otpVerified: false,
+  })),
+
+  on(AuthActions.requestNewOtp, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
+  on(AuthActions.requestNewOtpSuccess, (state, { message }) => ({
+    ...state,
+    loading: false,
+    error: null,
+    successMessage: message,
+  })),
+
+  on(AuthActions.requestNewOtpFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+  })),
+
+  on(AuthActions.resetPassword, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+    passwordReset: false,
+  })),
+
+  on(AuthActions.resetPasswordSuccess, (state, { message }) => ({
+    ...state,
+    loading: false,
+    error: null,
+    successMessage: message,
+    passwordReset: true,
+  })),
+
+  on(AuthActions.resetPasswordFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error,
+    passwordReset: false,
+  })),
 );

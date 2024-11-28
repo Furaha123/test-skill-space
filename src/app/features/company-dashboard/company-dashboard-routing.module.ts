@@ -3,19 +3,29 @@ import { RouterModule, Routes } from "@angular/router";
 import { CompanyDashboardComponent } from "./company-dashboard.component";
 import { CompanyProfileComponent } from "./components/company-profile/company-profile.component";
 import { DashboardDetailsComponent } from "./components/dashboard-details/dashboard-details.component";
-
+import { CreateProgramComponent } from "../company-dash-board/components/create-program/create-program.component";
+import { CareerProgramsComponent } from "../company-dash-board/components/career-programs/career-programs.component";
+import { COMPANY_PATHS } from "./company.routes";
 const routes: Routes = [
   {
     path: "",
     component: CompanyDashboardComponent,
     children: [
       {
-        path: "dashboard",
+        path: COMPANY_PATHS.dashboard,
         component: DashboardDetailsComponent,
       },
       {
-        path: "settings",
+        path: COMPANY_PATHS.settings,
         component: CompanyProfileComponent,
+      },
+      {
+        path: COMPANY_PATHS.programs,
+        component: CareerProgramsComponent,
+      },
+      {
+        path: COMPANY_PATHS.edit_program,
+        component: CreateProgramComponent,
       },
     ],
   },

@@ -1,0 +1,158 @@
+<section class="wrapper">
+  <div class="top-nav-wrapper">
+    <div class="search-input-wrapper">
+      <h3>Career Program</h3>
+      <!--  Search field-->
+      <div>
+        <img src="assets/icon/icon-search-orange.svg" alt="search icon" />
+        <input
+          type="text"
+          name="keyword"
+          id="search-input"
+          placeholder="Search by: Job tittle, Position, Keyword..."
+        />
+      </div>
+    </div>
+    <div class="buttons-wrapper">
+      <button class="btn btn-filter">
+        <img src="assets/icon/icon-filter.svg" alt="filter icon" />
+        Filters
+      </button>
+      <button class="btn btn-add" (click)="onAddProgram()">
+        <img src="assets/icon/icon-plus-white.svg" alt="Add icon" />
+
+        Add a program
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs-->
+
+  <div class="tab-header">
+    <div
+      class="tab-item company-details"
+      [class.active]="selectedTabIndex === 0"
+      (click)="onTabChange(0)"
+    >
+      <h2>Published programs</h2>
+    </div>
+
+    <div
+      class="tab-item security"
+      [class.active]="selectedTabIndex === 1"
+      (click)="onTabChange(1)"
+    >
+      <h2>Saved drafts</h2>
+    </div>
+  </div>
+
+  <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="tab-content">
+    <mat-tab>
+      <div>
+        <h3>Here is a list of career programes you have published</h3>
+        <div class="card-wrapper">
+          <div>
+            <h4>Data Science Internship Program</h4>
+            <h5>Published: May 15, 2024 | Applications: 45 | Status: Active</h5>
+          </div>
+          <div class="buttons-wrapper">
+            <button>
+              <img src="assets/icon/icon-pen.svg" alt="pen icon" />
+              <span>Update</span>
+            </button>
+            <button>
+              <img src="assets/icon/icon-close-danger.svg" alt="close icon" />
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-wrapper">
+          <div>
+            <h4>Data Science Internship Program</h4>
+            <h5>Published: May 15, 2024 | Applications: 45 | Status: Active</h5>
+          </div>
+          <div class="buttons-wrapper">
+            <button>
+              <img src="assets/icon/icon-pen.svg" alt="pen icon" />
+              <span>Update</span>
+            </button>
+            <button>
+              <img src="assets/icon/icon-close-danger.svg" alt="close icon" />
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-wrapper">
+          <div>
+            <h4>Data Science Internship Program</h4>
+            <h5>Published: May 15, 2024 | Applications: 45 | Status: Active</h5>
+          </div>
+          <div class="buttons-wrapper">
+            <button>
+              <img src="assets/icon/icon-pen.svg" alt="pen icon" />
+              <span>Update</span>
+            </button>
+            <button>
+              <img src="assets/icon/icon-close-danger.svg" alt="close icon" />
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-wrapper">
+          <div>
+            <h4>Data Science Internship Program</h4>
+            <h5>Published: May 15, 2024 | Applications: 45 | Status: Active</h5>
+          </div>
+          <div class="buttons-wrapper">
+            <button>
+              <img src="assets/icon/icon-pen.svg" alt="pen icon" />
+              <span>Update</span>
+            </button>
+            <button>
+              <img src="assets/icon/icon-close-danger.svg" alt="close icon" />
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+        <div class="card-wrapper">
+          <div>
+            <h4>Data Science Internship Program</h4>
+            <h5>Published: May 15, 2024 | Applications: 45 | Status: Active</h5>
+          </div>
+          <div class="buttons-wrapper">
+            <button>
+              <img src="assets/icon/icon-pen.svg" alt="pen icon" />
+              <span>Update</span>
+            </button>
+            <button>
+              <img src="assets/icon/icon-close-danger.svg" alt="close icon" />
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab>
+      <div class="card-wrapper">
+        <div>
+          <h4>Data Science Internship Program</h4>
+          <h5>Published: May 15, 2024 | Applications: 45 | Status: Active</h5>
+        </div>
+        <div class="buttons-wrapper">
+          <button>
+            <img src="assets/icon/icon-pen.svg" alt="pen icon" />
+            <span>Update</span>
+          </button>
+          <button>
+            <img src="assets/icon/icon-copy.svg" alt="pen icon" />
+            <span>Duplicate</span>
+          </button>
+          <button>
+            <img src="assets/icon/icon-close-danger.svg" alt="close icon" />
+            <span>Delete</span>
+          </button>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</section>

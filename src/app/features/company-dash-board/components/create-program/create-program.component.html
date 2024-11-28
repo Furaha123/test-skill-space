@@ -1,0 +1,83 @@
+<div class="create-program-container">
+  @if (showError) {
+    <app-error-toast
+      [type]="'warning'"
+      [title]="'Error'"
+      [subText]="'An error occured, your programe wasn’t published '"
+    ></app-error-toast>
+  }
+
+  <form [formGroup]="programForm" (ngSubmit)="onSubmit()" class="program-form">
+    <app-input
+      formControlName="programName"
+      label="Programme name"
+      placeholder="Enter programme name"
+      id="program-name"
+      [errorMessage]="['Programme name is required']"
+    ></app-input>
+
+    <app-input
+      formControlName="programDescription"
+      label="Programme description"
+      placeholder="Description for program"
+      id="program-description"
+      type="textarea"
+      [errorMessage]="['Programme description is required']"
+    ></app-input>
+
+    <app-input
+      formControlName="programRequirements"
+      label="Programme requirements"
+      placeholder="List programme requirements"
+      id="program-requirements"
+      type="textarea"
+      [errorMessage]="['Programme requirements are required']"
+    ></app-input>
+
+    <app-input
+      formControlName="requiredBadges"
+      label="Required earned badges"
+      placeholder="Enter earned badges(comma-separated)"
+      id="required-badges"
+      [errorMessage]="['Required badges are required']"
+    ></app-input>
+
+    <app-input
+      formControlName="additionalBadges"
+      label="Additional earned badges(Optional)"
+      placeholder="Enter optional badges(comma-separated)"
+      id="additional-badges"
+    ></app-input>
+
+    <div class="date-inputs">
+      <app-input
+        formControlName="startDate"
+        label="Date of Commencement"
+        type="date"
+        placeholder="Select start date"
+        id="start-date"
+        [errorMessage]="['Start date is required']"
+      ></app-input>
+
+      <app-input
+        formControlName="endDate"
+        label="Date Completed"
+        type="date"
+        placeholder="Select end date"
+        id="end-date"
+        [errorMessage]="['End date is required']"
+      ></app-input>
+    </div>
+
+    <div class="button-group">
+      <app-button
+        [customClasses]="'btn secondary'"
+        [isActive]="true"
+        [isDisabled]="programForm.invalid"
+        >Publish programme</app-button
+      >
+
+      <app-button [customClasses]="'btn secondary'"> Save as draft</app-button>
+    </div>
+  </form>
+</div>

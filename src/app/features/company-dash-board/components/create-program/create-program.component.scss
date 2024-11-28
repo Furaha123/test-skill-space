@@ -1,0 +1,84 @@
+@import "../../../../../styles.scss";
+
+.create-program-container {
+  @include padding($spacing-large);
+
+  margin: 4px auto;
+}
+
+.error-message {
+  @include flex-center;
+  background-color: $error-95;
+  color: $error-40;
+  padding: $spacing-medium;
+  border-radius: 4px;
+  margin-bottom: $spacing-large;
+  gap: $spacing-small;
+
+  .error-icon {
+    @include flex-center;
+    width: 24px;
+    height: 24px;
+    background-color: $error-40;
+    color: $white;
+    border-radius: 50%;
+    font-weight: bold;
+  }
+}
+
+.program-form {
+  @include flex-column;
+  gap: $spacing-large;
+
+  .date-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-medium;
+
+    @include respond-to("sm") {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: $spacing-medium;
+    margin-top: $spacing-large;
+
+    @include respond-to("sm") {
+      flex-direction: column;
+    }
+
+    button {
+      @include padding($spacing-medium);
+      border-radius: 4px;
+      font-weight: $font-weight-medium;
+      min-width: 150px;
+      cursor: pointer;
+
+      @include respond-to("sm") {
+        width: 100%;
+      }
+    }
+
+    .publish-btn {
+      background-color: $primary-orange;
+      color: $white;
+      border: none;
+
+      &:hover {
+        background-color: darken($primary-orange, 5%);
+      }
+    }
+
+    .draft-btn {
+      background-color: $white;
+      color: $primary-orange;
+      border: 1px solid $primary-orange;
+
+      &:hover {
+        background-color: rgba($primary-orange, 0.05);
+      }
+    }
+  }
+}

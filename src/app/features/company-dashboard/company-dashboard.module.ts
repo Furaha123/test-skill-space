@@ -19,6 +19,10 @@ import { CompanyDashboardComponent } from "./company-dashboard.component";
 import { DashboardDetailsComponent } from "./components/dashboard-details/dashboard-details.component";
 import { CompanyJobPostingComponent } from "./components/company-job-posting/company-job-posting.component";
 
+import { MaterialModule } from "../../shared/material.module";
+import { CreateProgramComponent } from "../company-dash-board/components/create-program/create-program.component";
+import { CareerProgramsComponent } from "../company-dash-board/components/career-programs/career-programs.component";
+
 @NgModule({
   declarations: [
     CompanyProfileComponent,
@@ -27,6 +31,9 @@ import { CompanyJobPostingComponent } from "./components/company-job-posting/com
     CompanyDashboardComponent,
     DashboardDetailsComponent,
     CompanyJobPostingComponent,
+    CreateProgramComponent,
+
+    CareerProgramsComponent,
   ],
   imports: [
     CommonModule,
@@ -46,6 +53,7 @@ import { CompanyJobPostingComponent } from "./components/company-job-posting/com
       traceLimit: 75,
       connectInZone: true,
     }),
+    MaterialModule,
   ],
 })
 export class CompanyDashboardModule {}

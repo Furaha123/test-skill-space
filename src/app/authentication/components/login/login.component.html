@@ -59,4 +59,7 @@
     Don’t have an account?
     <a routerLink="/auth/register">Sign up instead</a>
   </div>
+
+  <!-- Loader logic -->
+  <app-loader *ngIf="isLoading$ | async" [isLoading]="true"></app-loader>
 </div>

@@ -26,6 +26,7 @@ const routes: Routes = [
   
   
   { path: AUTH_PATHS.login, component: LoginComponent },
+  { path: AUTH_PATHS.resetpassword, component: CreateNewPasswordComponent },
 ];
 
 @NgModule({

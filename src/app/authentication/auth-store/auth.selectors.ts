@@ -23,3 +23,23 @@ export const selectIsRegistered = createSelector(
   selectUserState,
   (state: AuthState) => state.isRegistered,
 );
+
+export const selectSuccessMessage = createSelector(
+  selectUserState,
+  (state: AuthState) => state.successMessage,
+);
+
+export const selectOtpVerified = createSelector(
+  selectUserState,
+  (state: AuthState) => state.otpVerified,
+);
+
+export const selectPasswordResetOtpVerified = createSelector(
+  selectUserState,
+  (state: AuthState) => state.passwordResetOtpVerified,
+);
+
+export const selectIsPasswordReset = createSelector(
+  selectUserState,
+  (state: AuthState) => state.passwordReset,
+);

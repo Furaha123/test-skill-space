@@ -43,4 +43,83 @@ export const loginFailure = createAction(
   props<{ error: string }>(),
 );
 
+export const forgotPassword = createAction(
+  "[Auth] Forgot Password",
+  props<{ email: string }>(),
+);
+
+export const forgotPasswordSuccess = createAction(
+  "[Auth] Forgot Password Success",
+  props<{ message: string }>(),
+);
+
+export const forgotPasswordFailure = createAction(
+  "[Auth] Forgot Password Failure",
+  props<{ error: string }>(),
+);
+
+export const verifyResetOtp = createAction(
+  "[Auth] Verify Reset OTP",
+  props<{ email: string; otp: string }>(),
+);
+
+export const verifyResetOtpSuccess = createAction(
+  "[Auth] Verify Reset OTP Success",
+  props<{ message: string }>(),
+);
+
+export const verifyResetOtpFailure = createAction(
+  "[Auth] Verify Reset OTP Failure",
+  props<{ error: string }>(),
+);
+
+export const verifyPasswordResetOtp = createAction(
+  "[Auth] Verify Password Reset OTP",
+  props<{ email: string; otp: string }>(),
+);
+
+export const verifyPasswordResetOtpSuccess = createAction(
+  "[Auth] Verify Password Reset OTP Success",
+  props<{ message: string }>(),
+);
+
+export const verifyPasswordResetOtpFailure = createAction(
+  "[Auth] Verify Password Reset OTP Failure",
+  props<{ error: string }>(),
+);
+
+export const requestNewOtp = createAction(
+  "[Auth] Request New OTP",
+  props<{ email: string }>(),
+);
+
+export const requestNewOtpSuccess = createAction(
+  "[Auth] Request New OTP Success",
+  props<{ message: string }>(),
+);
+
+export const requestNewOtpFailure = createAction(
+  "[Auth] Request New OTP Failure",
+  props<{ error: string }>(),
+);
+
+export const resetPassword = createAction(
+  "[Auth] Reset Password",
+  props<{
+    email: string;
+    newPassword: string;
+    confirmPassword: string;
+  }>(),
+);
+
+export const resetPasswordSuccess = createAction(
+  "[Auth] Reset Password Success",
+  props<{ message: string }>(),
+);
+
+export const resetPasswordFailure = createAction(
+  "[Auth] Reset Password Failure",
+  props<{ error: string }>(),
+);
+
 export const tokenCleared = createAction("[Auth] Token Cleared");

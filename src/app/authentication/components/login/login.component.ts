@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import * as AuthActions from "../../auth-store/auth.actions";
@@ -16,19 +16,26 @@ import { AppState } from "../../../shared/models/app.state.interface";
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   loginForm: FormGroup;
-  showError$: Observable<string | null> = of("");
+  
   currentForm = "talent";
   userName: string | null = null;
-
+  isLoading$: Observable<boolean> = this.store.select(
+    AuthSelectors.selectIsLoading,
+  );
+  showError$: Observable<string | null> = this.store.select(
+    AuthSelectors.selectError,
+  );
   constructor(
     private readonly fb: FormBuilder,
     private readonly googleAuthService: GoogleAuthService,
     private readonly router: Router,
     private readonly toastr: ToastrService,
     private readonly store: Store<AppState>,
-  ) {
+  
+
+   ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
       password: [
@@ -44,19 +51,16 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.showError$ = this.store.select(AuthSelectors.selectError);
-  }
+  
 
   isFieldInvalid(field: string): boolean {
     const control = this.loginForm.get(field);
     return !!control && control.invalid && (control.touched || control.dirty);
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-
       this.store.dispatch(AuthActions.login({ email, password }));
     } else {
       this.loginForm.markAllAsTouched();

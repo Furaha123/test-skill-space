@@ -1,0 +1,141 @@
+<div class="job-posting-card" [ngClass]="variant" (click)="closeDropdown()">
+  <!-- Company Variant -->
+  <ng-container *ngIf="variant === 'company'">
+    <div class="job-posting-card__header">
+      <h3 class="job-title">{{ jobPosting.title }}</h3>
+      <div class="dropdown-container" *ngIf="isEditable">
+        <button class="menu-button" (click)="toggleDropdown($event)">
+          <img src="assets/icon/threedots.svg" alt="Menu" />
+        </button>
+        <div class="dropdown-menu" *ngIf="showDropdown">
+          <button class="dropdown-item" (click)="onEditClick($event)">
+            <img src="assets/icon/edit.svg" alt="Edit" />
+            <span>Unpublish</span>
+          </button>
+          <button class="dropdown-item delete" (click)="onDeleteClick($event)">
+            <img src="assets/icon/delete.svg" alt="Delete" />
+            <span>Delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="job-info">
+      <div class="job-type" [ngClass]="getJobTypeClass(jobPosting.jobType)">
+        {{ jobPosting.jobType }}
+      </div>
+      <div class="salary" *ngIf="jobPosting.salary">
+        Salary: {{ jobPosting.salary.currency }}{{ jobPosting.salary.min }} -
+        {{ jobPosting.salary.currency }}{{ jobPosting.salary.max }}
+      </div>
+    </div>
+    <div class="company-info">
+      <img
+        src="assets/icon/employerslogo.svg"
+        [alt]="jobPosting.companyName"
+        class="company-logo"
+      />
+      <div class="company-details">
+        <div class="company-name">{{ jobPosting.companyName }}</div>
+        <div class="location">
+          <img src="assets/icon/location.svg" alt="Location" />
+          <span>{{ jobPosting.location }}</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Talent Variant -->
+  <ng-container *ngIf="variant === 'talent'">
+    <div class="job-posting-card__header">
+      <h3 class="job-title">{{ jobPosting.title }}</h3>
+    </div>
+    <div class="job-info">
+      <div class="job-type" [ngClass]="getJobTypeClass(jobPosting.jobType)">
+        {{ jobPosting.jobType }}
+      </div>
+      <div class="salary" *ngIf="jobPosting.salary">
+        Salary: {{ jobPosting.salary.currency }}{{ jobPosting.salary.min }} -
+        {{ jobPosting.salary.currency }}{{ jobPosting.salary.max }}
+      </div>
+    </div>
+    <div class="company-info">
+      <img
+        src="assets/icon/employerslogo.svg"
+        [alt]="jobPosting.companyName"
+        class="company-logo"
+      />
+      <div class="company-details">
+        <div class="company-name">{{ jobPosting.companyName }}</div>
+        <div class="location">
+          <img src="assets/icon/location.svg" alt="Location" />
+          <span>{{ jobPosting.location }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="apply-button" (click)="applyClicked.emit(jobPosting.id)">
+        Apply now
+      </button>
+      <button
+        class="bookmark-button"
+        (click)="bookmarkClicked.emit(jobPosting.id)"
+      >
+        <img src="assets/icon/bookmark.svg" alt="Bookmark" />
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- Program Variant -->
+  <ng-container *ngIf="variant === 'program' && jobPosting.programDetails">
+    <div class="program-header">
+      <img
+        src="assets/icon/employerslogo.svg"
+        [alt]="jobPosting.companyName"
+        class="company-logo"
+      />
+      <span *ngIf="jobPosting.programDetails.status" class="status">
+        {{ jobPosting.programDetails.status }}
+      </span>
+    </div>
+    <h2 class="program-title">{{ jobPosting.title }}</h2>
+    <ng-container
+      *ngIf="
+        jobPosting.programDetails.technologies &&
+        jobPosting.programDetails.technologies.length > 0
+      "
+    >
+      <div class="technologies">
+        <span
+          class="tech-badge"
+          *ngFor="let tech of jobPosting.programDetails.technologies"
+        >
+          {{ tech }}
+        </span>
+      </div>
+    </ng-container>
+    <ng-container
+      *ngIf="
+        jobPosting.programDetails.startDate && jobPosting.programDetails.endDate
+      "
+    >
+      <div class="program-date">
+        <img src="assets/icon/calendar.svg" alt="Calendar" />
+        <span
+          >{{ jobPosting.programDetails.startDate }} -
+          {{ jobPosting.programDetails.endDate }}</span
+        >
+      </div>
+    </ng-container>
+    <div class="actions">
+      <button class="apply-button" (click)="applyClicked.emit(jobPosting.id)">
+        Apply now
+      </button>
+      <button
+        class="bookmark-button"
+        (click)="bookmarkClicked.emit(jobPosting.id)"
+      >
+        <img src="assets/icon/bookmark.svg" alt="Bookmark" />
+      </button>
+    </div>
+  </ng-container>
+</div>

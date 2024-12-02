@@ -1,0 +1,90 @@
+<section class="section-wrapper">
+  <span class="back-btn" (click)="goBack()">
+    <mat-icon>keyboard_arrow_left</mat-icon>
+    Back
+  </span>
+
+  <div class="card-wrapper">
+    <div class="label-wrapper">
+      <div class="status-label">Available</div>
+    </div>
+
+    <div class="google">
+      <div class="google-btn">
+        <img src="assets/icon/icon-google.svg" alt="google logo" />
+        <span>Google</span>
+      </div>
+      <span>14 days ago</span>
+    </div>
+
+    <div class="internship-details">
+      <h2>Software Engineering Internship</h2>
+      <p class="description">
+        This 10-week learning program will focus on mastering both front-end and
+        back-end web development skills using modern technologies. Interns will
+        work on real-world projects, collaborate with teams, and learn Agile
+        methodologies.
+      </p>
+
+      <div class="program-section">
+        <h3>Program Overview</h3>
+        <p>Program Duration: January 10, 2024 - March 25, 2024 (10 weeks)</p>
+        <p class="deadline">
+          Application Deadline: 5 Days Left to Apply (January 5, 2024)
+        </p>
+        <div class="tags">
+          <span class="tag">JavaScript</span>
+          <span class="tag">React</span>
+        </div>
+      </div>
+
+      <div class="program-section">
+        <h3>Learning Outcomes</h3>
+        <ul>
+          <li>Master front-end technologies (HTML, CSS, JavaScript)</li>
+          <li>Build back-end services with Node.js and Express</li>
+          <li>Learn database design and management</li>
+          <li>Develop a fully functional full-stack application</li>
+        </ul>
+      </div>
+
+      <div class="program-section">
+        <h3>Learning Outcomes</h3>
+        <ul>
+          <li>Eligibility Criteria:</li>
+          <li>Minimum 1 year of experience in software development</li>
+          <li>Completion of at least 2 skill assessments</li>
+          <li>Your profile is 80% complete (Unable to apply)</li>
+        </ul>
+      </div>
+
+      <div class="program-section">
+        <h3>Profile Requirements</h3>
+        <ul>
+          <li>Ensure your profile is up-to-date with the following:</li>
+          <li>LinkedIn profile</li>
+          <li>Portfolio or Github link</li>
+        </ul>
+      </div>
+
+      <div class="program-section">
+        <h3>Application Process</h3>
+        <ul>
+          <li>Complete your profile (if needed)</li>
+          <li>Ensure you have earned the required badges</li>
+          <li>Submit your application via the "Apply Now" button below</li>
+          <li>Upload necessary documents (CV, cover letter, portfolio)</li>
+        </ul>
+      </div>
+
+      <div class="apply-btn">
+        <app-button
+          [customClasses]="'btn primary'"
+          [isActive]="true"
+          (handleClick)="onApply()"
+          >Apply now</app-button
+        >
+      </div>
+    </div>
+  </div>
+</section>

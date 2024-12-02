@@ -5,20 +5,31 @@ import { CompanyProfileComponent } from "./components/company-profile/company-pr
 import { DashboardDetailsComponent } from "./components/dashboard-details/dashboard-details.component";
 import { CompanyJobPostingComponent } from "./components/company-job-posting/company-job-posting.component";
 
+import { CreateProgramComponent } from "../company-dash-board/components/create-program/create-program.component";
+import { CareerProgramsComponent } from "../company-dash-board/components/career-programs/career-programs.component";
+import { COMPANY_PATHS } from "./company.routes";
 const routes: Routes = [
   {
     path: "",
     component: CompanyDashboardComponent,
     children: [
       {
-        path: "dashboard",
+        path: COMPANY_PATHS.dashboard,
         component: DashboardDetailsComponent,
       },
       {
-        path: "settings",
+        path: COMPANY_PATHS.settings,
         component: CompanyProfileComponent,
       },
       { path: "job-posting", component: CompanyJobPostingComponent },
+      {
+        path: COMPANY_PATHS.programs,
+        component: CareerProgramsComponent,
+      },
+      {
+        path: COMPANY_PATHS.edit_program,
+        component: CreateProgramComponent,
+      },
     ],
   },
 ];

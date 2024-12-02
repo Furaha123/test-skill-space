@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { CountryCodesComponent } from "./components/country-codes/country-codes.component";
 import { CalendarComponent } from "./components/calendar/calendar.component";
 import { AuthLayoutComponent } from "./auth-layout/auth-layout.component";
+import { JobPostingCardComponent } from "./components/job-posting-card/job-posting-card.component";
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { AuthLayoutComponent } from "./auth-layout/auth-layout.component";
     LoaderComponent,
     CalendarComponent,
     AuthLayoutComponent,
+    JobPostingCardComponent,
   ],
 
   imports: [CommonModule, MatProgressSpinnerModule],
@@ -37,6 +39,7 @@ import { AuthLayoutComponent } from "./auth-layout/auth-layout.component";
     CalendarComponent,
     AuthLayoutComponent,
     ErrorToastComponent,
+    JobPostingCardComponent,
   ],
 })
 export class SharedModule {}

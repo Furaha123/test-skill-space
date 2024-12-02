@@ -12,9 +12,14 @@ export class CompanyDashboardComponent {
       route: "company/dashboard",
     },
     {
-      label: "Programs",
+      label: "My Programs",
       icon: "assets/icon/program.svg",
       route: "/company/program",
+    },
+    {
+      label: "Jobs",
+      icon: "assets/icon/program.svg",
+      route: "/company/job-posting",
     },
     {
       label: "Applications",

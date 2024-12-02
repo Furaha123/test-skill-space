@@ -14,9 +14,10 @@ import { CompanySecurityComponent } from "./components/company-security/company-
 import { companyUserReducer } from "./store/company-profile.reducer";
 import { HttpClientModule } from "@angular/common/http";
 import { CompanyUserEffects } from "./store/company-profile.effects";
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CompanyDashboardComponent } from "./company-dashboard.component";
 import { DashboardDetailsComponent } from "./components/dashboard-details/dashboard-details.component";
+import { CompanyJobPostingComponent } from "./components/company-job-posting/company-job-posting.component";
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { DashboardDetailsComponent } from "./components/dashboard-details/dashbo
     CompanySecurityComponent,
     CompanyDashboardComponent,
     DashboardDetailsComponent,
+    CompanyJobPostingComponent,
   ],
   imports: [
     CommonModule,
@@ -32,6 +34,7 @@ import { DashboardDetailsComponent } from "./components/dashboard-details/dashbo
     HttpClientModule,
     ProfilesRoutingModule,
     SharedModule,
+    FormsModule,
     MatTabsModule,
     StoreModule.forFeature("companyUser", companyUserReducer),
     EffectsModule.forFeature([CompanyUserEffects]),

@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngrx/store";
 import * as AuthActions from "../../auth-store/auth.actions";
-import { Observable, of, take } from "rxjs";
+import { Observable, take } from "rxjs";
 import { GoogleAuthService } from "../../services/google-auth.service";
 import { Router } from "@angular/router";
 import { ToastrService } from "ngx-toastr";
@@ -18,7 +18,7 @@ import { AppState } from "../../../shared/models/app.state.interface";
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  
+
   currentForm = "talent";
   userName: string | null = null;
   isLoading$: Observable<boolean> = this.store.select(
@@ -33,9 +33,7 @@ export class LoginComponent {
     private readonly router: Router,
     private readonly toastr: ToastrService,
     private readonly store: Store<AppState>,
-  
-
-   ) {
+  ) {
     this.loginForm = this.fb.group({
       email: ["", [Validators.required, Validators.email]],
       password: [
@@ -50,8 +48,6 @@ export class LoginComponent {
       ],
     });
   }
-
-  
 
   isFieldInvalid(field: string): boolean {
     const control = this.loginForm.get(field);

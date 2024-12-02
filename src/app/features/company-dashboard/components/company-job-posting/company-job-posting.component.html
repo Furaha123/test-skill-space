@@ -1,0 +1,42 @@
+<div class="company-job-posting">
+  <div class="header">
+    <div class="header-left">
+      <h2 class="title">Job Posting</h2>
+      <div class="search-box">
+        <img src="assets/icon/search.svg" alt="Search" />
+        <input
+          type="text"
+          placeholder="Search by: Job title, Position, Keyword..."
+          [value]="searchQuery"
+          (input)="onSearch($event)"
+        />
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="filter-button">
+        <img src="assets/icon/filter.svg" alt="Filter" />
+        <span>Filters</span>
+      </button>
+      <button class="add-job-button" (click)="onAddJob()">
+        <img src="assets/icon/add1.svg" alt="Add" />
+        <span>Add Job</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="job-grid">
+    <app-job-posting-card
+      *ngFor="let job of filteredJobs"
+      [jobPosting]="job"
+      variant="company"
+      [isEditable]="true"
+      (editClicked)="onEditJob($event)"
+      (deleteClicked)="onDeleteJob($event)"
+    >
+    </app-job-posting-card>
+  </div>
+
+  <div *ngIf="filteredJobs.length === 0" class="no-results">
+    No jobs found matching your search criteria.
+  </div>
+</div>

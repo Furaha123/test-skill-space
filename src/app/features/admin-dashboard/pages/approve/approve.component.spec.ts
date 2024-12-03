@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ActivatedRoute, Router } from "@angular/router";
 import { MockStore, provideMockStore } from "@ngrx/store/testing";
 import { ApproveComponent } from "./approve.component";
-import { AdminActions } from "../../store/admin.actions";
 import {
   selectCompanyById,
   selectIsLoading,
@@ -84,26 +83,6 @@ describe("ApproveComponent", () => {
       "admin-dashboard",
       "company-approval",
     ]);
-  });
-
-  it("should dispatch approve action and navigate when approveCompany is called", () => {
-    const dispatchSpy = jest.spyOn(store, "dispatch");
-
-    component.approveCompany();
-
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      AdminActions.approveCompany({ companyId: "123" }),
-    );
-  });
-
-  it("should dispatch reject action and navigate when rejectCompany is called", () => {
-    const dispatchSpy = jest.spyOn(store, "dispatch");
-
-    component.rejectCompany();
-
-    expect(dispatchSpy).toHaveBeenCalledWith(
-      AdminActions.rejectCompany({ companyId: "123" }),
-    );
   });
 
   it("should handle loading state", (done) => {

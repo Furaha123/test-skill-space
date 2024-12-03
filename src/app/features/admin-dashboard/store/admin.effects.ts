@@ -10,39 +10,21 @@ export class AdminEffects {
   loadCompanies$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AdminActions.loadCompanies),
-      mergeMap(() =>
-        this.adminService.getCompanies().pipe(
-          map((companies) => AdminActions.loadCompaniesSuccess({ companies })),
+      mergeMap(({ page, size }) =>
+        this.adminService.getInitialCompanies(page, size).pipe(
+          map((response) =>
+            AdminActions.loadCompaniesSuccess({
+              companies: response.data,
+              currentPage: response.currentPage,
+              totalPages: response.totalPages,
+              totalItems: response.totalItems,
+              pageSize: response.pageSize,
+              hasNext: response.hasNext,
+              hasPrevious: response.hasPrevious,
+            }),
+          ),
           catchError((error) =>
             of(AdminActions.loadCompaniesFailure({ error: error.message })),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  approveCompany$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AdminActions.approveCompany),
-      mergeMap(({ companyId }) =>
-        this.adminService.approveCompany(companyId).pipe(
-          map((company) => AdminActions.approveCompanySuccess({ company })),
-          catchError((error) =>
-            of(AdminActions.approveCompanyFailure({ error: error.message })),
-          ),
-        ),
-      ),
-    ),
-  );
-
-  rejectCompany$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(AdminActions.rejectCompany),
-      mergeMap(({ companyId }) =>
-        this.adminService.rejectCompany(companyId).pipe(
-          map((company) => AdminActions.rejectCompanySuccess({ company })),
-          catchError((error) =>
-            of(AdminActions.rejectCompanyFailure({ error: error.message })),
           ),
         ),
       ),

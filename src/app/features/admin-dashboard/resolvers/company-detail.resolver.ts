@@ -3,7 +3,6 @@ import { Resolve, ActivatedRouteSnapshot } from "@angular/router";
 import { Store } from "@ngrx/store";
 import { Observable, filter, first, tap } from "rxjs";
 import { Company } from "../models/company.model";
-import { AdminActions } from "../store/admin.actions";
 import { selectCompanyById } from "../store/admin.selectors";
 
 @Injectable({ providedIn: "root" })
@@ -13,7 +12,7 @@ export class CompanyDetailResolver implements Resolve<Company | undefined> {
   resolve(route: ActivatedRouteSnapshot): Observable<Company | undefined> {
     const companyId = route.paramMap.get("id")!;
 
-    this.store.dispatch(AdminActions.loadCompany({ companyId }));
+    // this.store.dispatch(AdminActions.loadCompany({ companyId }));
 
     return this.store.select(selectCompanyById(companyId)).pipe(
       filter((company) => !!company),

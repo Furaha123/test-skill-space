@@ -1,9 +1,21 @@
+<!-- company-approval.component.html -->
 <div class="approval-content">
   <ng-container *ngIf="isLoading$ | async">
-    <div>Loading...</div>
+    <div class="approval-content__loading">
+      <div>Loading companies...</div>
+    </div>
   </ng-container>
 
-  <ng-container *ngIf="companies$ | async as companies">
+  <ng-container *ngIf="error$ | async as error">
+    <div class="approval-content__error">
+      <div>
+        <p>Error loading companies: {{ error }}</p>
+        <p>Please try again or contact support if the problem persists.</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="paginatedCompanies$ | async as companies">
     <div class="approval-content__card" *ngFor="let company of companies">
       <div class="approval-content__labels">
         <div class="approval-content__label1">{{ company.name }}</div>
@@ -16,4 +28,16 @@
       </button>
     </div>
   </ng-container>
+  <div class="approval-content__pagination">
+    <ng-container *ngIf="paginatedCompanies$ | async as companies">
+      <app-pagination
+        *ngIf="companies.length > 0"
+        [totalItems]="(totalItems$ | async) ?? 0"
+        [itemsPerPage]="(pageSize$ | async) ?? 0"
+        (pageChange)="onPageChange($event)"
+        [currentPage]="(currentPage$ | async) ?? 1"
+      >
+      </app-pagination>
+    </ng-container>
+  </div>
 </div>

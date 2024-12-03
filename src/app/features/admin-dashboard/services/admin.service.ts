@@ -1,22 +1,44 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable, map } from "rxjs";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Observable, map, take } from "rxjs";
+import { PaginatedCompanyResponse } from "../../../shared/models/pagination-api-response.model";
+import { environment } from "../../../../environments/environment.development";
 import { Company } from "../models/company.model";
+import { selectCompanies } from "../store/admin.selectors";
+import { Store } from "@ngrx/store";
 
 @Injectable({
   providedIn: "root",
 })
 export class AdminService {
-  constructor(private readonly http: HttpClient) {}
+  private apiUrl = environment.getPaginatedCompanies;
 
-  getCompanies(): Observable<Company[]> {
-    return this.http
-      .get<{ companies: Company[] }>("assets/mock-data/company-data.json")
-      .pipe(map((response) => response.companies));
+  constructor(
+    private readonly http: HttpClient,
+    private readonly store: Store,
+  ) {}
+
+  getInitialCompanies(
+    page = 0,
+    size = 10,
+  ): Observable<PaginatedCompanyResponse> {
+    // Remove the existing query parameters and add new ones
+    const baseUrl = this.apiUrl.split("?")[0];
+    const url = `${baseUrl}?page=${page}&size=${size}`;
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${environment.token}`,
+      "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
+    });
+
+    return this.http.get<PaginatedCompanyResponse>(url, { headers });
   }
 
+  // Update other methods to handle multiple data sources
   getCompanyById(id: string): Observable<Company | undefined> {
-    return this.getCompanies().pipe(
+    return this.store.select(selectCompanies).pipe(
+      take(1),
       map((companies) => companies.find((company) => company.id === id)),
     );
   }

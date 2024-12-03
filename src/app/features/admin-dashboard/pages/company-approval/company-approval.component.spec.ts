@@ -1,11 +1,18 @@
-// company-approval.component.spec.ts
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { MockStore, provideMockStore } from "@ngrx/store/testing";
 import { CompanyApprovalComponent } from "./company-approval.component";
 import { AdminActions } from "../../store/admin.actions";
-import { selectCompanies, selectIsLoading } from "../../store/admin.selectors";
-import { Company } from "../../models/company.model";
+import {
+  selectCompanies,
+  selectIsLoading,
+  selectPageSize,
+  selectTotalItems,
+  selectError,
+  selectCurrentPage,
+  selectPagination,
+} from "../../store/admin.selectors";
+import { selectSearchTerm } from "../../../../shared/store/app.selectors";
 
 describe("CompanyApprovalComponent", () => {
   let component: CompanyApprovalComponent;
@@ -13,28 +20,37 @@ describe("CompanyApprovalComponent", () => {
   let store: MockStore;
   let router: jest.Mocked<Router>;
 
-  const mockCompanies: Company[] = [
-    {
-      id: "1",
-      name: "Company 1",
-      registrationDate: "2024-10-01",
-      status: "pending",
-      web: "www.company1.com",
-      email: "company1@test.com",
-      phone: "123-456-7890",
-      certificateUrl: "cert1.jpg",
+  const initialState = {
+    admin: {
+      companies: [],
+      isLoading: false,
+      error: null,
+      selectedCompanyId: null,
+      pageSize: 10,
+      totalItems: 0,
+      currentPage: 1,
+      pagination: {
+        currentPage: 1,
+        totalPages: 1,
+        totalItems: 0,
+        pageSize: 10,
+        hasNext: false,
+        hasPrevious: false,
+      },
     },
-    {
-      id: "2",
-      name: "Company 2",
-      registrationDate: "2024-10-02",
-      status: "pending",
-      web: "www.company2.com",
-      email: "company2@test.com",
-      phone: "123-456-7891",
-      certificateUrl: "cert2.jpg",
+    app: {
+      searchTerm: "",
     },
-  ];
+  };
+
+  const mockPaginationResponse = {
+    currentPage: 1,
+    totalPages: 5,
+    totalItems: 50,
+    pageSize: 10,
+    hasNext: true,
+    hasPrevious: false,
+  };
 
   beforeEach(async () => {
     const routerMock = {
@@ -44,16 +60,7 @@ describe("CompanyApprovalComponent", () => {
     await TestBed.configureTestingModule({
       declarations: [CompanyApprovalComponent],
       providers: [
-        provideMockStore({
-          initialState: {
-            admin: {
-              companies: [],
-              isLoading: false,
-              error: null,
-              selectedCompanyId: null,
-            },
-          },
-        }),
+        provideMockStore({ initialState }),
         { provide: Router, useValue: routerMock },
       ],
     }).compileComponents();
@@ -62,10 +69,15 @@ describe("CompanyApprovalComponent", () => {
     router = TestBed.inject(Router) as jest.Mocked<Router>;
 
     // Set up selector mocks
-    store.overrideSelector(selectCompanies, mockCompanies);
+    store.overrideSelector(selectCompanies, []);
     store.overrideSelector(selectIsLoading, false);
+    store.overrideSelector(selectPageSize, 10);
+    store.overrideSelector(selectTotalItems, 0);
+    store.overrideSelector(selectSearchTerm, "");
+    store.overrideSelector(selectError, null);
+    store.overrideSelector(selectCurrentPage, 1);
+    store.overrideSelector(selectPagination, mockPaginationResponse);
 
-    // Spy on store dispatch
     jest.spyOn(store, "dispatch");
   });
 
@@ -83,120 +95,101 @@ describe("CompanyApprovalComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should dispatch loadCompanies action on init", () => {
-    expect(store.dispatch).toHaveBeenCalledWith(AdminActions.loadCompanies());
-  });
-
-  it("should get companies from store", (done) => {
-    component.companies$.subscribe((companies) => {
-      expect(companies).toEqual(mockCompanies);
-      expect(companies.length).toBe(2);
-      done();
-    });
-  });
-
-  it("should get loading state from store", (done) => {
-    component.isLoading$.subscribe((isLoading) => {
-      expect(isLoading).toBeFalsy();
-      done();
-    });
-  });
-
-  it("should handle loading state changes", (done) => {
-    store.overrideSelector(selectIsLoading, true);
-    store.refreshState();
-
-    component.isLoading$.subscribe((isLoading) => {
-      expect(isLoading).toBeTruthy();
-      done();
+  describe("store selectors", () => {
+    it("should initialize all store selectors", () => {
+      component.isLoading$.subscribe((value) => expect(value).toBeFalsy());
+      component.paginatedCompanies$.subscribe((value) =>
+        expect(value).toEqual([]),
+      );
+      component.pageSize$.subscribe((value) => expect(value).toBe(10));
+      component.totalItems$.subscribe((value) => expect(value).toBe(0));
+      component.searchTerm$.subscribe((value) => expect(value).toBe(""));
+      component.error$.subscribe((value) => expect(value).toBeNull());
+      component.currentPage$.subscribe((value) => expect(value).toBe(1));
     });
   });
 
   describe("routeTo", () => {
-    it("should navigate to company approval page and dispatch select action", () => {
-      const companyId = "1";
+    it("should navigate to the correct route with company ID", () => {
+      const testId = "test-id";
 
-      component.routeTo(companyId);
+      component.routeTo(testId);
 
-      expect(store.dispatch).toHaveBeenCalledWith(
-        AdminActions.selectCompany({ companyId }),
-      );
       expect(router.navigate).toHaveBeenCalledWith([
         "admin-dashboard",
         "company-approval",
         "approve",
-        companyId,
+        testId,
       ]);
     });
   });
 
-  describe("selectCompany", () => {
-    it("should dispatch selectCompany action", () => {
-      const companyId = "1";
+  describe("onPageChange", () => {
+    it("should dispatch loadCompanies action with correct page and size", () => {
+      const testPage = 2;
+      const mockPaginationData = {
+        currentPage: 1,
+        totalPages: 5,
+        totalItems: 50,
+        pageSize: 10,
+        hasNext: true,
+        hasPrevious: false,
+      };
 
-      component.selectCompany(companyId);
+      store.overrideSelector(selectPagination, mockPaginationData);
+
+      component.onPageChange(testPage);
 
       expect(store.dispatch).toHaveBeenCalledWith(
-        AdminActions.selectCompany({ companyId }),
+        AdminActions.loadCompanies({
+          page: testPage,
+          size: mockPaginationData.pageSize,
+        }),
       );
     });
-  });
 
-  // Test error scenarios
-  describe("error handling", () => {
-    it("should handle empty companies array", (done) => {
-      store.overrideSelector(selectCompanies, []);
-      store.refreshState();
+    it("should handle pagination state changes", () => {
+      const testPage = 2;
+      const updatedPagination = {
+        currentPage: 2,
+        totalPages: 5,
+        totalItems: 50,
+        pageSize: 10,
+        hasNext: true,
+        hasPrevious: true,
+      };
 
-      component.companies$.subscribe((companies) => {
-        expect(companies).toEqual([]);
-        expect(companies.length).toBe(0);
+      store.overrideSelector(selectPagination, updatedPagination);
+
+      component.onPageChange(testPage);
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        AdminActions.loadCompanies({
+          page: testPage,
+          size: updatedPagination.pageSize,
+        }),
+      );
+    });
+
+    it("should take only first emission from pagination selector", (done) => {
+      const testPage = 2;
+      let dispatchCount = 0;
+
+      store.overrideSelector(selectPagination, mockPaginationResponse);
+
+      jest.spyOn(store, "dispatch").mockImplementation(() => {
+        dispatchCount++;
+        if (dispatchCount > 1) {
+          fail("Should not dispatch more than once");
+        }
+      });
+
+      component.onPageChange(testPage);
+
+      setTimeout(() => {
+        expect(dispatchCount).toBe(1);
         done();
       });
-    });
-  });
-
-  // Test state changes
-  describe("state changes", () => {
-    it("should update when companies change", (done) => {
-      const updatedCompanies = [
-        ...mockCompanies,
-        {
-          id: "3",
-          name: "Company 3",
-          registrationDate: "2024-10-03",
-          status: "pending",
-          web: "www.company3.com",
-          email: "company3@test.com",
-          phone: "123-456-7892",
-          certificateUrl: "cert3.jpg",
-        },
-      ];
-
-      store.overrideSelector(selectCompanies, updatedCompanies);
-      store.refreshState();
-
-      component.companies$.subscribe((companies) => {
-        expect(companies).toEqual(updatedCompanies);
-        expect(companies.length).toBe(3);
-        done();
-      });
-    });
-  });
-
-  // Test multiple actions
-  describe("multiple actions", () => {
-    it("should handle multiple company selections", () => {
-      component.selectCompany("1");
-      component.selectCompany("2");
-
-      expect(store.dispatch).toHaveBeenCalledTimes(3); // Including initial loadCompanies
-      expect(store.dispatch).toHaveBeenCalledWith(
-        AdminActions.selectCompany({ companyId: "1" }),
-      );
-      expect(store.dispatch).toHaveBeenCalledWith(
-        AdminActions.selectCompany({ companyId: "2" }),
-      );
     });
   });
 });

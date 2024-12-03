@@ -17,6 +17,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from "@angular/common/http";
 import { AuthInterceptor } from "./core/interceptor/auth-interceptor.interceptor";
 
 import { AuthEffects } from "./authentication/auth-store/auth.effects";
+import { appReducer } from "./shared/store/app.reducer";
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,7 +27,10 @@ import { AuthEffects } from "./authentication/auth-store/auth.effects";
 
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({ auth: authReducer }),
+    StoreModule.forRoot({
+      auth: authReducer,
+      app: appReducer,
+    }),
     EffectsModule.forRoot([AuthEffects]),
 
     StoreDevtoolsModule.instrument({

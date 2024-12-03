@@ -7,7 +7,6 @@ import {
   selectCompanyById,
   selectIsLoading,
 } from "../../store/admin.selectors";
-import { AdminActions } from "../../store/admin.actions";
 
 @Component({
   selector: "app-approve",
@@ -36,14 +35,14 @@ export class ApproveComponent implements OnInit {
   }
 
   approveCompany() {
-    this.store.dispatch(
-      AdminActions.approveCompany({ companyId: this.companyId }),
-    );
+    // this.store.dispatch(
+    //   AdminActions.approveCompany({ companyId: this.companyId }),
+    // );
   }
 
   rejectCompany() {
-    this.store.dispatch(
-      AdminActions.rejectCompany({ companyId: this.companyId }),
-    );
+    // this.store.dispatch(
+    //   AdminActions.rejectCompany({ companyId: this.companyId }),
+    // );
   }
 }

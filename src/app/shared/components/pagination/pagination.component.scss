@@ -1,0 +1,101 @@
+@import "../../../../styles.scss";
+
+.pagination-data {
+  @include flex-center-row-between;
+  width: 100%;
+  &__texts {
+    font-weight: 400;
+    color: $nav-text-color;
+  }
+  &__pag-arrow-left {
+    @include flex-center-row;
+    mask-image: url("../../../../assets/icon/arrow-left.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: white;
+    width: 15px;
+    height: 9px;
+    margin-right: 0.25rem;
+    display: inline-block;
+  }
+  &__pag-arrow-right {
+    @include flex-center-row;
+    mask-image: url("../../../../assets/icon/arrow-left.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: white;
+    width: 15px;
+    height: 9px;
+    margin-right: 0.25rem;
+    display: inline-block;
+    transform: rotate(180deg);
+  }
+  &__buttons {
+    @include flex-center-row;
+    gap: 0.5rem;
+  }
+
+  &__right-side {
+    width: 80%;
+    @include flex-center;
+    padding-right: 100px;
+  }
+
+  &__icon-left {
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    background-color: $card-text;
+    cursor: pointer;
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  &__icon-right {
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    border-radius: 100%;
+    background-color: $card-text;
+    padding-left: 5px;
+    cursor: pointer;
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+  &__numbers {
+    @include flex-center-row;
+    gap: 2px;
+    background-color: $primary-95;
+    border: 2px solid $tertiary-90;
+    border-radius: 5.5px;
+
+    button {
+      width: 36px;
+      height: 36px;
+      background-color: white;
+      color: $card-text;
+      font-weight: 400;
+
+      &.current {
+        background-color: $card-text;
+        color: white;
+      }
+
+      &.dots {
+        cursor: default;
+      }
+
+      &:first-child {
+        width: 25px;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+    }
+  }
+}

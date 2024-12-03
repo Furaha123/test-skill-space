@@ -5,17 +5,40 @@ import { AdminActions } from "./admin.actions";
 export const adminReducer = createReducer(
   initialAdminState,
   // Load Companies
+  // Load Companies
   on(AdminActions.loadCompanies, (state) => ({
     ...state,
     isLoading: true,
     error: null,
   })),
-  on(AdminActions.loadCompaniesSuccess, (state, { companies }) => ({
-    ...state,
-    companies,
-    isLoading: false,
-    error: null,
-  })),
+  on(
+    AdminActions.loadCompaniesSuccess,
+    (
+      state,
+      {
+        companies,
+        currentPage,
+        totalPages,
+        totalItems,
+        pageSize,
+        hasNext,
+        hasPrevious,
+      },
+    ) => ({
+      ...state,
+      companies,
+      isLoading: false,
+      error: null,
+      pagination: {
+        currentPage,
+        totalPages,
+        totalItems,
+        pageSize,
+        hasNext,
+        hasPrevious,
+      },
+    }),
+  ),
   on(AdminActions.loadCompaniesFailure, (state, { error }) => ({
     ...state,
     companies: [],
@@ -31,19 +54,5 @@ export const adminReducer = createReducer(
   on(AdminActions.clearSelectedCompany, (state) => ({
     ...state,
     selectedCompanyId: null,
-  })),
-
-  // Update Company Status
-  on(AdminActions.approveCompanySuccess, (state, { company }) => ({
-    ...state,
-    companies: state.companies.map((c) =>
-      c.id === company.id ? { ...c, status: "approved" } : c,
-    ),
-  })),
-  on(AdminActions.rejectCompanySuccess, (state, { company }) => ({
-    ...state,
-    companies: state.companies.map((c) =>
-      c.id === company.id ? { ...c, status: "rejected" } : c,
-    ),
   })),
 );

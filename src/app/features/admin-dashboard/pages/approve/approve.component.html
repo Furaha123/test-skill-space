@@ -19,7 +19,7 @@
             </div>
             <div class="approve-container__company-detail">
               <div class="web-icon"></div>
-              <div class="approve-container__web">{{ company.web }}</div>
+              <div class="approve-container__web">{{ company.websiteUrl }}</div>
             </div>
             <div class="approve-container__company-detail">
               <div class="mail-icon"></div>
@@ -27,12 +27,18 @@
             </div>
             <div class="approve-container__company-detail">
               <div class="phone-icon"></div>
-              <div class="approve-container__phone">{{ company.phone }}</div>
+              <div class="approve-container__phone">
+                {{ company.phoneNumber }}
+              </div>
             </div>
           </div>
         </div>
         <div class="approve-container__company-icon-wrapper">
-          <img src="assets/images/company-icon.png" alt="company-icon" />
+          <img
+            *ngIf="company.logoUrl"
+            [src]="company.logoUrl"
+            alt="company-icon"
+          />
         </div>
       </div>
 
@@ -42,8 +48,9 @@
         </div>
         <div>
           <img
+            *ngIf="company.certificates"
             class="approve-container__comany-certificate-image"
-            [src]="company.certificateUrl"
+            [src]="company.certificates[0]"
             alt="company-certificate"
           />
         </div>
@@ -65,8 +72,8 @@
       </div>
     </ng-container>
 
-    <div *ngIf="isLoading$ | async" class="loading">
-      Loading company details...
-    </div>
+    <ng-container *ngIf="isLoading$ | async">
+      <app-loader [isLoading]="true"></app-loader>
+    </ng-container>
   </div>
 </div>

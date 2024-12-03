@@ -18,10 +18,11 @@ describe("ApproveComponent", () => {
     name: "Test Company",
     registrationDate: "2024-10-01",
     status: "pending",
-    web: "www.test.com",
+    websiteUrl: "www.test.com",
     email: "test@test.com",
-    phone: "123-456-7890",
-    certificateUrl: "test.jpg",
+    phoneNumber: "123-456-7890",
+    certificates: ["test.jpg"],
+    logoUrl: "logo.jpg",
   };
 
   beforeEach(async () => {

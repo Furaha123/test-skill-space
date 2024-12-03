@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { MockStore, provideMockStore } from "@ngrx/store/testing";
 import { CompanyApprovalComponent } from "./company-approval.component";
-import { AdminActions } from "../../store/admin.actions";
+import { AdminActions, AppActions } from "../../store/admin.actions";
 import {
   selectCompanies,
   selectIsLoading,
@@ -11,6 +11,7 @@ import {
   selectError,
   selectCurrentPage,
   selectPagination,
+  selectIsSearching,
 } from "../../store/admin.selectors";
 import { selectSearchTerm } from "../../../../shared/store/app.selectors";
 
@@ -190,6 +191,123 @@ describe("CompanyApprovalComponent", () => {
         expect(dispatchCount).toBe(1);
         done();
       });
+    });
+  });
+
+  describe("onSearchChange", () => {
+    it("should dispatch setSearchTerm action", () => {
+      const searchTerm = "test";
+
+      component.onSearchChange(searchTerm);
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        AppActions.setSearchTerm({ searchTerm }),
+      );
+    });
+
+    it("should dispatch clearSearch and loadCompanies when search term is empty", () => {
+      const searchTerm = "";
+      store.overrideSelector(selectIsSearching, false);
+      store.overrideSelector(selectSearchTerm, "");
+      store.overrideSelector(selectPagination, mockPaginationResponse);
+
+      component.onSearchChange(searchTerm);
+
+      expect(store.dispatch).toHaveBeenCalledWith(AdminActions.clearSearch());
+      expect(store.dispatch).toHaveBeenCalledWith(
+        AdminActions.loadCompanies({
+          page: 0,
+          size: 5,
+        }),
+      );
+    });
+
+    it("should dispatch searchCompanies when searching with term", () => {
+      const searchTerm = "test company";
+      const page = 0;
+      store.overrideSelector(selectIsSearching, true);
+      store.overrideSelector(selectSearchTerm, searchTerm);
+      store.overrideSelector(selectPagination, mockPaginationResponse);
+
+      component.onSearchChange(searchTerm, page);
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        AdminActions.searchCompanies({
+          searchTerm,
+          page,
+          size: mockPaginationResponse.pageSize,
+        }),
+      );
+    });
+
+    it("should take only first emission from combined selectors", (done) => {
+      const searchTerm = "test";
+      let dispatchCount = 0;
+
+      store.overrideSelector(selectIsSearching, true);
+      store.overrideSelector(selectSearchTerm, searchTerm);
+      store.overrideSelector(selectPagination, mockPaginationResponse);
+
+      jest.spyOn(store, "dispatch").mockImplementation(() => {
+        dispatchCount++;
+        if (dispatchCount > 2) {
+          // One for setSearchTerm and one for searchCompanies
+          fail("Should not dispatch more than twice");
+        }
+      });
+
+      component.onSearchChange(searchTerm);
+
+      setTimeout(() => {
+        expect(dispatchCount).toBe(2);
+        done();
+      });
+    });
+  });
+
+  // Additional test for onPageChange with search condition
+  describe("onPageChange with search", () => {
+    it("should dispatch searchCompanies when searching with term", () => {
+      const testPage = 2;
+      const searchTerm = "test";
+
+      store.overrideSelector(selectIsSearching, true);
+      store.overrideSelector(selectSearchTerm, searchTerm);
+      store.overrideSelector(selectPagination, mockPaginationResponse);
+
+      component.onPageChange(testPage);
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        AdminActions.searchCompanies({
+          searchTerm,
+          page: testPage,
+          size: mockPaginationResponse.pageSize,
+        }),
+      );
+    });
+
+    it("should handle pagination with search state changes", () => {
+      const testPage = 2;
+      const searchTerm = "test";
+      const updatedPagination = {
+        ...mockPaginationResponse,
+        currentPage: 2,
+        hasPrevious: true,
+      };
+
+      store.overrideSelector(selectIsSearching, true);
+      store.overrideSelector(selectSearchTerm, searchTerm);
+      store.overrideSelector(selectPagination, updatedPagination);
+
+      component.onPageChange(testPage);
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        AdminActions.searchCompanies({
+          searchTerm,
+          page: testPage,
+          size: updatedPagination.pageSize,
+        }),
+      );
     });
   });
 });

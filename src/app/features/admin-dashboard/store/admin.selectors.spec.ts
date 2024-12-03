@@ -9,23 +9,24 @@ describe("Admin Selectors", () => {
         name: "Company 1",
         registrationDate: "2024-01-01",
         status: "pending",
-        web: "https://company1.com",
+        websiteUrl: "https://company1.com",
         email: "contact@company1.com",
-        phone: "+1234567890",
-        certificateUrl: "https://company1.com/certificate",
+        phoneNumber: "+1234567890",
+        certificates: ["https://company1.com/certificate"],
+        logoUrl: "logo.jpg",
       },
       {
         id: "2",
         name: "Company 2",
         registrationDate: "2024-01-02",
         status: "approved",
-        web: "https://company2.com",
+        websiteUrl: "https://company2.com",
         email: "contact@company2.com",
-        phone: "+1234567891",
-        certificateUrl: "https://company2.com/certificate",
+        phoneNumber: "+1234567891",
+        certificates: ["https://company2.com/certificate"],
+        logoUrl: "logo.jpg",
       },
     ],
-    searchedCompanies: [],
     selectedCompanyId: null,
     isLoading: false,
     error: null,
@@ -37,14 +38,6 @@ describe("Admin Selectors", () => {
       hasNext: true,
       hasPrevious: false,
     },
-    searchPagination: {
-      currentPage: 1,
-      itemsPerPage: 5,
-    },
-    loadedDataSources: [],
-    searchLoadedDataSources: [],
-    hasMoreData: true,
-    hasMoreSearchData: true,
     isSearching: false,
   };
 
@@ -117,6 +110,13 @@ describe("Admin Selectors", () => {
         initialState.pagination,
       );
       expect(result).toBe(5);
+    });
+  });
+
+  describe("selectIsSearching", () => {
+    it("should select searching state", () => {
+      const result = fromSelectors.selectIsSearching.projector(initialState);
+      expect(result).toBeFalsy();
     });
   });
 

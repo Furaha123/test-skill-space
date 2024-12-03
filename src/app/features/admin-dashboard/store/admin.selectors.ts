@@ -40,6 +40,11 @@ export const selectPageSize = createSelector(
   (pagination) => pagination.pageSize,
 );
 
+export const selectIsSearching = createSelector(
+  selectAdminState,
+  (state) => state.isSearching,
+);
+
 // Individual company selectors
 export const selectCompanyById = (companyId: string) =>
   createSelector(selectCompanies, (companies) =>

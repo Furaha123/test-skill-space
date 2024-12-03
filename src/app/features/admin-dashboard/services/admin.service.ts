@@ -20,7 +20,7 @@ export class AdminService {
 
   getInitialCompanies(
     page = 0,
-    size = 10,
+    size = 5,
   ): Observable<PaginatedCompanyResponse> {
     // Remove the existing query parameters and add new ones
     const baseUrl = this.apiUrl.split("?")[0];
@@ -43,26 +43,42 @@ export class AdminService {
     );
   }
 
-  // Simulate PUT/POST requests (in a real app these would be HTTP requests)
-  approveCompany(id: string): Observable<Company> {
-    return this.getCompanyById(id).pipe(
-      map((company) => {
-        if (!company) {
-          throw new Error("Company not found");
-        }
-        return { ...company, status: "approved" as const };
-      }),
-    );
+  approveCompany(companyId: string): Observable<Company> {
+    const url = environment.approveCompanyUrl.replace("{companyId}", companyId);
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${environment.token}`,
+      "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
+    });
+
+    return this.http.post<Company>(url, {}, { headers });
   }
 
-  rejectCompany(id: string): Observable<Company> {
-    return this.getCompanyById(id).pipe(
-      map((company) => {
-        if (!company) {
-          throw new Error("Company not found");
-        }
-        return { ...company, status: "rejected" as const };
-      }),
-    );
+  rejectCompany(companyId: string): Observable<Company> {
+    const url = environment.rejectCompanyUrl.replace("{companyId}", companyId);
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${environment.token}`,
+      "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
+    });
+
+    return this.http.post<Company>(url, {}, { headers });
+  }
+
+  searchCompanies(
+    searchTerm: string,
+    page = 0,
+    size = 5,
+  ): Observable<PaginatedCompanyResponse> {
+    // Remove the existing query parameters and add new ones
+    const baseUrl = this.apiUrl.split("?")[0];
+    const url = `${baseUrl}?page=${page}&size=${size}&search=${searchTerm}`;
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${environment.token}`,
+      "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
+    });
+    return this.http.get<PaginatedCompanyResponse>(url, { headers });
   }
 }

@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { initialAdminState } from "./admin.state";
-import { AdminActions } from "./admin.actions";
+import { AdminActions, AppActions } from "./admin.actions";
 
 export const adminReducer = createReducer(
   initialAdminState,
@@ -54,5 +54,90 @@ export const adminReducer = createReducer(
   on(AdminActions.clearSelectedCompany, (state) => ({
     ...state,
     selectedCompanyId: null,
+  })),
+
+  // For searching companies
+  on(AdminActions.searchCompanies, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  // For searching companies
+  on(AdminActions.searchCompanies, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(
+    AdminActions.searchCompaniesSuccess,
+    (
+      state,
+      {
+        companies,
+        currentPage,
+        totalPages,
+        totalItems,
+        pageSize,
+        hasNext,
+        hasPrevious,
+      },
+    ) => ({
+      ...state,
+      companies,
+      isLoading: false,
+      error: null,
+      // Update search pagination for search results
+      pagination: {
+        currentPage,
+        totalPages,
+        totalItems,
+        pageSize,
+        hasNext,
+        hasPrevious,
+      },
+    }),
+  ),
+  on(AdminActions.searchCompaniesFailure, (state, { error }) => ({
+    ...state,
+    companies: [],
+    isLoading: false,
+    error,
+  })),
+
+  on(AppActions.setSearchTerm, (state, { searchTerm }) => ({
+    ...state,
+    isSearching: searchTerm.length > 0,
+  })),
+
+  // Approve Company
+  on(AdminActions.approveCompany, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(AdminActions.approveCompanySuccess, (state) => ({
+    ...state,
+    isLoading: false,
+  })),
+  on(AdminActions.approveCompanyFailure, (state) => ({
+    ...state,
+    isLoading: false,
+    error: null,
+  })),
+
+  // Reject Company
+  on(AdminActions.rejectCompany, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(AdminActions.rejectCompanySuccess, (state) => ({
+    ...state,
+    isLoading: false,
+  })),
+  on(AdminActions.rejectCompanyFailure, (state) => ({
+    ...state,
+    isLoading: false,
+    error: null,
   })),
 );

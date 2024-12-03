@@ -27,7 +27,6 @@ export class AdminService {
     const url = `${baseUrl}?page=${page}&size=${size}`;
 
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${environment.token}`,
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true",
     });
@@ -46,7 +45,6 @@ export class AdminService {
   approveCompany(companyId: string): Observable<Company> {
     const url = environment.approveCompanyUrl.replace("{companyId}", companyId);
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${environment.token}`,
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true",
     });
@@ -57,7 +55,6 @@ export class AdminService {
   rejectCompany(companyId: string): Observable<Company> {
     const url = environment.rejectCompanyUrl.replace("{companyId}", companyId);
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${environment.token}`,
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true",
     });
@@ -75,7 +72,6 @@ export class AdminService {
     const url = `${baseUrl}?page=${page}&size=${size}&search=${searchTerm}`;
 
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${environment.token}`,
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true",
     });

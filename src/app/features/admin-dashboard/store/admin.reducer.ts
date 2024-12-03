@@ -5,7 +5,6 @@ import { AdminActions, AppActions } from "./admin.actions";
 export const adminReducer = createReducer(
   initialAdminState,
   // Load Companies
-  // Load Companies
   on(AdminActions.loadCompanies, (state) => ({
     ...state,
     isLoading: true,

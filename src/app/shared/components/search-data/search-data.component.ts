@@ -1,4 +1,3 @@
-// search-data.component.ts
 import {
   Component,
   OnInit,

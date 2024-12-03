@@ -1,361 +1,59 @@
-<div class="talent-details" [formGroup]="profileForm">
-  <div class="profile-left-section">
-    <div class="profile-details">
-      <h2>Profile picture</h2>
-      <p>This is what will be displayed on your profile.</p>
-
-      <img
-        [src]="imagePreviewUrl || 'assets/icon/profile.svg'"
-        alt="Profile Preview"
-        class="profile-preview"
-      />
-
-      <div class="profile-upload">
-        <div
-          class="upload-box"
-          (click)="openFileSelector('image')"
-          (dragover)="handleDragOver($event)"
-          (drop)="handleDrop($event, 'image')"
-        >
-          <input
-            type="file"
-            accept=".png, .jpg, .jpeg"
-            (change)="onFileSelected($event, 'image')"
-            style="display: none"
-            class="resize-input"
-          />
-          <div class="upload-icon">
-            <img src="assets/icon/upload.svg" alt="Upload Logo" />
-          </div>
-          <div class="upload-text">
-            <p><span>Click here or drag</span> your files to upload</p>
-            <p class="supported-formats">
-              Supported formats: PNG, JPG, JPEG (5mb max)
-            </p>
-          </div>
-        </div>
-      </div>
+<div class="talent-details">
+  <div
+    class="personal-info"
+    *ngIf="personalDetails$ | async as personalDetails; else errorTemplate"
+  >
+    <div class="section-header">
+      <h2>Personal information</h2>
+      <span class="edit-icon">
+        <img src="assets/icon/pencile.svg" alt="edit" />
+      </span>
     </div>
-    <div class="additional-info">
-      <div class="display-names">
-        <h2>Display Name</h2>
-        <p>
-          This is what employers will see on your profile and what will appear
-          on all your earned certificates.
-        </p>
-        <div class="name-inputs">
-          <div class="input-group">
-            <label for="first-name">First Name</label>
-            <input
-              type="text"
-              id="first-name"
-              placeholder="Enter First Name"
-              formControlName="firstName"
-            />
-          </div>
-          <div class="input-group">
-            <label for="last-name">Last Name</label>
-            <input
-              type="text"
-              id="last-name"
-              placeholder="Enter Last Name"
-              formControlName="lastName"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="display-names">
-      <h2>Introduction</h2>
-      <p>
-        This is your opening introduction to employers. Keep it concise and
-        impactful, showcasing your strengths, skills, and experience (in not
-        more than 250 words).
-      </p>
-      <div class="text-group">
-        <div class="textarea-container">
-          <textarea
-            id="introduction"
-            formControlName="introduction"
-            placeholder="Driven and results-oriented professional..."
-            rows="6"
-          ></textarea>
-          <div class="word-count">
-            <span id="word-count">{{ wordCount }}</span
-            >/250
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="display-names">
-      <h2>Upload your C.V</h2>
-      <p>You can upload up to 1 document.</p>
-      <div class="cv-upload">
-        <div class="file-preview" *ngIf="cvUpload">
-          <div class="file-content">
-            <button
-              class="delete-button"
-              type="button"
-              (click)="removeFile('cv')"
-            >
-              <img src="assets/icon/remove.svg" alt="Delete" />
-            </button>
 
-            <p class="file-name">{{ cvUpload.name }}</p>
-          </div>
-        </div>
-
-        <!-- Upload Box Section -->
-        <div
-          class="upload-box"
-          *ngIf="!cvUpload"
-          (click)="openFileSelector('cv')"
-          (dragover)="handleDragOver($event)"
-          (drop)="handleDrop($event, 'cv')"
-        >
-          <input
-            type="file"
-            accept=".pdf"
-            (change)="onFileSelected($event, 'cv')"
-            style="display: none"
-            class="resize-input"
-          />
-          <div class="upload-icon">
-            <img src="assets/icon/upload.svg" alt="Upload CV" />
-          </div>
-          <div class="upload-text">
-            <p>Click here or drag your CV to upload</p>
-            <p class="supported-formats">Supported format: PDF (5mb max)</p>
-          </div>
-        </div>
-      </div>
+    <div class="info-section">
+      <h3>About Me</h3>
+      <p>{{ personalDetails.introduction }}</p>
     </div>
-    <div class="save-btn cancel-btn">
-      <button class="btn save" (click)="handleUpdate()">Save changes</button>
-      <button class="btn cancel">Cancel</button>
-    </div>
-  </div>
 
-  <div class="profile-right-section">
-    <div class="birth-date-container">
-      <h2>Date of Birth</h2>
-      <div class="date-input">
-        <div class="calendar">
-          <app-calendar
-            (dateOfBirth)="onDateOfBirthSelected($event)"
-          ></app-calendar>
-        </div>
+    <div class="info-section">
+      <h3>PHONE</h3>
+      <p>{{ personalDetails.phoneNumber }}</p>
+    </div>
+
+    <div class="info-section">
+      <h3>LOCATION</h3>
+      <p>{{ personalDetails.currentLocation }}</p>
+    </div>
+
+    <div class="info-section">
+      <h3>SOCIAL MEDIA</h3>
+      <div class="link-item" *ngFor="let social of personalDetails.socialMedia">
+        <img
+          [src]="'assets/icon/social/' + social.name.toLowerCase() + '.png'"
+          [alt]="social.name"
+        />
+        <a [href]="social.url" target="_blank">{{ social.name }}</a>
       </div>
     </div>
 
-    <div class="birth-date-container">
-      <h2>Nationality</h2>
-      <p>The country where you claim your citizenship.</p>
-      <div class="date-input">
-        <div class="dropdown">
-          <select class="country-select" formControlName="nationality">
-            <option value="rwanda">Rwanda</option>
-            <option value="ghan">Ghan</option>
-            <option value="german">German</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="location">
-        <h2>Current Location</h2>
-        <p>Enter your current city/town.</p>
-        <div class="name-inputs">
-          <div class="input-group">
-            <input
-              type="text"
-              id="current-location"
-              formControlName="currentLocation"
-              placeholder="Kigali"
-              class="current-location-input"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="birth-date-container">
-      <h2>Phone Number</h2>
-      <p>You can set this as private/public to control who sees it.</p>
-      <div class="phone-input-group">
-        <div class="phone-number">
-          <input
-            type="tel"
-            id="phone"
-            class="resize-input"
-            formControlName="phoneNumber"
-          />
-        </div>
-      </div>
-      <div class="checkbox-group">
-        <div class="checkbox">
-          <input
-            type="radio"
-            id="public"
-            formControlName="phoneVisibility"
-            value="public"
-            class="checkbox-input"
-          />
-          <label for="public" class="checkbox-label">
-            <div class="checkbox-box"></div>
-            <p>Public</p>
-          </label>
-        </div>
-
-        <div class="checkbox">
-          <input type="checkbox" id="private" class="checkbox-input" />
-          <label for="private" class="checkbox-label">
-            <div class="checkbox-box"></div>
-            <p>Private</p>
-          </label>
-        </div>
-      </div>
-    </div>
-    <div class="social-media-section">
-      <h2 class="section-title">Social Media Pages</h2>
-
+    <div class="info-section">
+      <h3>PORTFOLIO LINKS</h3>
       <div
-        class="content-wrapper"
-        *ngFor="let socialMediaControl of socialMedia.controls; let i = index"
-        [formGroup]="getSocialMediaGroup(i)"
+        class="link-item"
+        *ngFor="let portfolio of personalDetails.portfolios"
       >
-        <div class="icons-input-group">
-          <div class="icon-dropdown">
-            <div
-              class="icon-select"
-              (click)="toggleDropdown(i)"
-              [class.active]="isDropdownOpenForIndex(i)"
-            >
-              <img
-                *ngIf="getSelectedIcon(i)"
-                [src]="getIconImage(getSelectedIcon(i))"
-                class="selected-icon"
-                alt=""
-              />
-            </div>
-
-            <div class="dropdown-menu" *ngIf="isDropdownOpenForIndex(i)">
-              <div
-                *ngFor="let icon of icons"
-                class="dropdown-item"
-                (click)="selectIcon(icon.name, i)"
-              >
-                <img
-                  [src]="icon.imageUrl"
-                  class="option-icon"
-                  [alt]="icon.name"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="url-input">
-            <input
-              type="url"
-              formControlName="url"
-              class="social-url-input"
-              [class.invalid]="isSocialMediaInvalid(i)"
-              placeholder="https://platform.com/yourprofile"
-            />
-            <div class="error-message" *ngIf="isSocialMediaInvalid(i)">
-              Please enter a valid URL starting with http:// or https://
-            </div>
-          </div>
-        </div>
-
-        <div class="action-buttons">
-          <button
-            type="button"
-            class="icon-button minus"
-            (click)="removeSocialMedia(i)"
-          >
-            <img src="assets/icon/minus.svg" alt="Remove Website" />
-          </button>
-          <button
-            type="button"
-            class="icon-button plus"
-            *ngIf="i === socialMedia.length - 1"
-            (click)="addSocialMedia()"
-          >
-            <img src="assets/icon/plus.svg" alt="Add Website" />
-          </button>
-        </div>
+        <a [href]="portfolio">
+          {{ portfolio }}
+        </a>
       </div>
-
-      <!-- Add initial social media if empty -->
-      <div class="content-wrapper" *ngIf="socialMedia.length === 0">
-        <button
-          type="button"
-          class="icon-button plus"
-          (click)="addSocialMedia()"
-        >
-          <img src="assets/icon/plus.svg" alt="Add Social Media" />
-        </button>
-      </div>
-    </div>
-
-    <div class="social-media-section">
-      <h2 class="section-title">Portfolio Links</h2>
-      <form [formGroup]="profileForm">
-        <div class="content-wrapper" *ngIf="portfolioLinks.length === 0">
-          <div class="icons-input-group">
-            <div class="url-input">
-              <input
-                type="url"
-                class="social-url-input"
-                placeholder="https://myportfolio.com/yourlink"
-              />
-            </div>
-          </div>
-          <div class="action-buttons">
-            <button
-              type="button"
-              class="icon-button plus"
-              (click)="addPortfolio()"
-            >
-              <img src="assets/icon/plus.svg" alt="Add Website" />
-            </button>
-          </div>
-        </div>
-
-        <div
-          class="content-wrapper"
-          *ngFor="let portfolio of portfolioLinks.controls; let i = index"
-          [formGroup]="getPortfolioGroup(i)"
-        >
-          <div class="icons-input-group">
-            <div class="url-input">
-              <input
-                type="url"
-                class="social-url-input"
-                placeholder="https://myportfolio.com/yourlink"
-                formControlName="url"
-              />
-            </div>
-          </div>
-          <div class="action-buttons">
-            <button
-              type="button"
-              class="icon-button minus"
-              (click)="removePortfolio(i)"
-            >
-              <img src="assets/icon/minus.svg" alt="Remove Website" />
-            </button>
-            <button
-              type="button"
-              class="icon-button plus"
-              *ngIf="i === portfolioLinks.length - 1"
-              (click)="addPortfolio()"
-            >
-              <img src="assets/icon/plus.svg" alt="Add Website" />
-            </button>
-          </div>
-        </div>
-      </form>
     </div>
   </div>
 </div>
+<ng-template #errorTemplate>
+  <div class="error-message">
+    <h2>Error Loading Details</h2>
+    <p>
+      There was a problem fetching personal details. Please try again later.
+    </p>
+  </div>
+</ng-template>

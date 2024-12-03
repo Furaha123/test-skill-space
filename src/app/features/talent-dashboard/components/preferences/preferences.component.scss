@@ -1,0 +1,275 @@
+@import "../../../../../styles.scss";
+
+.settings-container {
+  height: 100%;
+
+  .settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-large;
+  }
+  .section-heading {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-small;
+    color: $neutral-17;
+  }
+
+  .section-description {
+    color: $neutral-60;
+    font-size: $font-size-small;
+  }
+
+  .settings-card {
+    background-color: $neutral-99;
+    border-radius: 6px;
+    padding: $spacing-medium;
+  }
+
+  .toggle-switch {
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+
+      input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+
+        &:checked + .slider {
+          background-color: $primary-60;
+        }
+
+        &:checked + .slider:before {
+          transform: translateX(24px);
+        }
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: $neutral-60;
+        transition: 0.3s;
+        border-radius: 24px;
+
+        &:before {
+          position: absolute;
+          content: "";
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: 0.3s;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+
+  .notifications-section {
+    @extend .settings-card;
+
+    .communication-emails {
+      border: 1px solid $neutral-80;
+      border-radius: 10px;
+      padding: $spacing-medium;
+
+      .setting-title {
+        font-weight: $font-weight-bold;
+        margin-bottom: $spacing-small;
+      }
+
+      .setting-content {
+        @include flex-between;
+        align-items: center;
+      }
+    }
+  }
+
+  .radio-options {
+    .radio-option {
+      margin: $spacing-medium 0;
+      display: flex;
+      align-items: center;
+      gap: $spacing-small;
+
+      input[type="radio"] {
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border: 2px solid $neutral-60;
+        border-radius: 50%;
+        margin-right: $spacing-small;
+        position: relative;
+        cursor: pointer;
+
+        &:checked {
+          border-color: $primary-60;
+
+          &:after {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: $primary-60;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
+        }
+      }
+
+      label {
+        color: $neutral-40;
+        cursor: pointer;
+      }
+    }
+  }
+
+  // Availability Section
+  .availability-section {
+    .availability-header {
+      @include flex-between;
+    }
+
+    .availability-status {
+      display: flex;
+      align-items: center;
+      gap: $spacing-small;
+
+      .status-indicator {
+        width: 20px;
+        height: 20px;
+        background-color: $success-50;
+        border-radius: 50%;
+      }
+
+      span {
+        color: $neutral-40;
+      }
+    }
+  }
+
+  // Security Section
+  .security-section {
+    .two-factor-header {
+      @include flex-between;
+    }
+
+    .contact-info {
+      .contact-item {
+        @include flex-between;
+        padding: $spacing-medium 0;
+        border-bottom: 1px solid $neutral-90;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .contact-details {
+          display: flex;
+          align-items: center;
+          gap: $spacing-medium;
+
+          i {
+            font-size: 20px;
+          }
+        }
+
+        .action-buttons {
+          display: flex;
+          align-items: center;
+          gap: $spacing-medium;
+
+          .edit-btn,
+          .verify-btn {
+            background: none;
+            border: none;
+            color: $primary-60;
+            cursor: pointer;
+            font-weight: $font-weight-medium;
+            padding: 4px 12px;
+
+            &:hover {
+              background-color: rgba($primary-60, 0.1);
+              border-radius: 4px;
+            }
+          }
+
+          .verified-badge {
+            background-color: $success-60;
+            color: $success-50;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: $font-size-small;
+          }
+
+          .success-icon {
+            color: $success-50;
+          }
+
+          .pending-icon {
+            color: $neutral-60;
+          }
+        }
+      }
+    }
+
+    // Password Section
+    .password-section {
+      .password-form {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-large;
+
+        .form-row {
+          display: flex;
+          gap: $spacing-large;
+
+          @media (max-width: 768px) {
+            flex-direction: column;
+          }
+
+          .form-group {
+            flex: 1;
+          }
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          label {
+            color: $neutral-20;
+            font-size: $font-size-small;
+          }
+
+          input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid $neutral-80;
+            border-radius: 4px;
+            font-size: $font-size-base;
+
+            &:focus {
+              border-color: $primary-60;
+              outline: none;
+            }
+
+            &::placeholder {
+              color: $neutral-60;
+            }
+          }
+        }
+      }
+    }
+  }
+}

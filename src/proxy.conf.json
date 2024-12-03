@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://e96f-102-22-146-226.ngrok-free.app",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

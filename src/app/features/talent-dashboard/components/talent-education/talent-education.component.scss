@@ -1,130 +1,76 @@
-@import "../../../../../sass/abstract/mixins";
-@import "../../../../../sass/abstract/variables";
-@import "../../../../../sass/base/typography";
+@import "../../../../../styles.scss";
 
 .education-section {
   padding: $spacing-small;
-  margin-top: $spacing-small;
-  border-radius: 4px;
-  max-width: 96%;
 
-  background-color: $neutral-99;
+  .education {
+    .education-header {
+      @include flex-between;
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .title {
-      font-size: $font-size-large;
-      font-weight: $font-weight-bold !important;
-      color: $neutral-0;
-      font-family: inherit;
+      h2 {
+        font-size: $font-size-xlarge;
+        font-weight: $font-weight-bold !important;
+        color: $neutral-0;
+      }
     }
 
-    .add-button {
+    .education-item {
       display: flex;
-      align-items: center;
-      gap: $spacing-small;
-      padding: $spacing-small $spacing-medium;
-      background-color: $primary-60;
-      color: $neutral-100;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: $font-weight-medium;
-      transition: background-color 0.3s ease;
+      gap: $spacing-medium;
+      margin-bottom: $spacing-large;
+      padding: $spacing-medium;
+      border-bottom: 1px solid $neutral-50;
+      position: relative;
 
-      &:hover {
-        background-color: $primary-70;
+      .education-icon {
+        @include flex-center;
+        width: 48px;
+        height: 48px;
+
+        img {
+          width: 44px;
+          height: 44px;
+        }
       }
 
-      img {
-        width: 20px;
-        height: 20px;
-      }
-    }
-  }
+      .education-details {
+        flex: 1;
+        margin-right: $spacing-large;
 
-  .description {
-    color: $neutral-40;
-    margin-bottom: $spacing-large;
-  }
-
-  .records-list {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-medium;
-
-    .record-card {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      padding: $spacing-small;
-      background-color: $secondary-95;
-      border-radius: 8px;
-
-      .record-info {
-        .degree {
-          font-size: $font-size-large;
-          font-weight: $font-weight-bold !important;
-          color: $neutral-0;
-          font-family: inherit;
-        }
-
-        .institution {
-          color: $neutral-40;
-        }
-
-        .files-info {
-          display: flex;
-          align-items: center;
-          gap: $spacing-small;
-          color: $neutral-40;
+        h3 {
           font-size: $font-size-base;
+          font-weight: $font-weight-bold;
+          color: $neutral-0;
+          margin-bottom: 4px;
+        }
 
-          img {
-            width: 16px;
-            height: 16px;
-          }
+        .degree {
+          color: $neutral-40;
+          margin-bottom: 4px;
+        }
+
+        .duration {
+          font-size: $font-size-small;
+          color: $neutral-60;
         }
       }
 
-      .actions {
+      .education-actions {
         display: flex;
+        gap: $spacing-small;
+        align-items: center;
+        position: absolute;
+        right: $spacing-medium;
+        top: 50%;
+        transform: translateY(-50%);
 
-        justify-content: center;
-
-        .action-button {
-          display: flex;
-          align-items: center;
-          gap: $spacing-small;
-          padding: $spacing-small;
-          background: none;
-          border: none;
-          color: $neutral-40;
+        img {
           cursor: pointer;
-          transition: color 0.3s ease;
-
-          img {
-            width: 26px;
-            height: 26px;
-          }
+          width: 24px;
+          height: 24px;
 
           &:hover {
-            color: $neutral-20;
-          }
-
-          &.update {
-            &:hover {
-              color: $primary-60;
-            }
-          }
-
-          &.remove {
-            &:hover {
-              color: $error-60;
-            }
+            opacity: 0.8;
           }
         }
       }

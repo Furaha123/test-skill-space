@@ -12,6 +12,7 @@ import { DashboardTalentComponent } from "./components/dashboard-talent/dashboar
 import { TalentEducationComponent } from "./components/talent-education/talent-education.component";
 import { TalentEducationUpateComponent } from "./components/talent-education-upate/talent-education-upate.component";
 import { TabComponent } from "./components/tab/tab.component";
+import { PreferencesComponent } from "./components/preferences/preferences.component";
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { TabComponent } from "./components/tab/tab.component";
     TalentEducationComponent,
     TalentEducationUpateComponent,
     TabComponent,
+    PreferencesComponent,
   ],
   imports: [
     CommonModule,

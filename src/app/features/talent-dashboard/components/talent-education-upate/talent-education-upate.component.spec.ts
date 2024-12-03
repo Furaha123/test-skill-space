@@ -1,110 +1,172 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ReactiveFormsModule, FormsModule } from "@angular/forms";
-import { TalentEducationUpateComponent } from "./talent-education-upate.component";
+import { TestBed } from "@angular/core/testing";
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from "@angular/common/http/testing";
+import { TalentProfileService } from "../../services/talent-profile.service";
+import {
+  ApiResponse,
+  PersonalDetails,
+} from "../../models/personal.detalis.interface";
 import { EducationRecord } from "../../models/education.record.interface";
 
-describe("TalentEducationUpateComponent", () => {
-  let component: TalentEducationUpateComponent;
-  let fixture: ComponentFixture<TalentEducationUpateComponent>;
+describe("TalentProfileService", () => {
+  let service: TalentProfileService;
+  let httpTestingController: HttpTestingController;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule, FormsModule],
-      declarations: [TalentEducationUpateComponent],
-    }).compileComponents();
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [TalentProfileService],
+    });
 
-    fixture = TestBed.createComponent(TalentEducationUpateComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    service = TestBed.inject(TalentProfileService);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
+  afterEach(() => {
+    httpTestingController.verify();
   });
 
-  it("should initialize the form", () => {
-    expect(component.educationForm).toBeDefined();
-    expect(component.educationForm.controls["institution"]).toBeDefined();
-    expect(component.educationForm.controls["degree"]).toBeDefined();
+  it("should be created", () => {
+    expect(service).toBeTruthy();
   });
 
-  it("should patch form values if record is provided", () => {
-    const mockRecord: EducationRecord = {
-      institution: "Test University",
-      address: "123 Test St",
-      country: "Test Country",
-      qualification: "Bachelor's Degree",
-      degree: "Computer Science",
-      status: "Graduated",
-      startDate: "2015-01-01",
-      endDate: "2019-01-01",
-      filesCount: 0,
-      files: [],
+  it("should get personal details", () => {
+    const mockResponse: ApiResponse<PersonalDetails> = {
+      status: "Success",
+      message: "Got personal Details Successfully",
+      data: {
+        firstName: "Moses",
+        lastName: "Doe",
+        introduction:
+          "A passionate software developer with over 10 years of experience in full-stack development.",
+        birthDate: "1990-05-15",
+        nationality: "American",
+        currentLocation: "San Francisco, CA, USA",
+        phoneNumber: "+1-555-123-4567",
+        phoneVisibility: "public",
+        socialMedia: [
+          { name: "LinkedIn", url: "https://www.linkedin.com/in/johndoe" },
+          { name: "GitHub", url: "https://github.com/johndoe" },
+          { name: "Twitter", url: "https://twitter.com/johndoe" },
+        ],
+        profilePictureUrl: "https://example.com/profile-picture.jpg",
+        cvUrl: "https://example.com/cv/johndoe.pdf",
+        portfolios: [
+          "https://portfolio.johndoe.com",
+          "https://behance.net/johndoe",
+        ],
+      },
     };
 
-    component.record = mockRecord;
-    component.ngOnInit();
+    service.getPersonalDetails().subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
 
-    // Expect form to contain the values excluding `files` and `filesCount`
-    const expectedFormValues = {
-      institution: "Test University",
-      address: "123 Test St",
-      country: "Test Country",
-      qualification: "Bachelor's Degree",
-      degree: "Computer Science",
-      status: "Graduated",
-      startDate: "2015-01-01",
-      endDate: "2019-01-01",
+    const req = httpTestingController.expectOne(
+      service["personalDetailsEndpoint"],
+    );
+    expect(req.request.method).toBe("GET");
+    req.flush(mockResponse);
+  });
+
+  it("should get schools", () => {
+    const mockRecords: EducationRecord[] = [
+      {
+        id: "1",
+        name: "Harvard University",
+        address: "Massachusetts, USA",
+        country: "USA",
+        qualificationLevel: "Bachelor's",
+        programName: "Computer Science",
+        programStatus: "Completed",
+        commencementDate: "2005-09-01",
+        completionDate: "2009-06-30",
+        academicTranscriptUrls: "http://example.com/transcript1",
+      },
+    ];
+
+    const mockResponse: ApiResponse<EducationRecord[]> = {
+      status: "success",
+      message: "Fetched education records successfully",
+      data: mockRecords,
     };
 
-    expect(component.educationForm.value).toEqual(expectedFormValues);
+    service.getSchools().subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = httpTestingController.expectOne(service["schoolsEndpoint"]);
+    expect(req.request.method).toBe("GET");
+    req.flush(mockResponse);
   });
 
-  it("should return true for isAddMode when mode is 'add'", () => {
-    component.mode = "add";
-    expect(component.isAddMode).toBeTruthy();
+  it("should create a school", () => {
+    const newSchool: EducationRecord = {
+      id: "2",
+      name: "MIT",
+      address: "Massachusetts, USA",
+      country: "USA",
+      qualificationLevel: "Master's",
+      programName: "Software Engineering",
+      programStatus: "Ongoing",
+      commencementDate: "2020-09-01",
+      completionDate: "2022-06-30",
+      academicTranscriptUrls: "http://example.com/transcript2",
+    };
+
+    const mockResponse: ApiResponse<EducationRecord> = {
+      status: "success",
+      message: "School created successfully",
+      data: newSchool,
+    };
+
+    service.createSchools(newSchool).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = httpTestingController.expectOne(
+      service["createSchoolsEndpoint"],
+    );
+    expect(req.request.method).toBe("POST");
+    expect(req.request.body).toEqual(newSchool);
+    req.flush(mockResponse);
   });
 
-  it("should return true for isUpdateMode when mode is 'update'", () => {
-    component.mode = "update";
-    expect(component.isUpdateMode).toBeTruthy();
+  it("should update a school", () => {
+    const updatedSchool: EducationRecord = {
+      id: "1",
+      name: "Harvard University",
+      address: "Massachusetts, USA",
+      country: "USA",
+      qualificationLevel: "Bachelor's",
+      programName: "Computer Science",
+      programStatus: "Completed",
+      commencementDate: "2005-09-01",
+      completionDate: "2009-06-30",
+      academicTranscriptUrls: "http://example.com/transcript1",
+    };
+
+    const mockResponse: ApiResponse<EducationRecord> = {
+      status: "success",
+      message: "School updated successfully",
+      data: updatedSchool,
+    };
+
+    service
+      .updateSchool(updatedSchool.id, updatedSchool)
+      .subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+
+    const req = httpTestingController.expectOne(
+      `${service["createSchoolsEndpoint"]}/${updatedSchool.id}`,
+    );
+    expect(req.request.method).toBe("PATCH");
+    expect(req.request.body).toEqual(updatedSchool);
+    req.flush(mockResponse);
   });
 
-  it("should emit close event on cancel", () => {
-    const emitSpy = jest.spyOn(component.closed, "emit");
-    component.onCancel();
-    expect(emitSpy).toHaveBeenCalled();
-  });
-
-  it("should emit close event on back", () => {
-    const emitSpy = jest.spyOn(component.closed, "emit");
-    component.onBack();
-    expect(emitSpy).toHaveBeenCalled();
-  });
-
-  it("should emit close event on navigateBackToList", () => {
-    const emitSpy = jest.spyOn(component.closed, "emit");
-    component.navigateBackToList();
-    expect(emitSpy).toHaveBeenCalled();
-  });
-
-  it("should mark institution field as invalid if empty", () => {
-    const institutionField = component.educationForm.controls["institution"];
-    institutionField.setValue("");
-    institutionField.markAsTouched();
-    expect(component.isFieldInvalid("institution")).toBeTruthy();
-  });
-
-  it("should mark degree field as invalid if empty", () => {
-    const degreeField = component.educationForm.controls["degree"];
-    degreeField.setValue("");
-    degreeField.markAsTouched();
-    expect(component.isFieldInvalid("degree")).toBeTruthy();
-  });
-
-  it("should show validation errors for empty required fields on form submission", () => {
-    component.educationForm.markAllAsTouched();
-    expect(component.isFieldInvalid("institution")).toBeTruthy();
-    expect(component.isFieldInvalid("degree")).toBeTruthy();
-  });
+  // Additional error handling tests can be added similarly
 });

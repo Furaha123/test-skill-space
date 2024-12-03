@@ -20,15 +20,14 @@
               type="text"
               id="institution"
               placeholder="Enter institution name"
-              [hasError]="isFieldInvalid('institution')"
-              formControlName="institution"
+              formControlName="name"
             ></app-input>
           </div>
 
           <div class="form-group">
             <app-input
               label="Address of Institution"
-              type="textarea"
+              type="text"
               id="address"
               placeholder="Enter institution address"
               fieldType="textarea"
@@ -56,9 +55,9 @@
               id="qualification"
               placeholder="Select qualification"
               fieldType="select"
-              formControlName="qualification"
+              formControlName="qualificationLevel"
               [options]="qualificationOptions"
-              [hasError]="isFieldInvalid('qualification')"
+              [hasError]="isFieldInvalid('qualificationLevel')"
             ></app-input>
           </div>
 
@@ -66,10 +65,10 @@
             <app-input
               label="Name of Program"
               type="text"
-              id="degree"
+              id="programName"
               placeholder="Enter program name"
-              formControlName="degree"
-              [hasError]="isFieldInvalid('degree')"
+              formControlName="programName"
+              [hasError]="isFieldInvalid('programName')"
             ></app-input>
           </div>
 
@@ -80,7 +79,7 @@
               id="status"
               placeholder="Select status"
               fieldType="select"
-              formControlName="status"
+              formControlName="programStatus"
               [options]="statusOptions"
               [disabled]="isUpdateMode"
             ></app-input>
@@ -91,18 +90,18 @@
               <app-input
                 label="Date of Commencement"
                 type="date"
-                id="startDate"
+                id="commencementDate"
                 placeholder="Select start date"
-                formControlName="startDate"
+                formControlName="commencementDate"
               ></app-input>
             </div>
             <div class="form-group">
               <app-input
                 label="Date Completed"
                 type="date"
-                id="endDate"
+                id="completionDate"
                 placeholder="Select end date"
-                formControlName="endDate"
+                formControlName="completionDate"
               ></app-input>
             </div>
           </div>
@@ -113,20 +112,31 @@
         <h2>Academic Transcripts</h2>
         <p>You can upload up to 1 document.</p>
 
-        <div class="file-preview" *ngFor="let file of record.files">
+        <div
+          class="file-preview"
+          *ngFor="
+            let file of parseTranscriptUrls(
+              record?.academicTranscriptUrls || ''
+            )
+          "
+        >
           <div class="file-content">
-            <button class="delete-button">
+            <button class="delete-button" (click)="onDeleteFile(file)">
               <img src="assets/icon/remove.svg" alt="Delete" />
             </button>
             <div class="file-icon">
-              <img [src]="file.url" alt="Uploaded File" />
+              <img [src]="file" alt="Uploaded File" />
             </div>
-            <p class="file-name">{{ file.name }}</p>
+            <p class="file-name">{{ extractFileName(file) }}</p>
           </div>
         </div>
 
         <div class="upload-box">
-          <input type="file" accept=".pdf,.png,.jpg,.jpeg,.docx" />
+          <input
+            type="file"
+            accept=".pdf,.png,.jpg,.jpeg,.docx"
+            (change)="onFileUpload($event)"
+          />
           <div class="upload-icon">
             <img src="assets/icon/upload.svg" alt="Upload" />
           </div>
@@ -140,10 +150,18 @@
       </div>
 
       <div class="action-buttons">
-        <app-button text="Save changes" [customClasses]="'btn save'">
+        <app-button
+          text="Save changes"
+          [customClasses]="'btn save'"
+          (click)="onSave()"
+        >
           Save changes
         </app-button>
-        <app-button text="Cancel" [customClasses]="'btn cancel'">
+        <app-button
+          text="Cancel"
+          [customClasses]="'btn cancel'"
+          (click)="onCancel()"
+        >
           Cancel
         </app-button>
       </div>

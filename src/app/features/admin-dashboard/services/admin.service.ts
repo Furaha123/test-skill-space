@@ -1,16 +1,12 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Observable, map, take } from "rxjs";
 import { PaginatedCompanyResponse } from "../../../shared/models/pagination-api-response.model";
 import { environment } from "../../../../environments/environment.development";
 import { Company } from "../models/company.model";
 import { selectCompanies } from "../store/admin.selectors";
 import { Store } from "@ngrx/store";
-
-const headers = new HttpHeaders({
-  "Content-Type": "application/json",
-  "ngrok-skip-browser-warning": "true",
-});
+import { headers } from "../../../shared/utils/httpHeaders";
 
 @Injectable({
   providedIn: "root",

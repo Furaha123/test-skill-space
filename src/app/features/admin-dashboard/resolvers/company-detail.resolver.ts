@@ -11,9 +11,6 @@ export class CompanyDetailResolver implements Resolve<Company | undefined> {
 
   resolve(route: ActivatedRouteSnapshot): Observable<Company | undefined> {
     const companyId = route.paramMap.get("id")!;
-
-    // this.store.dispatch(AdminActions.loadCompany({ companyId }));
-
     return this.store.select(selectCompanyById(companyId)).pipe(
       filter((company) => !!company),
       first(),

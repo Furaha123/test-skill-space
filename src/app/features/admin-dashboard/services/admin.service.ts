@@ -7,6 +7,11 @@ import { Company } from "../models/company.model";
 import { selectCompanies } from "../store/admin.selectors";
 import { Store } from "@ngrx/store";
 
+const headers = new HttpHeaders({
+  "Content-Type": "application/json",
+  "ngrok-skip-browser-warning": "true",
+});
+
 @Injectable({
   providedIn: "root",
 })
@@ -25,12 +30,6 @@ export class AdminService {
     // Remove the existing query parameters and add new ones
     const baseUrl = this.apiUrl.split("?")[0];
     const url = `${baseUrl}?page=${page}&size=${size}`;
-
-    const headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
-    });
-
     return this.http.get<PaginatedCompanyResponse>(url, { headers });
   }
 
@@ -44,21 +43,11 @@ export class AdminService {
 
   approveCompany(companyId: string): Observable<Company> {
     const url = environment.approveCompanyUrl.replace("{companyId}", companyId);
-    const headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
-    });
-
     return this.http.post<Company>(url, {}, { headers });
   }
 
   rejectCompany(companyId: string): Observable<Company> {
     const url = environment.rejectCompanyUrl.replace("{companyId}", companyId);
-    const headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
-    });
-
     return this.http.post<Company>(url, {}, { headers });
   }
 
@@ -70,11 +59,6 @@ export class AdminService {
     // Remove the existing query parameters and add new ones
     const baseUrl = this.apiUrl.split("?")[0];
     const url = `${baseUrl}?page=${page}&size=${size}&search=${searchTerm}`;
-
-    const headers = new HttpHeaders({
-      "Content-Type": "application/json",
-      "ngrok-skip-browser-warning": "true",
-    });
     return this.http.get<PaginatedCompanyResponse>(url, { headers });
   }
 }

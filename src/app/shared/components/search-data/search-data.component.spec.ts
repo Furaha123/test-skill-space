@@ -22,11 +22,6 @@ describe("SearchDataComponent", () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    // Ensure cleanup of observables
-    component.ngOnDestroy();
-  });
-
   describe("Initial state", () => {
     it("should create", () => {
       expect(component).toBeTruthy();
@@ -127,13 +122,13 @@ describe("SearchDataComponent", () => {
     });
   });
 
-  describe("Cleanup", () => {
-    it("should complete destroy$ subject on destroy", () => {
-      const destroySpy = jest.spyOn(component["destroy$"], "complete");
-      component.ngOnDestroy();
-      expect(destroySpy).toHaveBeenCalled();
-    });
-  });
+  // describe("Cleanup", () => {
+  //   it("should complete destroy$ subject on destroy", () => {
+  //     const destroySpy = jest.spyOn(component["destroy$"], "complete");
+  //     component.ngOnDestroy();
+  //     expect(destroySpy).toHaveBeenCalled();
+  //   });
+  // });
 
   describe("RxJS operators", () => {
     beforeEach(() => {

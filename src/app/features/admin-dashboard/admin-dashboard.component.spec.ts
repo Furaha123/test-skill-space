@@ -9,7 +9,6 @@ describe("AdminDashboardComponent", () => {
   let store: MockStore;
 
   const initialState = {
-    // Add your initial state here matching your AppState interface
     // For example:
     admin: {
       companies: [],

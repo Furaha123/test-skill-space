@@ -7,15 +7,14 @@ import {
 import { provideHttpClient, withFetch, HttpClient } from "@angular/common/http";
 import { AuthResponse } from "../models/auth-response.model";
 import { Observable, of } from "rxjs";
+import { environment } from "../../../environments/environment.development";
 
 describe("GoogleAuthService", () => {
   let service: GoogleAuthService;
   let httpTestingController: HttpTestingController;
   let httpClient: HttpClient;
-  const baseUrl =
-    "https://1d60-102-22-146-226.ngrok-free.app/api/v1/auth/register/google";
-  const baseUrlLogin =
-    "https://1d60-102-22-146-226.ngrok-free.app/api/v1/auth/login/google";
+  const baseUrl = `${environment.apiUrl}/auth/register/google`;
+  const baseUrlLogin = `${environment.apiUrl}/auth/login/google`;
 
   beforeEach(() => {
     TestBed.configureTestingModule({

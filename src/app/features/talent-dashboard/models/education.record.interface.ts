@@ -1,12 +1,12 @@
 export interface EducationRecord {
-  degree: string;
-  institution: string;
-  address?: string;
-  country?: string;
-  qualification?: string;
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-  filesCount: number;
-  files: { name: string; url: string }[];
+  id: string;
+  name: string;
+  address: string;
+  country: string;
+  qualificationLevel: string; // Level of qualification
+  programName: string; // Name of the program/degree
+  programStatus: string; // Current status of the program
+  commencementDate: string; // Program start date
+  completionDate: string; // Program end date
+  academicTranscriptUrls: string; // List of
 }

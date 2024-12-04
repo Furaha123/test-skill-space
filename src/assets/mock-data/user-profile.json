@@ -1,0 +1,31 @@
+{
+  "status": "Success",
+  "message": "Got personal Details Successfully",
+  "data": {
+    "firstName": "Moses",
+    "lastName": "Furaha",
+    "introduction": "Driven and results-oriented professional with expertise in project management, software development, and team leadership. Passionate about innovation and delivering impactful solutions.",
+    "birthDate": "1992-05-14",
+    "nationality": "Rwandan",
+    "currentLocation": "Kigali, Rwanda",
+    "phoneNumber": "+250781234567",
+    "phoneVisibility": "public",
+    "socialMedia": [
+      {
+        "name": "LinkedIn",
+        "url": "https://www.linkedin.com/in/mosesfuraha"
+      },
+      {
+        "name": "Twitter",
+        "url": "https://twitter.com/mosesfuraha"
+      },
+      {
+        "name": "GitHub",
+        "url": "https://github.com/mosesfuraha"
+      }
+    ],
+    "profilePictureUrl": "https://example.com/images/profile.jpg",
+    "cvUrl": "https://example.com/documents/moses_furaha_cv.pdf",
+    "portfolios": []
+  }
+}

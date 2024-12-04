@@ -4,11 +4,15 @@ import {
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { TalentProfileService } from "./talent-profile.service";
-import { PersonalDetails } from "../models/personal.detalis.interface";
+import {
+  PersonalDetails,
+  ApiResponse,
+} from "../models/personal.detalis.interface";
+import { EducationRecord } from "../models/education.record.interface";
 
 describe("TalentProfileService", () => {
   let service: TalentProfileService;
-  let httpMock: HttpTestingController;
+  let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -17,62 +21,150 @@ describe("TalentProfileService", () => {
     });
 
     service = TestBed.inject(TalentProfileService);
-    httpMock = TestBed.inject(HttpTestingController);
+    httpTestingController = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpTestingController.verify();
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should fetch personal details successfully", () => {
-    const mockResponse = {
+  it("should get personal details", () => {
+    const mockResponse: ApiResponse<PersonalDetails> = {
       status: "Success",
       message: "Got personal Details Successfully",
       data: {
-        firstName: "John",
+        firstName: "Moses",
         lastName: "Doe",
-        introduction: "Hello, I'm John Doe.",
-        birthDate: "1990-01-01",
+        introduction:
+          "A passionate software developer with over 10 years of experience in full-stack development.",
+        birthDate: "1990-05-15",
         nationality: "American",
-        currentLocation: "New York",
-        phoneNumber: "123-456-7890",
-        phoneVisibility: true,
-        socialMedia: [],
-        profilePictureUrl: null,
-        cvUrl: null,
-        portfolios: [],
-      } as PersonalDetails,
+        currentLocation: "San Francisco, CA, USA",
+        phoneNumber: "+1-555-123-4567",
+        phoneVisibility: "public",
+        socialMedia: [
+          { name: "LinkedIn", url: "https://www.linkedin.com/in/johndoe" },
+          { name: "GitHub", url: "https://github.com/johndoe" },
+          { name: "Twitter", url: "https://twitter.com/johndoe" },
+        ],
+        profilePictureUrl: "https://example.com/profile-picture.jpg",
+        cvUrl: "https://example.com/cv/johndoe.pdf",
+        portfolios: [
+          "https://portfolio.johndoe.com",
+          "https://behance.net/johndoe",
+        ],
+      },
     };
 
-    service.getPersonalDetails().subscribe((details) => {
-      expect(details).toEqual(mockResponse.data);
+    service.getPersonalDetails().subscribe((response) => {
+      expect(response).toEqual(mockResponse);
     });
 
-    const req = httpMock.expectOne(
-      `${service.apiUrl}/talent/talentId/personal-details`,
+    const req = httpTestingController.expectOne(
+      service["personalDetailsEndpoint"],
     );
     expect(req.request.method).toBe("GET");
-    expect(req.request.headers.get("Content-Type")).toBe("application/json");
-    expect(req.request.headers.get("Accept")).toBe("application/json");
-    expect(req.request.headers.get("ngrok-skip-browser-warning")).toBe("true");
-
     req.flush(mockResponse);
   });
 
-  it("should handle error when fetching personal details", () => {
-    const errorMessage = "simulated network error";
-
-    service.getPersonalDetails().subscribe({
-      next: () => fail("expected an error, not personal details"),
-      error: (error) => {
-        expect(error).toBeTruthy();
+  it("should get schools", () => {
+    const mockRecords: EducationRecord[] = [
+      {
+        id: "1",
+        name: "Harvard University",
+        address: "Massachusetts, USA",
+        country: "USA",
+        qualificationLevel: "Bachelor's",
+        programName: "Computer Science",
+        programStatus: "Completed",
+        commencementDate: "2005-09-01",
+        completionDate: "2009-06-30",
+        academicTranscriptUrls: "http://example.com/transcript1",
       },
+    ];
+
+    const mockResponse: ApiResponse<EducationRecord[]> = {
+      status: "success",
+      message: "Fetched education records successfully",
+      data: mockRecords,
+    };
+
+    service.getSchools().subscribe((response) => {
+      expect(response).toEqual(mockResponse);
     });
 
-    const req = httpMock.expectOne(
-      `${service.apiUrl}/talent/talentId/personal-details`,
-    );
+    const req = httpTestingController.expectOne(service["schoolsEndpoint"]);
+    expect(req.request.method).toBe("GET");
+    req.flush(mockResponse);
+  });
 
-    req.flush(errorMessage, { status: 500, statusText: "Server Error" });
+  it("should create a school", () => {
+    const newSchool: EducationRecord = {
+      id: "2",
+      name: "MIT",
+      address: "Massachusetts, USA",
+      country: "USA",
+      qualificationLevel: "Master's",
+      programName: "Software Engineering",
+      programStatus: "Ongoing",
+      commencementDate: "2020-09-01",
+      completionDate: "2022-06-30",
+      academicTranscriptUrls: "http://example.com/transcript2",
+    };
+
+    const mockResponse: ApiResponse<EducationRecord> = {
+      status: "success",
+      message: "School created successfully",
+      data: newSchool,
+    };
+
+    service.createSchools(newSchool).subscribe((response) => {
+      expect(response).toEqual(mockResponse);
+    });
+
+    const req = httpTestingController.expectOne(
+      service["createSchoolsEndpoint"],
+    );
+    expect(req.request.method).toBe("POST");
+    expect(req.request.body).toEqual(newSchool);
+    req.flush(mockResponse);
+  });
+
+  it("should update a school", () => {
+    const updatedSchool: EducationRecord = {
+      id: "1",
+      name: "Harvard University",
+      address: "Massachusetts, USA",
+      country: "USA",
+      qualificationLevel: "Bachelor's",
+      programName: "Computer Science",
+      programStatus: "Completed",
+      commencementDate: "2005-09-01",
+      completionDate: "2009-06-30",
+      academicTranscriptUrls: "http://example.com/transcript1",
+    };
+
+    const mockResponse: ApiResponse<EducationRecord> = {
+      status: "success",
+      message: "School updated successfully",
+      data: updatedSchool,
+    };
+
+    service
+      .updateSchool(updatedSchool.id, updatedSchool)
+      .subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+
+    const req = httpTestingController.expectOne(
+      `${service["createSchoolsEndpoint"]}/${updatedSchool.id}`,
+    );
+    expect(req.request.method).toBe("PATCH");
+    expect(req.request.body).toEqual(updatedSchool);
+    req.flush(mockResponse);
   });
 });

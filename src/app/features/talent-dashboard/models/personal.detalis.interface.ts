@@ -5,27 +5,21 @@ export interface ApiResponse<T> {
 }
 
 export interface PersonalDetails {
-  firstName: string | null;
-  lastName: string | null;
-  introduction: string | null;
-  birthDate: string | null;
-  nationality: string | null;
-  currentLocation: string | null;
-  phoneNumber: string | null;
-  phoneVisibility: boolean | null;
+  firstName: string;
+  lastName: string;
+  introduction: string;
+  birthDate: string;
+  nationality: string;
+  currentLocation: string;
+  phoneNumber: string;
+  phoneVisibility: "public" | "private";
   socialMedia: SocialMedia[];
-  profilePictureUrl: string | null;
-  cvUrl: string | null;
-  portfolios: Portfolio[];
+  profilePictureUrl: string;
+  cvUrl: string;
+  portfolios: string[];
 }
 
 export interface SocialMedia {
-  platform: string;
+  name: string;
   url: string;
-}
-
-export interface Portfolio {
-  id: string;
-  url: string;
-  description?: string;
 }

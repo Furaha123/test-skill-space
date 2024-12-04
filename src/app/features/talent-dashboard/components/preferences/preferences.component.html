@@ -1,0 +1,139 @@
+<div class="settings-container">
+  <div class="settings-content">
+    <div class="notifications-section">
+      <h2 class="section-heading">Notifications</h2>
+      <p class="section-description">Control how you receive notifications</p>
+
+      <div class="settings-card communication-emails">
+        <h3 class="setting-title">Communication emails</h3>
+        <div class="setting-content">
+          <p class="setting-description">
+            Receive emails about your account activities
+          </p>
+          <div class="toggle-switch">
+            <label class="switch">
+              <input type="checkbox" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="radio-options">
+        <div class="radio-option">
+          <input
+            type="radio"
+            id="all-messages"
+            name="notification-type"
+            checked
+          />
+          <label for="all-messages">All new messages</label>
+        </div>
+        <div class="radio-option">
+          <input type="radio" id="status-change" name="notification-type" />
+          <label for="status-change">Application status change</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-card availability-section">
+      <div class="availability-header">
+        <div>
+          <h2 class="section-heading">Availability</h2>
+          <p class="section-description">
+            Let employers know if you are available for a new role.
+          </p>
+        </div>
+        <div class="toggle-switch">
+          <label class="switch">
+            <input type="checkbox" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="availability-status">
+        <div class="status-indicator"></div>
+        <span>Available</span>
+      </div>
+    </div>
+
+    <!-- Security Section -->
+    <div class="settings-card security-section">
+      <!-- Two Factor Authentication -->
+      <div class="two-factor">
+        <div class="two-factor-header">
+          <div>
+            <h2 class="section-heading">
+              Enable Two (2) Factor Authentication (Recommended)
+            </h2>
+            <p class="section-description">
+              This security setting is recommended to help secure your account
+              from hackers
+            </p>
+          </div>
+          <div class="toggle-switch">
+            <label class="switch">
+              <input type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-details">
+            <i class="phone-icon">
+              <img src="assets/icon/phone.svg" alt="" />
+            </i>
+            <span>+233244700700</span>
+          </div>
+          <div class="action-buttons">
+            <button class="edit-btn">Edit</button>
+            <span class="verified-badge">Verified</span>
+            <i class="success-icon">
+              <img src="assets/icon/check.svg" alt="" srcset="" />
+            </i>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-details">
+            <i class="email-icon">
+              <img src="assets/icons/envelop.svg" alt="" srcset="" />
+            </i>
+            <span>demoexample.com</span>
+          </div>
+          <div class="action-buttons">
+            <button class="edit-btn">Edit</button>
+            <button class="verify-btn">Verify</button>
+            <i class="pending-icon">
+              <img src="assets/icon/unchecked.svg" alt="" srcset="" />
+            </i>
+          </div>
+        </div>
+      </div>
+
+      <div class="password-section">
+        <h2 class="section-heading">Change Password</h2>
+        <div class="password-form">
+          <div class="form-group">
+            <label>Old Password</label>
+            <input type="password" placeholder="••••••••••••" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" placeholder="••••••••••••" />
+            </div>
+            <div class="form-group">
+              <label>Repeat New Password</label>
+              <input type="password" placeholder="••••••••••••" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

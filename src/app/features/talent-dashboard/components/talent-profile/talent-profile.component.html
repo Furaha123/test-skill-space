@@ -1,46 +1,49 @@
 <div class="talent-profile-layout">
-  <section class="talent-profile">
-    <div class="profile-tabs-header">
-      <div
-        class="profile-tab-item personal-details"
-        [class.active]="selectedTabIndex === 0"
-        (click)="onTabChange(0)"
-      >
-        <h2>Personal Details</h2>
+  <section class="profile-section">
+    <div class="profile-header">
+      <div class="profile-image">
+        <img src="assets/icon/profile.svg" alt="Profile picture" />
       </div>
-
-      <div
-        class="profile-tab-item education"
-        [class.active]="selectedTabIndex === 1"
-        (click)="onTabChange(1)"
-      >
-        <h2>Education</h2>
-      </div>
-
-      <div
-        class="profile-tab-item preferences"
-        [class.active]="selectedTabIndex === 2"
-        (click)="onTabChange(2)"
-      >
-        <h2>Preferences</h2>
-      </div>
-
-      <div
-        class="profile-tab-item security"
-        [class.active]="selectedTabIndex === 3"
-        (click)="onTabChange(3)"
-      >
-        <h2>Security</h2>
+      <div class="profile-info" *ngIf="personalDetails">
+        <h2 class="talent-profile-name">{{ personalDetails.lastName }}</h2>
+        <p class="talent-profile-email">examplegmail.com</p>
       </div>
     </div>
-
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="tab-content">
-      <mat-tab>
-        <app-talent-details></app-talent-details>
-      </mat-tab>
-      <mat-tab>
-        <app-talent-education></app-talent-education>
-      </mat-tab>
-    </mat-tab-group>
   </section>
+
+  <div class="profile-tabs-header">
+    <div
+      class="profile-tab-item personal-details"
+      [class.active]="selectedTabIndex === 0"
+      (click)="onTabChange(0)"
+    >
+      <h2>Education</h2>
+    </div>
+
+    <div
+      class="profile-tab-item preferences"
+      [class.active]="selectedTabIndex === 1"
+      (click)="onTabChange(1)"
+    >
+      <h2>Settings & Preferences</h2>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <section class="profile-sidebar">
+      <app-talent-details></app-talent-details>
+    </section>
+
+    <section class="talent-profile-content">
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="tab-content">
+        <mat-tab>
+          <app-talent-education></app-talent-education>
+        </mat-tab>
+
+        <mat-tab>
+          <app-preferences></app-preferences>
+        </mat-tab>
+      </mat-tab-group>
+    </section>
+  </div>
 </div>

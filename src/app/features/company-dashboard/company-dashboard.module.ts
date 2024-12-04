@@ -23,10 +23,6 @@ import { MaterialModule } from "../../shared/material.module";
 import { CreateProgramComponent } from "../company-dash-board/components/create-program/create-program.component";
 import { CareerProgramsComponent } from "../company-dash-board/components/career-programs/career-programs.component";
 
-import { MaterialModule } from "../../shared/material.module";
-import { CreateProgramComponent } from "../company-dash-board/components/create-program/create-program.component";
-import { CareerProgramsComponent } from "../company-dash-board/components/career-programs/career-programs.component";
-
 @NgModule({
   declarations: [
     CompanyProfileComponent,

@@ -1,43 +1,47 @@
 <div class="education-section" *ngIf="!showUpdateComponent">
-  <div class="header">
-    <h2 class="title">Educational Records</h2>
-    <button class="add-button" (click)="startAddNewRecord()">
-      <img src="assets/icon/add.svg" alt="Add" />
-      Add new record
-    </button>
-  </div>
+  <div class="education">
+    <div class="education-header">
+      <h2>Education</h2>
+    </div>
 
-  <p class="description">
-    Below, you can manage all educational records you have provided.
-  </p>
+    <div *ngIf="isLoading" class="loading-spinner">
+      Loading education records...
+    </div>
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
 
-  <div class="records-list">
-    <div class="record-card" *ngFor="let record of educationRecords">
-      <div class="record-info">
-        <h3 class="degree">{{ record.degree }}</h3>
-        <p class="institution">{{ record.institution }}</p>
-        <div class="files-info">
-          <img src="assets/icon/file-icon.svg" alt="Files" />
-          <span>{{ record.filesCount }} files uploaded</span>
-        </div>
+    <div class="education-item" *ngFor="let record of educationRecords">
+      <div class="education-icon">
+        <img src="assets/icons/degree.svg" alt="Graduation cap" />
       </div>
-      <div class="actions">
-        <button class="action-button update" (click)="startUpdate(record)">
-          <img src="assets/icon/update.svg" alt="Update" />
-          Update
-        </button>
-        <button class="action-button remove">
-          <img src="assets/icon/cancel.svg" alt="Remove" />
-          Remove
-        </button>
+      <div class="education-details">
+        <h3>{{ record.name }}</h3>
+        <p class="degree">{{ record.programName }}</p>
+        <p class="duration">
+          {{ record.commencementDate | date: "MMM yyyy" }} -
+          {{ record.completionDate | date: "MMM yyyy" }}
+        </p>
+      </div>
+      <div class="education-actions">
+        <img
+          src="assets/icon/add-education.svg"
+          alt="Add Education"
+          (click)="startAddNewRecord()"
+        />
+        <img
+          src="assets/icon/pencile.svg"
+          alt="Edit Education"
+          (click)="startUpdate(record)"
+        />
       </div>
     </div>
   </div>
 </div>
 
 <app-talent-education-upate
-  *ngIf="showUpdateComponent && selectedRecord"
+  *ngIf="showUpdateComponent"
   [record]="selectedRecord"
   [mode]="mode"
-  (close)="closeUpdateComponent()"
+  (closed)="closeUpdateComponent()"
 ></app-talent-education-upate>

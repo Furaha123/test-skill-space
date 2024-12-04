@@ -1,66 +1,165 @@
-@import "../../../../../sass/base/typography";
-@import "../../../../../sass/abstract/mixins";
-@import "../../../../../sass/abstract/variables";
+@import "../../../../../styles.scss";
 
 .talent-profile-layout {
   display: flex;
-  padding: $spacing-medium;
+  flex-direction: column;
+  padding: $spacing-small;
   margin-left: $spacing-medium;
   background-color: $primary-99;
+  height: 100vh;
+  overflow: hidden;
 
-  .talent-profile {
-    width: 100%;
+  .profile-section {
+    flex-shrink: 0;
+    .profile-header {
+      @include flex-center-row;
+      gap: $spacing-small;
 
-    .profile-tabs-header {
-      display: flex;
-      gap: $spacing-large;
-      border-bottom: 1px solid $neutral-20;
-      margin-bottom: -1px;
+      .profile-image {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: $neutral-95;
+        @include flex-center;
 
-      .profile-tab-item {
-        min-width: 200px;
-        padding: 8px 24px;
-        cursor: pointer;
-        position: relative;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
 
-        h2 {
-          font-weight: $font-weight-medium;
-          font-size: $font-size-base;
-          color: $neutral-17;
-          text-align: center;
+      .profile-info {
+        .talent-profile-name {
+          font-size: $font-size-large;
+          font-weight: $font-weight-bold !important;
+          color: $neutral-0;
+          font-family: inherit;
         }
 
-        &.active {
-          h2 {
-            color: $neutral-0;
-            font-weight: $font-weight-bold;
+        .talent-profile-email {
+          font-size: $font-size-base;
+          color: $neutral-60;
+          font-weight: $font-weight-regular;
+        }
+      }
+    }
+  }
+
+  .profile-tabs-header {
+    flex-shrink: 0;
+    display: flex;
+    gap: $spacing-large;
+    border-bottom: 1px solid $neutral-20;
+
+    .profile-tab-item {
+      min-width: 200px;
+      padding: 8px 24px;
+      cursor: pointer;
+      position: relative;
+
+      h2 {
+        font-weight: $font-weight-medium;
+        font-size: $font-size-base;
+        color: $neutral-17;
+        text-align: center;
+      }
+
+      &.active {
+        h2 {
+          color: $neutral-0;
+          font-weight: $font-weight-bold;
+        }
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: $primary-60;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    display: flex;
+    gap: $spacing-large;
+    min-height: 0;
+    overflow: hidden;
+
+    .profile-sidebar {
+      flex: 0 0 400px;
+      overflow-y: auto;
+      padding-right: $spacing-small;
+
+      &::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: $neutral-60;
+        border-radius: 3px;
+      }
+    }
+
+    .talent-profile-content {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+
+      .tab-content {
+        height: 100%;
+        overflow: hidden;
+      }
+
+      ::ng-deep {
+        h2 {
+          letter-spacing: inherit !important;
+        }
+
+        .mat-mdc-tab-header {
+          display: none;
+        }
+
+        .mat-mdc-tab-body-wrapper {
+          border-top: none;
+          height: 100%;
+        }
+
+        .mat-mdc-tab-body-content {
+          height: 100%;
+          overflow-y: auto !important;
+          padding-right: $spacing-small;
+
+          &::-webkit-scrollbar {
+            width: 6px;
           }
 
-          &::after {
-            content: "";
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: $primary-60;
+          &::-webkit-scrollbar-thumb {
+            background-color: $neutral-60;
+            border-radius: 3px;
           }
         }
       }
     }
+  }
+}
 
-    ::ng-deep {
-      h2 {
-        font: inherit !important;
-        margin: 0 !important;
-        letter-spacing: inherit !important;
-      }
-      .mat-mdc-tab-header {
-        display: none;
-      }
+@media (max-width: 768px) {
+  .talent-profile-layout {
+    .main-content {
+      flex-direction: column;
 
-      .mat-mdc-tab-body-wrapper {
-        border-top: none;
+      .profile-sidebar {
+        flex: none;
+        width: 100%;
+        padding-right: 0;
+        max-height: 300px;
       }
     }
   }

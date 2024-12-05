@@ -1,0 +1,40 @@
+<div class="career-programs">
+  <div class="filters">
+    <h3>Career programs</h3>
+    <div class="search-bar">
+      <img src="assets/icon/icon-search-orange.svg" alt="search icon" />
+      <input
+        type="text"
+        placeholder="Search by: Program name, Position, Keyword..."
+        [(ngModel)]="searchQuery"
+      />
+    </div>
+
+    <div class="filter-dropdowns">
+      <select [(ngModel)]="selectedCompany">
+        <option value="All companies">All companies</option>
+        <option value="amalitech">Amalitech</option>
+        <option value="irembo">Irembo</option>
+        <option value="ttech">TTECH</option>
+        <option value="ittech">ITTECH</option>
+        <!-- Add more companies as needed -->
+      </select>
+
+      <select [(ngModel)]="statusFilter">
+        <option value="">Status</option>
+        <option value="Available">Available</option>
+        <option value="Closing Soon">Closing Soon</option>
+        <option value="Closed">Closed</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="programs-grid">
+    <div *ngFor="let program of programs">
+      <app-job-posting-card
+        [variant]="'program'"
+        [jobPosting]="program"
+      ></app-job-posting-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+@import "../../../../../styles";
+
+.section-wrapper {
+  padding: $spacing-large;
+  background-color: $error-98;
+  min-height: 100vh;
+
+  span {
+    @include font(Roboto, 400, 14px);
+    color: $card-text;
+  }
+
+  .back-btn {
+    @include flex-start();
+    cursor: pointer;
+
+    mat-icon {
+      vertical-align: middle;
+    }
+  }
+
+  .card-wrapper {
+    background-color: $primary-100;
+    margin: 2rem auto;
+    @include border-radius(8px);
+    @include padding($font-size-base);
+
+    .label-wrapper {
+      @include flex-end();
+      .status-label {
+        background-color: #4caf50;
+        @include padding(0.2rem 0.8rem);
+        @include border-radius(10px);
+        @include font(Roboto, 400, 12px);
+        color: $neutral-100;
+        max-width: 81px;
+      }
+    }
+
+    .google {
+      margin: 1rem auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .google-btn {
+        @include flex-center();
+        gap: 0.4rem;
+        img {
+          height: 60px;
+          width: 60px;
+          border-radius: 100%;
+          border: 2px solid $error-98;
+        }
+      }
+    }
+
+    .internship-details {
+      margin-top: 2rem;
+
+      h2 {
+        @include font($font-secondary, $font-weight-bold, 24px);
+        color: $tertiary-20;
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        @include font($font-secondary, $font-weight-medium, 18px);
+        color: $tertiary-20;
+        margin: 1.5rem 0 1rem;
+      }
+
+      p {
+        @include font($font-primary, $font-weight-regular, 16px);
+        color: $tertiary-40;
+        margin-bottom: 1rem;
+      }
+
+      .deadline {
+        color: $primary-orange;
+        font-weight: $font-weight-medium;
+      }
+
+      .tags {
+        display: flex;
+        gap: 0.5rem;
+        margin: 1rem 0;
+
+        .tag {
+          @include padding(0.3rem 1rem);
+          @include border-radius(16px);
+          background-color: $error-98;
+          color: $tertiary-40;
+        }
+      }
+
+      ul {
+        list-style-type: disc;
+        margin-left: 1.5rem;
+
+        li {
+          @include font($font-primary, $font-weight-regular, 16px);
+          color: $tertiary-40;
+          margin-bottom: 0.5rem;
+        }
+      }
+
+      .apply-btn {
+        margin-top: 2rem;
+        width: 14%;
+        @include respond-to("sm") {
+          width: 36%;
+        }
+      }
+    }
+  }
+}

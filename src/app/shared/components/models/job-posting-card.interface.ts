@@ -13,7 +13,7 @@ export interface ProgramDetails {
   technologies: string[];
   startDate: string;
   endDate: string;
-  status: "Available" | "Closed";
+  status: "Available" | "Closed" | "Closing soon";
 }
 
 export interface JobPostingData {

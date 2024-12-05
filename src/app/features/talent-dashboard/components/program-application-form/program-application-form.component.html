@@ -1,0 +1,74 @@
+<!-- internship-application.component.html -->
+<section class="section-wrapper">
+  <div class="back-link">
+    <mat-icon>arrow_back</mat-icon>
+    <span>Back</span>
+  </div>
+
+  <div class="application-card">
+    <div class="label-wrapper">
+      <div class="status-label">Available</div>
+    </div>
+    <h1>Software Engineering Internship</h1>
+    <div class="company-info">
+      <img
+        src="assets/icon/icon-google.svg"
+        alt="Google logo"
+        class="company-logo"
+      />
+      <span>Google</span>
+    </div>
+
+    <div class="profile-status">
+      <div class="status-items">
+        <div class="status-item">
+          <mat-icon>note_add</mat-icon>
+          <span>Your CV is attached from your profile</span>
+        </div>
+        <div class="status-item">
+          <mat-icon>school</mat-icon>
+          <span>Academic details are included from your profile</span>
+        </div>
+        <div class="status-item">
+          <mat-icon>school</mat-icon>
+          <span>Work experience is included from your profile</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="application-form">
+      <app-input
+        type="textarea"
+        [label]="'Why are you interested in this specific program?'"
+        [placeholder]="'Type here ...'"
+        id="interest"
+        [rows]="4"
+      ></app-input>
+      <app-input
+        type="date"
+        [label]="'What is your preferred start date?'"
+        [placeholder]="''"
+        id="start-date"
+      ></app-input>
+
+      <div class="checkbox">
+        <input type="checkbox" class="custom-checkbox" />
+        <label for="up-to-date"
+          >I confirm that my profile information is up to date</label
+        >
+      </div>
+      <div class="checkbox">
+        <input type="checkbox" class="custom-checkbox" />
+        <label for="up-to-date"
+          >I agree to the terms and conditions of this program</label
+        >
+      </div>
+
+      <div class="apply-button">
+        <app-button [customClasses]="'btn primary'" [isActive]="true"
+          >Apply now</app-button
+        >
+      </div>
+    </form>
+  </div>
+</section>

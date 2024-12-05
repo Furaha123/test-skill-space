@@ -12,6 +12,10 @@ import { DashboardTalentComponent } from "./components/dashboard-talent/dashboar
 import { TalentEducationComponent } from "./components/talent-education/talent-education.component";
 import { TalentEducationUpateComponent } from "./components/talent-education-upate/talent-education-upate.component";
 import { TabComponent } from "./components/tab/tab.component";
+import { ProgramsComponent } from "./components/programs/programs.component";
+import { SingleProgramComponent } from "./components/single-program/single-program.component";
+import { MaterialModule } from "../../shared/material.module";
+import { ProgramApplicationFormComponent } from "./components/program-application-form/program-application-form.component";
 import { PreferencesComponent } from "./components/preferences/preferences.component";
 
 @NgModule({
@@ -23,6 +27,9 @@ import { PreferencesComponent } from "./components/preferences/preferences.compo
     TalentEducationComponent,
     TalentEducationUpateComponent,
     TabComponent,
+    ProgramsComponent,
+    SingleProgramComponent,
+    ProgramApplicationFormComponent,
     PreferencesComponent,
   ],
   imports: [
@@ -32,6 +39,7 @@ import { PreferencesComponent } from "./components/preferences/preferences.compo
     MatTabsModule,
     FormsModule,
     ReactiveFormsModule,
+    MaterialModule,
   ],
 })
 export class TalentDashboardModule {}

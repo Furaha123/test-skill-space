@@ -9,7 +9,7 @@
     @include flex-between;
     width: 100%;
     background-color: $primary-100;
-    padding: 50px 20px;
+    padding: 20px 20px;
     border-radius: 8px;
   }
 
@@ -41,5 +41,13 @@
     &:hover {
       background-color: darken($orange-color, 10%);
     }
+  }
+
+  &__pagination {
+    width: 100%;
+  }
+
+  &__search-data {
+    width: 100%;
   }
 }

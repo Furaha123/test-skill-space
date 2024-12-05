@@ -1,0 +1,40 @@
+<div class="pagination-data">
+  <div class="pagination-data__texts">
+    <p *ngIf="totalPages !== currentPage + 1">
+      Showing {{ itemsPerPage }} out of {{ totalItems }} results
+    </p>
+    <p *ngIf="totalPages === currentPage + 1">
+      Showing {{ totalItems }} out of {{ totalItems }} results
+    </p>
+  </div>
+  <div class="pagination-data__right-side">
+    <div class="pagination-data__buttons">
+      <button
+        class="pagination-data__icon-left"
+        (click)="onPrevious()"
+        [disabled]="currentPage === 0"
+      >
+        <div class="pagination-data__pag-arrow-left"></div>
+      </button>
+      <div class="pagination-data__numbers">
+        <button
+          *ngFor="let page of pages"
+          [ngClass]="{
+            current: isCurrentPage(page),
+            dots: page === -1,
+          }"
+          (click)="onPageSelect(page)"
+        >
+          {{ page === -1 ? "..." : page + 1 }}
+        </button>
+      </div>
+      <button
+        class="pagination-data__icon-right"
+        (click)="onNext()"
+        [disabled]="currentPage === totalPages - 1"
+      >
+        <div class="pagination-data__pag-arrow-right"></div>
+      </button>
+    </div>
+  </div>
+</div>

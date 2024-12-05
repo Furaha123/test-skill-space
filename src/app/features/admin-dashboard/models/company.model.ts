@@ -3,8 +3,9 @@ export interface Company {
   name: string;
   registrationDate: string;
   status: string;
-  web: string;
+  websiteUrl: string;
   email: string;
-  phone: string;
-  certificateUrl: string;
+  phoneNumber: string;
+  certificates: string[];
+  logoUrl: string;
 }

@@ -12,6 +12,9 @@ import { CountryCodesComponent } from "./components/country-codes/country-codes.
 import { CalendarComponent } from "./components/calendar/calendar.component";
 import { AuthLayoutComponent } from "./auth-layout/auth-layout.component";
 import { JobPostingCardComponent } from "./components/job-posting-card/job-posting-card.component";
+import { PaginationComponent } from "./components/pagination/pagination.component";
+import { SearchDataComponent } from "./components/search-data/search-data.component";
+import { ReactiveFormsModule } from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -24,9 +27,11 @@ import { JobPostingCardComponent } from "./components/job-posting-card/job-posti
     CalendarComponent,
     AuthLayoutComponent,
     JobPostingCardComponent,
+    PaginationComponent,
+    SearchDataComponent,
   ],
 
-  imports: [CommonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatProgressSpinnerModule, ReactiveFormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 
   exports: [
@@ -38,8 +43,9 @@ import { JobPostingCardComponent } from "./components/job-posting-card/job-posti
     CountryCodesComponent,
     CalendarComponent,
     AuthLayoutComponent,
-    ErrorToastComponent,
     JobPostingCardComponent,
+    PaginationComponent,
+    SearchDataComponent,
   ],
 })
 export class SharedModule {}

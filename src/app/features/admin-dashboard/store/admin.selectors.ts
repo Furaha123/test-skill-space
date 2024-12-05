@@ -10,6 +10,11 @@ export const selectCompanies = createSelector(
   (state) => state.companies,
 );
 
+export const selectPagination = createSelector(
+  selectAdminState,
+  (state) => state.pagination,
+);
+
 export const selectIsLoading = createSelector(
   selectAdminState,
   (state) => state.isLoading,
@@ -20,68 +25,28 @@ export const selectError = createSelector(
   (state) => state.error,
 );
 
+export const selectTotalItems = createSelector(
+  selectPagination,
+  (pagination) => pagination.totalItems,
+);
+
+export const selectCurrentPage = createSelector(
+  selectPagination,
+  (pagination) => pagination.currentPage,
+);
+
+export const selectPageSize = createSelector(
+  selectPagination,
+  (pagination) => pagination.pageSize,
+);
+
+export const selectIsSearching = createSelector(
+  selectAdminState,
+  (state) => state.isSearching,
+);
+
 // Individual company selectors
 export const selectCompanyById = (companyId: string) =>
   createSelector(selectCompanies, (companies) =>
     companies?.find((company) => company.id === companyId),
-  );
-
-// Status-based selectors
-export const selectPendingCompanies = createSelector(
-  selectCompanies,
-  (companies) =>
-    companies?.filter((company) => company.status === "pending") || [],
-);
-
-export const selectApprovedCompanies = createSelector(
-  selectCompanies,
-  (companies) =>
-    companies?.filter((company) => company.status === "approved") || [],
-);
-
-export const selectRejectedCompanies = createSelector(
-  selectCompanies,
-  (companies) =>
-    companies?.filter((company) => company.status === "rejected") || [],
-);
-
-// Count selectors
-export const selectTotalCompanies = createSelector(
-  selectCompanies,
-  (companies) => companies?.length || 0,
-);
-
-export const selectPendingCount = createSelector(
-  selectPendingCompanies,
-  (companies) => companies.length,
-);
-
-export const selectApprovedCount = createSelector(
-  selectApprovedCompanies,
-  (companies) => companies.length,
-);
-
-export const selectRejectedCount = createSelector(
-  selectRejectedCompanies,
-  (companies) => companies.length,
-);
-
-// Search selector
-export const selectSearchResults = (searchTerm: string) =>
-  createSelector(
-    selectCompanies,
-    (companies) =>
-      companies?.filter((company) => {
-        const searchTermLower = searchTerm?.toLowerCase() || "";
-        const nameMatch =
-          company?.name?.toLowerCase()?.includes(searchTermLower) || false;
-        const webMatch =
-          company?.web?.toLowerCase()?.includes(searchTermLower) || false;
-        const emailMatch =
-          company?.email?.toLowerCase()?.includes(searchTermLower) || false;
-        const phoneMatch =
-          company?.phone?.toLowerCase()?.includes(searchTermLower) || false;
-
-        return nameMatch || webMatch || emailMatch || phoneMatch;
-      }) || [],
   );

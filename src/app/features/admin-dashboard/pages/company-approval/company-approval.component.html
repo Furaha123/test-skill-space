@@ -1,9 +1,45 @@
 <div class="approval-content">
   <ng-container *ngIf="isLoading$ | async">
-    <div>Loading...</div>
+    <app-loader [isLoading]="true"></app-loader>
   </ng-container>
 
-  <ng-container *ngIf="companies$ | async as companies">
+  <div class="approval-content__search-data">
+    <app-search-data
+      (searchValueChange)="onSearchChange($event)"
+      [searchTerm]="(searchTerm$ | async) ?? ''"
+    ></app-search-data>
+  </div>
+
+  <ng-container *ngIf="error$ | async as error">
+    <div class="approval-content__error">
+      <div>
+        <p>Error loading companies</p>
+        <p>Please try again or contact support if the problem persists.</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container
+    *ngIf="
+      (isLoading$ | async) === false &&
+      (paginatedCompanies$ | async) as companies
+    "
+  >
+    <!-- Handle empty states -->
+    <ng-container *ngIf="companies.length === 0">
+      <div class="approval-content__error">
+        <ng-container *ngIf="isSearching$ | async; else noCompanies">
+          <ng-container *ngIf="searchTerm$ | async as searchTerm">
+            <p>No companies found matching "{{ searchTerm }}"</p>
+          </ng-container>
+        </ng-container>
+        <ng-template #noCompanies>
+          <p>No companies available</p>
+        </ng-template>
+      </div>
+    </ng-container>
+
+    <!-- Show companies list -->
     <div class="approval-content__card" *ngFor="let company of companies">
       <div class="approval-content__labels">
         <div class="approval-content__label1">{{ company.name }}</div>
@@ -16,4 +52,17 @@
       </button>
     </div>
   </ng-container>
+
+  <div class="approval-content__pagination">
+    <ng-container *ngIf="paginatedCompanies$ | async as companies">
+      <app-pagination
+        *ngIf="companies.length > 0"
+        [totalItems]="(totalItems$ | async) ?? 0"
+        [itemsPerPage]="(pageSize$ | async) ?? 0"
+        (pageChange)="onPageChange($event)"
+        [currentPage]="(currentPage$ | async) ?? 1"
+      >
+      </app-pagination>
+    </ng-container>
+  </div>
 </div>

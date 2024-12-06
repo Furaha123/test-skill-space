@@ -4,12 +4,13 @@ import {
   getUserInformation,
   getUserInformationSuccess,
   getUserInformationFailure,
-  updateUserCompany,
+  updateUserInformation,
+  updateUserInformationSuccess,
+  updateUserInformationFailure,
 } from "./company-profile-actions";
 
 export interface CompanyUserState {
   user: CompanyUser | null;
-
   error: string | null;
   loading: boolean;
 }
@@ -23,32 +24,60 @@ export const initialState: CompanyUserState = {
 export const companyUserReducer = createReducer(
   initialState,
 
-  on(updateUserCompany, (state, { user }) => ({
-    ...state,
-    user: { ...user },
-  })),
+  on(
+    getUserInformation,
+    (state): CompanyUserState => ({
+      ...state,
+      loading: true,
+      error: null,
+    }),
+  ),
 
-  on(getUserInformation, (state) => ({
-    ...state,
-    loading: true,
-    error: null,
-  })),
+  on(
+    getUserInformationSuccess,
+    (state, { user }): CompanyUserState => ({
+      ...state,
+      user,
+      loading: false,
+      error: null,
+    }),
+  ),
 
-  on(getUserInformationSuccess, (state, { user }) => ({
-    ...state,
-    user,
-    loading: false,
-    error: null,
-  })),
+  on(
+    getUserInformationFailure,
+    (state, { error }): CompanyUserState => ({
+      ...state,
+      loading: false,
+      error,
+    }),
+  ),
 
-  on(getUserInformationFailure, (state, { error }) => ({
-    ...state,
-    loading: false,
-    error,
-  })),
+  // Removed unused parameters
+  on(
+    updateUserInformation,
+    (state): CompanyUserState => ({
+      ...state,
+      loading: true,
+      error: null,
+    }),
+  ),
 
-  on(updateUserCompany, (state, { user }) => ({
-    ...state,
-    user: { ...user },
-  })),
+  on(
+    updateUserInformationSuccess,
+    (state, { user }): CompanyUserState => ({
+      ...state,
+      user,
+      loading: false,
+      error: null,
+    }),
+  ),
+
+  on(
+    updateUserInformationFailure,
+    (state, { error }): CompanyUserState => ({
+      ...state,
+      loading: false,
+      error,
+    }),
+  ),
 );

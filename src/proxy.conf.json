@@ -1,0 +1,7 @@
+{
+  "/api": {
+    "target": "https://skillspace-rw-bn.amalitech-dev.net",
+    "secure": false,
+    "changeOrigin": true
+  }
+}

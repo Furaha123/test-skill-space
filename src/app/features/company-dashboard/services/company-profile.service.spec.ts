@@ -4,11 +4,17 @@ import {
   HttpTestingController,
 } from "@angular/common/http/testing";
 import { CompanyProfileService } from "./company-profile.service";
-import { CompanyUser } from "../models/company-user";
+import {
+  CompanyUser,
+  UpdateCompanyUser,
+  CompanyUserResponse,
+  ApiResponse,
+} from "../models/company-user";
+import { HttpErrorResponse } from "@angular/common/http";
 
 describe("CompanyProfileService", () => {
   let service: CompanyProfileService;
-  let httpMock: HttpTestingController;
+  let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -17,111 +23,123 @@ describe("CompanyProfileService", () => {
     });
 
     service = TestBed.inject(CompanyProfileService);
-    httpMock = TestBed.inject(HttpTestingController);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
   afterEach(() => {
-    httpMock.verify();
+    httpTestingController.verify();
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should fetch company user info", () => {
-    const mockResponse: CompanyUser = {
-      id: "123",
-      name: "Test Company",
-      contact: {
-        phone: "+1-123-4567",
-        website: "http://test.com",
-        email: "test@test.com",
+  it("should get company user info", () => {
+    const mockResponse: ApiResponse<CompanyUser> = {
+      status: "success",
+      message: "Company user fetched successfully",
+      data: {
+        name: "TechnoBrains",
+        websiteUrl: "ifill-cleaning-solutoins.com",
+        socialMedia: ["https://www.linkedin.com/in/furaha"],
+        logoUrl: "https://example.com/logo.jpg",
+        status: "CREATED",
+        registrationDate: "2024-11-30",
+        companyAdmin: 4,
+        phoneNumber: "+250780163267",
       },
-      logo: "logo.png",
-      documentUrl: "document.pdf",
-      password: "password123",
     };
 
-    service.getCompanyUserInfo().subscribe((data) => {
-      expect(data).toEqual(mockResponse);
+    service.getCompanyUserInfo().subscribe((response) => {
+      expect(response).toEqual(mockResponse.data);
     });
 
-    const req = httpMock.expectOne(service["apiUrl"]);
+    const req = httpTestingController.expectOne(service["apiUrl"]);
     expect(req.request.method).toBe("GET");
     req.flush(mockResponse);
   });
 
-  it("should update company user info successfully", () => {
-    const mockInitialData: CompanyUser = {
-      id: "123",
-      name: "Initial Company",
-      contact: {
-        phone: "+1-123-4567",
-        website: "http://initial.com",
-        email: "initial@test.com",
-      },
-      logo: "initial.png",
-      documentUrl: "initial.pdf",
-      password: "password123",
+  it("should handle missing data in response when getting company user info", () => {
+    const mockResponse: ApiResponse<CompanyUser> = {
+      status: "success",
+      message: "Company user fetched successfully",
+      data: null as unknown as CompanyUser, // Simulate missing data
     };
 
-    const updatedData: Partial<CompanyUser> = {
-      name: "Updated Company",
-      contact: {
-        phone: "+1-999-9999",
-        website: "http://initial.com",
-        email: "initial@test.com",
-      },
-    };
-
-    localStorage.setItem("companyUser", JSON.stringify(mockInitialData));
-
-    service.updateCompanyUserInfo(updatedData).subscribe((result) => {
-      expect(result).toBe(true);
-      const updatedUser = JSON.parse(localStorage.getItem("companyUser") ?? "");
-      expect(updatedUser.name).toBe("Updated Company");
-      expect(updatedUser.contact.phone).toBe("+1-999-9999");
-      expect(updatedUser.contact.website).toBe("http://initial.com");
-      expect(updatedUser.contact.email).toBe("initial@test.com");
-    });
-  });
-
-  it("should handle update error if no existing data in local storage", () => {
-    localStorage.removeItem("companyUser");
-
-    service.updateCompanyUserInfo({ name: "New Data" }).subscribe({
-      next: () => fail("Expected an error but got a success response"),
-      error: (error) => {
-        expect(error.message).toBe(
-          "No company user data found in local storage to update.",
-        );
-      },
-    });
-  });
-
-  it("should handle JSON parse error gracefully during update", () => {
-    localStorage.setItem("companyUser", "Invalid JSON Data");
-
-    service.updateCompanyUserInfo({ name: "New Data" }).subscribe({
-      next: () => fail("Expected an error but got a success response"),
-      error: (error) => {
-        expect(error.message).toBe("Failed to update company user info.");
-      },
-    });
-  });
-
-  it("should handle error during fetchCompanyUserInfo gracefully", () => {
     service.getCompanyUserInfo().subscribe({
-      next: () => fail("Expected an error but got a success response"),
+      next: () => fail("expected an error, not data"),
       error: (error) => {
-        expect(error.message).toBe("Failed to fetch company user info.");
+        expect(error.message).toContain("Invalid response format");
       },
     });
 
-    const req = httpMock.expectOne(service["apiUrl"]);
-    req.flush("Error fetching data", {
+    const req = httpTestingController.expectOne(service["apiUrl"]);
+    expect(req.request.method).toBe("GET");
+    req.flush(mockResponse);
+  });
+
+  it("should update company user info", () => {
+    const updatedData: UpdateCompanyUser = {
+      phoneNumber: "+250780132330",
+      websiteUrl: "updated-website.com",
+      socialMedia: ["https://updated-social-media.com"],
+    };
+
+    const mockResponse: ApiResponse<CompanyUserResponse> = {
+      status: "success",
+      message: "Company updated successfully",
+      data: {
+        id: "be549069-a7dd-464b-9094-5b3ecda208c1",
+        name: "TechnoBrains",
+        websiteUrl: "updated-website.com",
+        socialMedia: ["https://updated-social-media.com"],
+        logoUrl: "https://example.com/logo.jpg",
+        status: "CREATED",
+        registrationDate: "2024-11-30",
+        companyAdmin: 4,
+        phoneNumber: "+250780132330",
+      },
+    };
+
+    service.updateCompanyUserInfo(updatedData).subscribe((response) => {
+      expect(response).toEqual(mockResponse.data);
+    });
+
+    const req = httpTestingController.expectOne(service["apiUrl"]);
+    expect(req.request.method).toBe("PUT");
+    expect(req.request.body).toEqual(updatedData);
+    req.flush(mockResponse);
+  });
+
+  it("should handle client-side error", () => {
+    service.getCompanyUserInfo().subscribe({
+      next: () => fail("expected an error, not data"),
+      error: (error) => {
+        expect(error.message).toContain("Error: Client-side error");
+      },
+    });
+
+    const req = httpTestingController.expectOne(service["apiUrl"]);
+    req.error(
+      new ErrorEvent("Network error", { message: "Client-side error" }),
+    );
+  });
+
+  it("should handle server-side error", () => {
+    const mockError = new HttpErrorResponse({
+      error: "Server-side error",
       status: 500,
       statusText: "Server Error",
     });
+
+    service.updateCompanyUserInfo({ phoneNumber: "+250780132330" }).subscribe({
+      next: () => fail("expected an error, not data"),
+      error: (error) => {
+        expect(error.message).toContain("Error Code: 500");
+      },
+    });
+
+    const req = httpTestingController.expectOne(service["apiUrl"]);
+    req.flush("Server-side error", mockError);
   });
 });

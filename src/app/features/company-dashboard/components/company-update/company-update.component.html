@@ -1,0 +1,75 @@
+<div class="company-details" [formGroup]="companyForm">
+  <div class="main-container">
+    <div class="left-column">
+      <div class="company-info">
+        <h2>Socila Media</h2>
+        <p>This is what applicants will see on your profile.</p>
+        <div class="input-group">
+          <label for="name">Socila Media</label>
+          <input
+            type="text"
+            id="socialMedia"
+            formControlName="socialMedia"
+            [value]="companyForm.get('socialMedia')?.value"
+            class="resize-input"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="company-info">
+        <h2>Company phone number</h2>
+        <p>You can set this as private/public to control who sees it.</p>
+        <div class="phone-input-group">
+          <div class="phone-number">
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              formControlName="phoneNumber"
+              [value]="companyForm.get('phoneNumber')?.value"
+              class="resize-input"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="company-info">
+        <h2>Update Website Link</h2>
+        <p>You can set this as private/public to control who sees it.</p>
+        <div>
+          <div class="input-group-website">
+            <input
+              type="text"
+              class="resize-input"
+              formControlName="websiteUrl"
+              [value]="companyForm.get('websiteUrl')?.value"
+            />
+            <button class="icon-button minus">
+              <img src="assets/icon/minus.svg" alt="Remove Website" />
+            </button>
+            <button class="icon-button add">
+              <img src="assets/icon/plus.svg" alt="Add Website" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-btn cancel-btn">
+    <button class="btn save" (click)="onSave()">Save changes</button>
+    <button class="btn cancel" (click)="onCancel()">Cancel</button>
+  </div>
+</div>
+<div *ngIf="isModalOpen" class="modal-overlay">
+  <div class="modal-content">
+    <div class="success-header">
+      <img src="assets/icon/social/success.svg" alt="Success" />
+      <h2>Success</h2>
+    </div>
+    <p>Your information has been successfully updated.</p>
+    <button class="btn ok" (click)="closeModal()">O.K</button>
+  </div>
+</div>

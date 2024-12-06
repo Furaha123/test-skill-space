@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { CompanyProfileService } from "../services/company-profile.service";
-
 import { catchError, map, mergeMap, tap } from "rxjs/operators";
 import { of } from "rxjs";
 import { CompanyUser } from "../models/company-user";
@@ -35,6 +34,7 @@ export class CompanyUserEffects {
       ),
     ),
   );
+
   updateUserInformation$ = createEffect(() =>
     this.actions$.pipe(
       ofType(updateUserInformation),
@@ -42,7 +42,7 @@ export class CompanyUserEffects {
         this.companyProfileService
           .updateCompanyUserInfo(action.updatedData)
           .pipe(
-            map(() => updateUserInformationSuccess()),
+            map((response) => updateUserInformationSuccess({ user: response })),
             catchError((error) =>
               of(updateUserInformationFailure({ error: error.message })),
             ),

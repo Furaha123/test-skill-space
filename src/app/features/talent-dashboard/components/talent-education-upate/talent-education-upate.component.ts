@@ -1,8 +1,13 @@
-/* eslint-disable no-console */
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { EducationRecord } from "../../models/education.record.interface";
 import { TalentProfileService } from "../../services/talent-profile.service";
+import { Store } from "@ngrx/store";
+import {
+  addEducationRecord,
+  updateEducationRecord,
+} from "../../store/talent.actions";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-talent-education-upate",
@@ -20,11 +25,14 @@ export class TalentEducationUpateComponent implements OnInit {
     "Master's Degree",
     "Certificate",
   ];
-  statusOptions = ["Graduated", "In Progress", "Completed"];
+  statusOptions = ["Graduated", "In Progress", "Certified"];
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly talentProfileService: TalentProfileService,
+    private readonly toastr: ToastrService,
+
+    private readonly store: Store,
   ) {
     this.educationForm = this.fb.group({
       name: ["", Validators.required],
@@ -73,7 +81,10 @@ export class TalentEducationUpateComponent implements OnInit {
     if (!urls) {
       return [];
     }
-    return urls.split(",").map((url) => url.trim());
+    return urls
+      .split(",")
+      .map((url) => url.trim())
+      .filter(Boolean);
   }
 
   extractFileName(url: string): string {
@@ -85,61 +96,93 @@ export class TalentEducationUpateComponent implements OnInit {
       return;
     }
 
-    const urls = this.parseTranscriptUrls(this.record.academicTranscriptUrls);
+    const urls = this.record.academicTranscriptUrls;
     const updatedUrls = urls.filter((url) => url !== file);
-    this.record.academicTranscriptUrls = updatedUrls.join(",");
+    this.record.academicTranscriptUrls = updatedUrls;
   }
 
   onFileUpload(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      console.log("File uploaded:", file);
 
       const newUrl = `https://example.com/${file.name}`;
       if (this.record) {
-        const urls = this.parseTranscriptUrls(
-          this.record.academicTranscriptUrls,
-        );
+        const urls = this.record.academicTranscriptUrls || [];
         urls.push(newUrl);
-        this.record.academicTranscriptUrls = urls.join(",");
+        this.record.academicTranscriptUrls = urls;
       }
     }
   }
-  onSave(): void {
-    if (this.educationForm.invalid) {
-      console.log("Form is invalid. Please fill all required fields.");
+  onSubmit(): void {
+    if (this.isAddMode) {
+      this.createNewEducationRecord();
+    } else if (this.isUpdateMode && this.record?.id) {
+      this.updateExistingEducationRecord();
+    }
+
+    this.closed.emit();
+  }
+
+  private createNewEducationRecord(): void {
+    const formValues = this.educationForm.value;
+    const educationRecord: EducationRecord = {
+      id: this.record?.id,
+      name: formValues.name,
+      address: formValues.address,
+      country: formValues.country,
+      qualificationLevel: formValues.qualificationLevel,
+      programName: formValues.programName,
+      programStatus: formValues.programStatus,
+      commencementDate: formValues.commencementDate,
+      completionDate: formValues.completionDate,
+      academicTranscriptUrls: this.record?.academicTranscriptUrls || [],
+    };
+
+    this.store.dispatch(addEducationRecord({ educationRecord }));
+  }
+
+  private updateExistingEducationRecord(): void {
+    if (!this.record?.id) {
       return;
     }
 
-    const formData: EducationRecord = {
-      ...this.educationForm.value,
-      academicTranscriptUrls: this.record?.academicTranscriptUrls || "",
+    const formValues = this.educationForm.value;
+    const updatedRecord: EducationRecord = {
+      ...this.record,
+      ...{
+        name: formValues.name,
+        address: formValues.address,
+        country: formValues.country,
+        qualificationLevel: formValues.qualificationLevel,
+        programName: formValues.programName,
+        programStatus: formValues.programStatus,
+        commencementDate: formValues.commencementDate,
+        completionDate: formValues.completionDate,
+      },
+      academicTranscriptUrls: this.record.academicTranscriptUrls || [],
     };
 
-    if (this.isAddMode) {
-      // Add new school
-      this.talentProfileService.createSchools(formData).subscribe({
-        next: (response) => {
-          console.log("School created successfully:", response);
-          this.closed.emit();
-        },
-        error: (error) => {
-          console.error("Error creating school:", error);
-        },
-      });
-    } else if (this.isUpdateMode && this.record?.id) {
-      this.talentProfileService
-        .updateSchool(this.record.id, formData)
-        .subscribe({
-          next: (response) => {
-            console.log("School updated successfully:", response);
-            this.closed.emit();
-          },
-          error: (error) => {
-            console.error("Error updating school:", error);
-          },
-        });
+    try {
+      this.store.dispatch(
+        updateEducationRecord({
+          id: this.record.id,
+          educationRecord: updatedRecord,
+        }),
+      );
+
+      this.talentProfileService.updateLocalStorage(
+        this.record.id,
+        updatedRecord,
+      );
+      this.toastr.success("Education record updated successfully", "Success");
+    } catch (error) {
+      this.toastr.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update education record",
+        "Error",
+      );
     }
   }
 }

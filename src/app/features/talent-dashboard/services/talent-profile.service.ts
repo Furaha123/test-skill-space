@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
-import { Observable, throwError } from "rxjs";
-import { catchError, retry } from "rxjs/operators";
+import { Observable, of, throwError } from "rxjs";
+import { catchError, retry, tap } from "rxjs/operators";
 import {
   ApiResponse,
   PersonalDetails,
+  UserInfo,
 } from "../models/personal.detalis.interface";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+
 import { EducationRecord } from "../models/education.record.interface";
 import { HttpError } from "../models/http-error.interface";
 
@@ -13,11 +15,12 @@ import { HttpError } from "../models/http-error.interface";
   providedIn: "root",
 })
 export class TalentProfileService {
-  private readonly personalDetailsEndpoint =
-    "/api/v1/talent/8a57f795-eed2-46ba-a9fc-10616ff24aba/personal-details";
-  private readonly schoolsEndpoint =
-    "/api/v1/talent/8a57f795-eed2-46ba-a9fc-10616ff24aba/schools";
+  private readonly personalDetailsEndpoint = "/api/v1/talent/personal-details";
+  private readonly schoolsEndpoint = "/api/v1/talent/schools";
   private readonly createSchoolsEndpoint = "/api/v1/talent/schools";
+  private readonly STORAGE_KEY = "educationRecords";
+  private readonly PERSONAL_DETAILS_KEY = "personalDetails";
+  private readonly userInfoEndpoint = "api/v1/auth/get-user-info";
 
   constructor(private readonly http: HttpClient) {}
 
@@ -29,11 +32,38 @@ export class TalentProfileService {
   }
 
   getPersonalDetails(): Observable<ApiResponse<PersonalDetails>> {
+    const cachedDetails = localStorage.getItem(this.PERSONAL_DETAILS_KEY);
+    if (cachedDetails) {
+      return of(JSON.parse(cachedDetails));
+    }
+
     return this.http
       .get<ApiResponse<PersonalDetails>>(this.personalDetailsEndpoint, {
         headers: this.getHeaders(),
       })
-      .pipe(retry(3), catchError(this.handleError));
+      .pipe(
+        retry(1),
+        tap((response) => {
+          localStorage.setItem(
+            this.PERSONAL_DETAILS_KEY,
+            JSON.stringify(response),
+          );
+        }),
+        catchError(this.handleError),
+      );
+  }
+  updatePersonalDetails(
+    updatedDetails: PersonalDetails,
+  ): Observable<ApiResponse<PersonalDetails>> {
+    const response: ApiResponse<PersonalDetails> = {
+      status: "success",
+      message: "Personal details updated successfully",
+      data: updatedDetails,
+    };
+
+    localStorage.setItem(this.PERSONAL_DETAILS_KEY, JSON.stringify(response));
+
+    return of(response);
   }
 
   getSchools(): Observable<ApiResponse<EducationRecord[]>> {
@@ -41,7 +71,7 @@ export class TalentProfileService {
       .get<ApiResponse<EducationRecord[]>>(this.schoolsEndpoint, {
         headers: this.getHeaders(),
       })
-      .pipe(retry(3), catchError(this.handleError));
+      .pipe(retry(1), catchError(this.handleError));
   }
 
   createSchools(
@@ -51,19 +81,42 @@ export class TalentProfileService {
       .post<ApiResponse<EducationRecord>>(this.createSchoolsEndpoint, school, {
         headers: this.getHeaders(),
       })
-      .pipe(retry(3), catchError(this.handleError));
+      .pipe(retry(1), catchError(this.handleError));
   }
 
-  updateSchool(
-    schoolId: string,
-    school: EducationRecord,
-  ): Observable<ApiResponse<EducationRecord>> {
-    const endpoint = `${this.createSchoolsEndpoint}/${schoolId}`;
+  updateLocalStorage(id: string, updatedRecord: EducationRecord): void {
+    const records = localStorage.getItem(this.STORAGE_KEY);
+    if (records) {
+      const parsedRecords = JSON.parse(records);
+      const updatedRecords = parsedRecords.map((record: EducationRecord) =>
+        record.id === id ? updatedRecord : record,
+      );
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updatedRecords));
+    }
+  }
+  deleteSchool(id: string): Observable<ApiResponse<void>> {
+    const records = localStorage.getItem(this.STORAGE_KEY);
+    if (records) {
+      const parsedRecords = JSON.parse(records) as EducationRecord[];
+      const updatedRecords = parsedRecords.filter(
+        (record: EducationRecord) => record.id !== id,
+      );
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updatedRecords));
+    }
+
+    return of({
+      status: "success",
+      message: "School deleted successfully",
+      data: undefined,
+    });
+  }
+
+  getUserInfo(): Observable<ApiResponse<UserInfo>> {
     return this.http
-      .patch<ApiResponse<EducationRecord>>(endpoint, school, {
+      .get<ApiResponse<UserInfo>>(this.userInfoEndpoint, {
         headers: this.getHeaders(),
       })
-      .pipe(retry(3), catchError(this.handleError));
+      .pipe(retry(1), catchError(this.handleError));
   }
 
   private handleError(error: HttpError): Observable<never> {

@@ -1,23 +1,20 @@
-@import "../../../../../sass/base/typography";
-@import "../../../../../sass/abstract/mixins";
-@import "../../../../../sass/abstract/variables";
+@import "../../../../../styles.scss";
 
 .company-profile-layout {
   display: flex;
   padding: $spacing-medium;
   margin-left: $spacing-medium;
-
+  background-color: $primary-98;
+  height: 100vh;
   .company-profile {
     width: 100%;
     .tab-header {
       display: flex;
       gap: $spacing-large;
       border-bottom: 1px solid $neutral-20;
-      margin-bottom: -1px;
 
       .tab-item {
         min-width: 200px;
-        padding: 12px 24px;
         cursor: pointer;
         position: relative;
 

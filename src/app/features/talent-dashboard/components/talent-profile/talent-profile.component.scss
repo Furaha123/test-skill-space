@@ -55,6 +55,7 @@
 
     .profile-tab-item {
       min-width: 200px;
+
       padding: 8px 24px;
       cursor: pointer;
       position: relative;
@@ -93,16 +94,15 @@
     overflow: hidden;
 
     .profile-sidebar {
-      flex: 0 0 400px;
+      flex: 0 0 650px;
       overflow-y: auto;
       padding-right: $spacing-small;
-
       &::-webkit-scrollbar {
         width: 6px;
       }
 
       &::-webkit-scrollbar-thumb {
-        background-color: $neutral-60;
+        background-color: $primary-60;
         border-radius: 3px;
       }
     }

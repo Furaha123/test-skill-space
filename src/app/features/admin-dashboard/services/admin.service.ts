@@ -12,7 +12,7 @@ import { headers } from "../../../shared/utils/httpHeaders";
   providedIn: "root",
 })
 export class AdminService {
-  private apiUrl = environment.getPaginatedCompanies;
+  private apiUrl = `${environment.apiUrl}/companys/pending-approvals?page=0size=2`;
 
   constructor(
     private readonly http: HttpClient,
@@ -38,12 +38,14 @@ export class AdminService {
   }
 
   approveCompany(companyId: string): Observable<Company> {
-    const url = environment.approveCompanyUrl.replace("{companyId}", companyId);
+    const url = `${environment.apiUrl}/companys/${companyId}/approve`;
+    // const url = environment.approveCompanyUrl.replace("{companyId}", companyId);
     return this.http.post<Company>(url, {}, { headers });
   }
 
   rejectCompany(companyId: string): Observable<Company> {
-    const url = environment.rejectCompanyUrl.replace("{companyId}", companyId);
+    const url = `${environment.apiUrl}/companys/${companyId}/reject`;
+    // const url = environment.rejectCompanyUrl.replace("{companyId}", companyId);
     return this.http.post<Company>(url, {}, { headers });
   }
 

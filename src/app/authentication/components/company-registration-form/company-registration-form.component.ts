@@ -111,7 +111,7 @@ export class CompanyRegistrationFormComponent implements OnDestroy {
         password: formValues.password,
         name: formValues.name,
         websiteUrl: formValues.website,
-        contactInformation: formValues.phoneNumber,
+        phoneNumber: formValues.phoneNumber,
         logo: formValues.logo,
         certificates: formValues.certificate,
       };

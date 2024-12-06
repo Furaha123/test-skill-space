@@ -14,6 +14,7 @@ import {
 } from "../../models/personal.detalis.interface";
 import { catchError, finalize, takeUntil } from "rxjs/operators";
 import { of, Subject } from "rxjs";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-personal-details-update",
@@ -42,6 +43,7 @@ export class PersonalDetailsUpdateComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private talentProfileService: TalentProfileService,
+    private toastService: ToastrService,
   ) {
     this.personalDetailsForm = this.fb.group({
       firstName: ["", Validators.required],
@@ -170,7 +172,6 @@ export class PersonalDetailsUpdateComponent implements OnInit, OnDestroy {
     ) as FormArray;
     portfoliosFormArray.removeAt(index);
   }
-
   onSubmit(): void {
     if (this.personalDetailsForm.valid) {
       const updatedDetails: PersonalDetails = this.personalDetailsForm.value;
@@ -180,10 +181,10 @@ export class PersonalDetailsUpdateComponent implements OnInit, OnDestroy {
         .pipe(
           takeUntil(this.destroy$),
           catchError(() => {
-            this.errorMessage = "Failed to update personal details";
+            this.toastService.error("Failed to update personal details");
             return of({
               status: "error",
-              message: this.errorMessage,
+              message: "Failed to update personal details",
               data: null,
             });
           }),
@@ -196,14 +197,16 @@ export class PersonalDetailsUpdateComponent implements OnInit, OnDestroy {
               | { status: string; message: string; data: null },
           ) => {
             if (response.status === "success") {
-              // Handle successful update
+              this.toastService.success(
+                "Personal details updated successfully",
+              );
             } else {
-              this.errorMessage = response.message;
+              this.toastService.error(response.message);
             }
           },
         );
     } else {
-      this.errorMessage = "Please fill in all required fields correctly.";
+      this.toastService.error("Please fill in all required fields correctly.");
     }
   }
 

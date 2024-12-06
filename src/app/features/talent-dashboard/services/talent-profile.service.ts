@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError } from "rxjs";
-import { catchError, retry, tap } from "rxjs/operators";
+import { catchError, retry } from "rxjs/operators";
 import {
   ApiResponse,
   PersonalDetails,
@@ -15,7 +15,7 @@ import { HttpError } from "../models/http-error.interface";
   providedIn: "root",
 })
 export class TalentProfileService {
-  private readonly personalDetailsEndpoint = "/api/v1/talent/personal-details";
+  private readonly personalDetailsEndpoint = "api/v1/talent/personal-details";
   private readonly schoolsEndpoint = "/api/v1/talent/schools";
   private readonly createSchoolsEndpoint = "/api/v1/talent/schools";
   private readonly STORAGE_KEY = "educationRecords";
@@ -41,29 +41,21 @@ export class TalentProfileService {
       .get<ApiResponse<PersonalDetails>>(this.personalDetailsEndpoint, {
         headers: this.getHeaders(),
       })
-      .pipe(
-        retry(1),
-        tap((response) => {
-          localStorage.setItem(
-            this.PERSONAL_DETAILS_KEY,
-            JSON.stringify(response),
-          );
-        }),
-        catchError(this.handleError),
-      );
+      .pipe(retry(1), catchError(this.handleError));
   }
+
   updatePersonalDetails(
     updatedDetails: PersonalDetails,
   ): Observable<ApiResponse<PersonalDetails>> {
-    const response: ApiResponse<PersonalDetails> = {
-      status: "success",
-      message: "Personal details updated successfully",
-      data: updatedDetails,
-    };
-
-    localStorage.setItem(this.PERSONAL_DETAILS_KEY, JSON.stringify(response));
-
-    return of(response);
+    return this.http
+      .put<ApiResponse<PersonalDetails>>(
+        this.personalDetailsEndpoint,
+        updatedDetails,
+        {
+          headers: this.getHeaders(),
+        },
+      )
+      .pipe(retry(1), catchError(this.handleError));
   }
 
   getSchools(): Observable<ApiResponse<EducationRecord[]>> {

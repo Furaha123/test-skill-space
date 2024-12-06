@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
+
 import { Store } from "@ngrx/store";
-import { Observable, Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { Observable } from "rxjs";
+
 import { AppState } from "../../../shared/models/app.state.interface";
 import * as AuthActions from "../../auth-store/auth.actions";
 import * as AuthSelectors from "../../auth-store/auth.selectors";
@@ -13,127 +13,120 @@ import * as AuthSelectors from "../../auth-store/auth.selectors";
   templateUrl: "./create-new-password.component.html",
   styleUrls: ["./create-new-password.component.scss"],
 })
-export class CreateNewPasswordComponent implements OnInit, OnDestroy {
-  passwordForm: FormGroup;
+export class CreateNewPasswordComponent {
+  passwordForm: FormGroup = this.initializeForm();
   showPasswordWarning = false;
   showPasswordError = false;
-  showSuccessMessage = false;
-  loading$: Observable<boolean>;
-  error$: Observable<string | null>;
-  private destroy$ = new Subject<void>();
-  private email = "";
+
+  loading$: Observable<boolean> = this.store.select(
+    AuthSelectors.selectIsLoading,
+  );
+  error$: Observable<string | null> = this.store.select(
+    AuthSelectors.selectError,
+  );
+  successMessage$: Observable<string | null> = this.store.select(
+    AuthSelectors.selectSuccessMessage,
+  );
+  isPasswordReset$: Observable<boolean> = this.store.select(
+    AuthSelectors.selectIsPasswordReset,
+  );
+
+  private readonly passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router,
     private store: Store<AppState>,
-  ) {
-    this.passwordForm = this.fb.group(
+  ) {}
+
+  private initializeForm(): FormGroup {
+    return this.fb.group(
       {
         newPassword: [
           "",
           [
             Validators.required,
             Validators.minLength(8),
-            Validators.pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            ),
+            Validators.pattern(this.passwordPattern),
           ],
         ],
         confirmPassword: ["", [Validators.required]],
       },
-      { validators: this.passwordMatchValidator },
+      {
+        validators: this.passwordMatchValidator,
+      },
     );
-
-    this.loading$ = this.store.select(AuthSelectors.selectIsLoading);
-    this.error$ = this.store.select(AuthSelectors.selectError);
   }
 
-  ngOnInit() {
-    this.store
-      .select(AuthSelectors.selectIsPasswordReset)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isReset) => {
-        if (isReset) {
-          this.redirectToLogin();
-        }
-      });
-
-    this.email = sessionStorage.getItem("resetPasswordEmail") || "";
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  passwordMatchValidator(g: FormGroup) {
-    return g.get("newPassword")?.value === g.get("confirmPassword")?.value
-      ? null
-      : { mismatch: true };
+  private passwordMatchValidator(
+    g: FormGroup,
+  ): { [key: string]: boolean } | null {
+    const newPassword = g.get("newPassword")?.value;
+    const confirmPassword = g.get("confirmPassword")?.value;
+    return newPassword === confirmPassword ? null : { mismatch: true };
   }
 
   isNewPasswordInvalid(): boolean {
     const control = this.passwordForm.get("newPassword");
-    return Boolean(control?.invalid && control?.touched);
+    return Boolean(control?.invalid && (control?.touched || control?.dirty));
   }
 
   isConfirmPasswordInvalid(): boolean {
     const control = this.passwordForm.get("confirmPassword");
-    return Boolean(
-      control?.touched && (control?.invalid || this.isPasswordMismatch()),
+    return (
+      Boolean(control?.invalid && (control?.touched || control?.dirty)) ||
+      this.isPasswordMismatch()
     );
   }
 
   isPasswordMismatch(): boolean {
-    return Boolean(this.passwordForm.hasError("mismatch"));
+    const confirmTouched = Boolean(
+      this.passwordForm.get("confirmPassword")?.touched,
+    );
+    return Boolean(this.passwordForm.hasError("mismatch") && confirmTouched);
+  }
+
+  validatePassword(): void {
+    const newPasswordControl = this.passwordForm.get("newPassword");
+    const confirmPasswordControl = this.passwordForm.get("confirmPassword");
+
+    const newPassword = newPasswordControl?.value || "";
+    const confirmPassword = confirmPasswordControl?.value || "";
+
+    this.showPasswordWarning = Boolean(
+      !this.passwordPattern.test(newPassword) && newPasswordControl?.touched,
+    );
+
+    // Check password match
+    this.showPasswordError = Boolean(
+      newPassword !== confirmPassword && confirmPasswordControl?.touched,
+    );
   }
 
   isSubmitDisabled(): boolean {
-    return this.passwordForm.invalid || Boolean(this.loading$);
+    return Boolean(
+      this.passwordForm.invalid ||
+        this.showPasswordWarning ||
+        this.showPasswordError,
+    );
   }
 
-  validatePassword() {
-    const newPassword = this.passwordForm.get("newPassword")?.value || "";
-    const confirmPassword =
-      this.passwordForm.get("confirmPassword")?.value || "";
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    this.showPasswordWarning = !passwordRegex.test(newPassword);
-    this.showPasswordError = this.passwordForm.hasError("mismatch");
-    this.showSuccessMessage =
-      !this.showPasswordWarning &&
+  onSubmit(): void {
+    if (
+      this.passwordForm.valid &&
       !this.showPasswordError &&
-      newPassword === confirmPassword &&
-      newPassword.length > 0;
-  }
-
-  onSubmit() {
-    if (this.passwordForm.valid && !this.showPasswordWarning) {
-      const { newPassword, confirmPassword } = this.passwordForm.value;
-
-      if (newPassword !== confirmPassword) {
-        this.showPasswordError = true;
-        return;
-      }
-
-      this.store.dispatch(
-        AuthActions.resetPassword({
-          email: this.email,
-          newPassword,
-          confirmPassword,
-        }),
-      );
+      !this.showPasswordWarning
+    ) {
+      // Dispatch reset password action
+      const newPassword = this.passwordForm.get("newPassword")?.value;
+      this.store.dispatch(AuthActions.resetPassword({ newPassword }));
     } else {
-      if (this.showPasswordWarning) {
-        this.passwordForm.get("newPassword")?.setErrors({ pattern: true });
-      }
-      this.passwordForm.markAllAsTouched();
+      // Mark all fields as touched to trigger validation display
+      Object.keys(this.passwordForm.controls).forEach((key) => {
+        const control = this.passwordForm.get(key);
+        control?.markAsTouched();
+      });
+      this.validatePassword();
     }
-  }
-
-  redirectToLogin() {
-    this.router.navigate(["/auth/login"]);
   }
 }

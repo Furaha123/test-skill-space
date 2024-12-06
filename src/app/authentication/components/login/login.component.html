@@ -50,9 +50,15 @@
       </a>
     </div>
 
-    <app-button type="button" (handleClick)="onSubmit()" class="btn btn-primary"
-      >Login</app-button
+    <app-button
+      text="Login"
+      type="submit"
+      [isDisabled]="loginForm.invalid || isLoading()"
+      [customClasses]="'btn primary'"
+      [isActive]="true"
     >
+      {{ isLoading() ? "Logging in..." : "Login" }}
+    </app-button>
   </form>
 
   <div class="signup-link">

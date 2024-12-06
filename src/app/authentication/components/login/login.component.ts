@@ -57,9 +57,35 @@ export class LoginComponent {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.store.dispatch(AuthActions.login({ email, password }));
+
+      if (!email || !password) {
+        this.toastr.error("Please enter both email and password");
+        return;
+      }
+
+      this.store.dispatch(
+        AuthActions.login({
+          email: email.trim().toLowerCase(),
+          password,
+        }),
+      );
+
+      // Subscribe to error state
+      this.showError$.pipe(take(1)).subscribe((error) => {
+        if (error) {
+          this.toastr.error(error);
+          this.loginForm.get("password")?.reset();
+        }
+      });
     } else {
       this.loginForm.markAllAsTouched();
+      if (this.loginForm.get("email")?.errors?.["email"]) {
+        this.toastr.error("Please enter a valid email address");
+      } else if (this.loginForm.get("password")?.errors?.["pattern"]) {
+        this.toastr.error("Password must meet the required format");
+      } else {
+        this.toastr.error("Please fill in all required fields");
+      }
     }
   }
 
@@ -101,5 +127,10 @@ export class LoginComponent {
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     return JSON.parse(window.atob(base64));
+  }
+  isLoading(): boolean {
+    let loading = false;
+    this.isLoading$.pipe(take(1)).subscribe((value) => (loading = value));
+    return loading;
   }
 }

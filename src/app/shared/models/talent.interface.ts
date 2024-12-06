@@ -3,4 +3,5 @@ export interface Talent {
   password: string;
   phoneNumber: string;
   firstName: string;
+  lastName: string;
 }

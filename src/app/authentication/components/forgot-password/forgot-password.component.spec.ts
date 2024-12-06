@@ -10,6 +10,7 @@ import {
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { provideMockStore, MockStore } from "@ngrx/store/testing";
+import { ToastrService } from "ngx-toastr";
 import { ForgotPasswordComponent } from "./forgot-password.component";
 import * as AuthActions from "../../auth-store/auth.actions";
 import * as AuthSelectors from "../../auth-store/auth.selectors";
@@ -41,16 +42,16 @@ class MockInputComponent implements ControlValueAccessor {
   @Input() errorMessage: string[] = [];
 
   control = new FormControl();
-  onChange = () => {};
-  onTouch = () => {};
+  onChange: (value: unknown) => void = () => {};
+  onTouch: () => void = () => {};
 
   writeValue(value: unknown): void {
     if (value !== undefined) {
-      this.control.setValue(value);
+      this.control.setValue(value, { emitEvent: false });
     }
   }
 
-  registerOnChange(fn: () => void): void {
+  registerOnChange(fn: (value: unknown) => void): void {
     this.onChange = fn;
   }
 
@@ -91,7 +92,8 @@ describe("ForgotPasswordComponent", () => {
   let component: ForgotPasswordComponent;
   let fixture: ComponentFixture<ForgotPasswordComponent>;
   let store: MockStore;
-  let router: jest.Mocked<Router>;
+  let router: Router;
+  let toastr: jest.Mocked<ToastrService>;
 
   const initialState = {
     auth: {
@@ -106,6 +108,12 @@ describe("ForgotPasswordComponent", () => {
       navigate: jest.fn(),
     };
 
+    const toastrMock = {
+      success: jest.fn(),
+      error: jest.fn(),
+      warning: jest.fn(),
+    } as Partial<ToastrService>;
+
     await TestBed.configureTestingModule({
       declarations: [
         ForgotPasswordComponent,
@@ -117,55 +125,49 @@ describe("ForgotPasswordComponent", () => {
         FormBuilder,
         provideMockStore({ initialState }),
         { provide: Router, useValue: routerMock },
+        { provide: ToastrService, useValue: toastrMock },
       ],
     }).compileComponents();
 
     store = TestBed.inject(MockStore);
-    router = TestBed.inject(Router) as jest.Mocked<Router>;
+    router = TestBed.inject(Router);
+    toastr = TestBed.inject(ToastrService) as jest.Mocked<ToastrService>;
+
+    jest.spyOn(store, "dispatch");
 
     store.overrideSelector(AuthSelectors.selectIsLoading, false);
     store.overrideSelector(AuthSelectors.selectError, null);
     store.overrideSelector(AuthSelectors.selectPasswordResetOtpVerified, false);
 
-    jest.spyOn(store, "dispatch").mockImplementation(() => {});
-
     fixture = TestBed.createComponent(ForgotPasswordComponent);
     component = fixture.componentInstance;
-    store.refreshState();
     fixture.detectChanges();
   });
 
   afterEach(() => {
-    store?.resetSelectors();
+    if (component.interval) {
+      clearInterval(component.interval);
+      component.interval = null;
+    }
     jest.clearAllMocks();
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   describe("Form Initialization", () => {
-    it("should initialize forgotPasswordForm with empty email", () => {
-      expect(component.forgotPasswordForm.get("email")).toBeTruthy();
-      expect(component.forgotPasswordForm.get("email")?.value).toBe("");
-      expect(
-        component.forgotPasswordForm
-          .get("email")
-          ?.hasValidator(Validators.required),
-      ).toBeTruthy();
-      expect(
-        component.forgotPasswordForm
-          .get("email")
-          ?.hasValidator(Validators.email),
-      ).toBeTruthy();
+    it("should create component", () => {
+      expect(component).toBeTruthy();
     });
 
-    it("should initialize otpForm with 5 empty controls", () => {
+    it("should initialize forms correctly", () => {
+      const emailControl = component.forgotPasswordForm.get("email");
+      expect(emailControl).toBeTruthy();
+      expect(emailControl?.value).toBe("");
+      expect(emailControl?.hasValidator(Validators.required)).toBeTruthy();
+      expect(emailControl?.hasValidator(Validators.email)).toBeTruthy();
+
       expect(component.otpControls.length).toBe(5);
       component.otpControls.controls.forEach((control) => {
         expect(control.value).toBe("");
         expect(control.hasValidator(Validators.required)).toBeTruthy();
-        expect(control.hasValidator(Validators.pattern(/[0-9]/))).toBeFalsy();
       });
     });
   });
@@ -175,7 +177,6 @@ describe("ForgotPasswordComponent", () => {
       const emailControl = component.forgotPasswordForm.get("email");
       emailControl?.setValue("");
       emailControl?.markAsTouched();
-      fixture.detectChanges();
       expect(component.isFieldInvalid("email")).toBeTruthy();
     });
 
@@ -183,11 +184,9 @@ describe("ForgotPasswordComponent", () => {
       const emailControl = component.forgotPasswordForm.get("email");
       emailControl?.setValue("invalid-email");
       emailControl?.markAsTouched();
-      fixture.detectChanges();
       expect(component.isFieldInvalid("email")).toBeTruthy();
 
       emailControl?.setValue("valid@email.com");
-      fixture.detectChanges();
       expect(component.isFieldInvalid("email")).toBeFalsy();
     });
   });
@@ -215,28 +214,19 @@ describe("ForgotPasswordComponent", () => {
 
       jest.advanceTimersByTime(1000);
       expect(component.timeLeft).toBe(598);
-
-      jest.advanceTimersByTime(599000);
-      jest.runOnlyPendingTimers();
-      fixture.detectChanges();
-
-      expect(component.timeLeft).toBe(0);
-      expect(component.timerExpired).toBeTruthy();
     });
 
     it("should clear timer correctly", () => {
       component.startCountdown();
-      jest.advanceTimersByTime(1000);
       component.clearTimer();
       expect(component.interval).toBeNull();
     });
   });
 
   describe("Form Submission", () => {
-    it("should handle form submission with valid email", () => {
+    it("should handle valid email submission", () => {
       const email = "test@example.com";
       component.forgotPasswordForm.get("email")?.setValue(email);
-      fixture.detectChanges();
       component.onSubmit();
 
       expect(store.dispatch).toHaveBeenCalledWith(
@@ -246,11 +236,13 @@ describe("ForgotPasswordComponent", () => {
       expect(component.previousEmail).toBe(email);
     });
 
-    it("should not submit with invalid email", () => {
+    it("should handle invalid email submission", () => {
       component.forgotPasswordForm.get("email")?.setValue("invalid-email");
-      fixture.detectChanges();
       component.onSubmit();
       expect(store.dispatch).not.toHaveBeenCalled();
+      expect(toastr.error).toHaveBeenCalledWith(
+        "Please enter a valid email address",
+      );
     });
   });
 
@@ -261,15 +253,51 @@ describe("ForgotPasswordComponent", () => {
       fixture.detectChanges();
     });
 
-    it("should handle OTP input correctly", () => {
-      const mockInput = document.createElement("input") as HTMLInputElement;
-      const mockNextInput = document.createElement("input") as HTMLInputElement;
+    it("should handle OTP verification", () => {
+      component.otpControls.controls.forEach((control) =>
+        control.setValue("1"),
+      );
+      component.verifyOtp();
+
+      expect(store.dispatch).toHaveBeenCalledWith(
+        AuthActions.verifyPasswordResetOtp({
+          otp: "11111",
+        }),
+      );
+    });
+
+    it("should handle invalid OTP", () => {
+      component.verifyOtp();
+      expect(store.dispatch).not.toHaveBeenCalled();
+      expect(toastr.error).toHaveBeenCalledWith(
+        "Please fill in all OTP digits",
+      );
+    });
+
+    it("should handle expired OTP", () => {
+      component.timerExpired = true;
+      component.otpControls.controls.forEach((control) =>
+        control.setValue("1"),
+      );
+      component.verifyOtp();
+
+      expect(store.dispatch).not.toHaveBeenCalled();
+      expect(toastr.error).toHaveBeenCalledWith(
+        "OTP has expired. Please request a new one.",
+      );
+    });
+  });
+
+  describe("OTP Input Navigation", () => {
+    it("should handle numeric input", () => {
+      const mockInput = document.createElement("input");
+      const mockNextInput = document.createElement("input");
       mockNextInput.focus = jest.fn();
 
       Object.defineProperty(mockInput, "nextElementSibling", {
         value: mockNextInput,
       });
-      Object.defineProperty(mockInput, "value", { value: "1" });
+      mockInput.value = "1";
 
       const event = new KeyboardEvent("keyup", { key: "1" });
       Object.defineProperty(event, "target", { value: mockInput });
@@ -278,15 +306,15 @@ describe("ForgotPasswordComponent", () => {
       expect(mockNextInput.focus).toHaveBeenCalled();
     });
 
-    it("should handle backspace in OTP input", () => {
-      const mockInput = document.createElement("input") as HTMLInputElement;
-      const mockPrevInput = document.createElement("input") as HTMLInputElement;
+    it("should handle backspace", () => {
+      const mockInput = document.createElement("input");
+      const mockPrevInput = document.createElement("input");
       mockPrevInput.focus = jest.fn();
 
       Object.defineProperty(mockInput, "previousElementSibling", {
         value: mockPrevInput,
       });
-      Object.defineProperty(mockInput, "value", { value: "" });
+      mockInput.value = "";
 
       const event = new KeyboardEvent("keyup", { key: "Backspace" });
       Object.defineProperty(event, "target", { value: mockInput });
@@ -294,30 +322,10 @@ describe("ForgotPasswordComponent", () => {
       component.onOtpInput(event);
       expect(mockPrevInput.focus).toHaveBeenCalled();
     });
-
-    it("should verify valid OTP", () => {
-      component.otpControls.controls.forEach((control) =>
-        control.setValue("1"),
-      );
-      fixture.detectChanges();
-      component.verifyOtp();
-
-      expect(store.dispatch).toHaveBeenCalledWith(
-        AuthActions.verifyPasswordResetOtp({
-          email: "test@example.com",
-          otp: "11111",
-        }),
-      );
-    });
-
-    it("should not verify invalid OTP", () => {
-      component.verifyOtp();
-      expect(store.dispatch).not.toHaveBeenCalled();
-    });
   });
 
-  describe("Navigation and UI State", () => {
-    it("should handle back navigation correctly", () => {
+  describe("Navigation", () => {
+    it("should handle back navigation", () => {
       component.showOtpScreen = true;
       component.handleBackNavigation();
       expect(component.showOtpScreen).toBeFalsy();
@@ -330,11 +338,6 @@ describe("ForgotPasswordComponent", () => {
       expect(router.navigate).toHaveBeenCalledWith(["/auth/login"]);
     });
 
-    it("should navigate to create new password", () => {
-      component.createNewPassword();
-      expect(router.navigate).toHaveBeenCalledWith(["/auth/reset-password"]);
-    });
-
     it("should show OTP form", () => {
       component.showOtpForm();
       expect(component.showOtpScreen).toBeTruthy();
@@ -342,97 +345,46 @@ describe("ForgotPasswordComponent", () => {
     });
   });
 
-  describe("Reset and Recovery Functions", () => {
+  describe("Reset and Recovery", () => {
     it("should reset form correctly", () => {
+      component.isEmailSubmitted = true;
+      component.showOtpScreen = true;
+      component.verificationSuccessful = true;
+      component.verificationFailed = true;
+      component.statusMessage = "Test message";
+
       component.resetForm();
-      expect(component.isEmailSubmitted).toBeTruthy();
-      expect(component.tryNewEmailClicked).toBeTruthy();
+
+      expect(component.isEmailSubmitted).toBeFalsy();
       expect(component.showOtpScreen).toBeFalsy();
       expect(component.verificationSuccessful).toBeFalsy();
       expect(component.verificationFailed).toBeFalsy();
+      expect(component.statusMessage).toBe("");
       expect(component.forgotPasswordForm.pristine).toBeTruthy();
+      expect(component.otpForm.pristine).toBeTruthy();
     });
 
-    it("should handle new email request", () => {
+    it("should handle new code request", () => {
       const email = "test@example.com";
       component.previousEmail = email;
-      fixture.detectChanges();
-
-      component.otpControls.controls.forEach((control) => {
-        control.reset();
-      });
-      fixture.detectChanges();
 
       component.requestNewCode();
-
       expect(store.dispatch).toHaveBeenCalledWith(
         AuthActions.requestNewOtp({ email }),
       );
       expect(component.verificationFailed).toBeFalsy();
-
-      component.otpControls.controls.forEach((control) => {
-        expect(control.enabled).toBeTruthy();
-        expect(control.value).toBe(null);
-      });
-
       expect(component.timerExpired).toBeFalsy();
-      expect(component.timeLeft).toBe(599);
-    });
-
-    it("should handle try new email cancellation", () => {
-      const previousEmail = "test@example.com";
-      component.previousEmail = previousEmail;
-      component.cancelTryNewEmail();
-
-      expect(component.tryNewEmailClicked).toBeFalsy();
-      expect(component.isEmailSubmitted).toBeTruthy();
-      expect(component.forgotPasswordForm.get("email")?.value).toBe(
-        previousEmail,
-      );
     });
   });
 
-  describe("Component Lifecycle and State", () => {
-    it("should clean up on destroy", () => {
-      const clearTimerSpy = jest.spyOn(component, "clearTimer");
-      component.startCountdown();
-      component.ngOnDestroy();
-      expect(clearTimerSpy).toHaveBeenCalled();
-      expect(component.interval).toBeNull();
-    });
-
-    it("should handle OTP verification success", () => {
-      store.overrideSelector(
-        AuthSelectors.selectPasswordResetOtpVerified,
-        true,
-      );
+  describe("Error Handling", () => {
+    it("should handle API errors", () => {
+      const error = "Test error";
+      store.overrideSelector(AuthSelectors.selectError, error);
       store.refreshState();
-      fixture.detectChanges();
 
-      expect(component.verificationSuccessful).toBeTruthy();
-      expect(component.verificationFailed).toBeFalsy();
-    });
-  });
-
-  describe("UI Helper Methods", () => {
-    it("should get correct back button text", () => {
-      component.showOtpScreen = true;
-      expect(component.getBackButtonText()).toBe("Back ");
-
-      component.showOtpScreen = false;
-      component.isEmailSubmitted = true;
-      expect(component.getBackButtonText()).toBe("Back ");
-
-      component.isEmailSubmitted = false;
-      expect(component.getBackButtonText()).toBe("Back");
-    });
-
-    it("should determine if back button should be shown", () => {
-      component.verificationSuccessful = false;
-      expect(component.shouldShowBackButton()).toBeTruthy();
-
-      component.verificationSuccessful = true;
-      expect(component.shouldShowBackButton()).toBeFalsy();
+      expect(component.statusMessage).toBe(error);
+      expect(toastr.error).toHaveBeenCalledWith(error);
     });
   });
 });

@@ -13,6 +13,7 @@ import * as AuthActions from "../../auth-store/auth.actions";
 import * as AuthSelectors from "../../auth-store/auth.selectors";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-forgot-password",
@@ -34,15 +35,28 @@ export class ForgotPasswordComponent implements OnDestroy {
   previousEmail = "";
   loading$: Observable<boolean>;
   error$: Observable<string | null>;
+  statusMessage = "";
   private destroy$ = new Subject<void>();
 
   constructor(
     private readonly fb: FormBuilder,
     private readonly router: Router,
     private readonly store: Store<AppState>,
+    private readonly toastr: ToastrService,
   ) {
     this.loading$ = this.store.select(AuthSelectors.selectIsLoading);
     this.error$ = this.store.select(AuthSelectors.selectError);
+
+    this.store
+      .select(AuthSelectors.selectError)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((error) => {
+        if (error) {
+          this.statusMessage = error;
+          this.toastr.error(error);
+          this.isEmailSubmitted = false;
+        }
+      });
 
     this.store
       .select(AuthSelectors.selectPasswordResetOtpVerified)
@@ -52,6 +66,8 @@ export class ForgotPasswordComponent implements OnDestroy {
           this.verificationSuccessful = true;
           this.verificationFailed = false;
           this.clearTimer();
+          this.statusMessage = "Your verification was successful";
+          this.toastr.success("OTP verification successful!");
         }
       });
   }
@@ -122,13 +138,23 @@ export class ForgotPasswordComponent implements OnDestroy {
 
   onSubmit(): void {
     if (this.forgotPasswordForm.valid) {
-      const email = this.forgotPasswordForm.get("email")?.value;
+      const email = this.forgotPasswordForm.get("email")?.value?.trim();
+
+      if (!email) {
+        this.statusMessage = "Please enter a valid email address";
+        this.toastr.error("Please enter a valid email address");
+        return;
+      }
+
       this.store.dispatch(AuthActions.forgotPassword({ email }));
+      this.previousEmail = email;
       this.isEmailSubmitted = true;
       this.tryNewEmailClicked = false;
-      this.previousEmail = email;
+      this.statusMessage = "";
     } else {
       this.forgotPasswordForm.markAllAsTouched();
+      this.statusMessage = "Please enter a valid email address";
+      this.toastr.error("Please enter a valid email address");
     }
   }
 
@@ -142,6 +168,12 @@ export class ForgotPasswordComponent implements OnDestroy {
     const nextInput = input.nextElementSibling as HTMLInputElement;
     const prevInput = input.previousElementSibling as HTMLInputElement;
 
+    // Only allow numbers
+    if (!/^\d*$/.test(input.value)) {
+      input.value = "";
+      return;
+    }
+
     if (input.value.length > 0 && nextInput && event.key !== "Backspace") {
       nextInput.focus();
     } else if (event.key === "Backspace" && prevInput) {
@@ -152,14 +184,38 @@ export class ForgotPasswordComponent implements OnDestroy {
   verifyOtp(): void {
     if (this.otpForm.valid) {
       const otpValue = this.otpControls.value.join("");
+
+      if (this.timerExpired) {
+        this.statusMessage = "OTP has expired. Please request a new one.";
+        this.toastr.error("OTP has expired. Please request a new one.");
+        this.otpForm.reset();
+        return;
+      }
+
+      if (!/^\d{5}$/.test(otpValue)) {
+        this.statusMessage = "Please enter a valid 5-digit OTP";
+        this.toastr.error("Please enter a valid 5-digit OTP");
+        return;
+      }
+
       this.store.dispatch(
         AuthActions.verifyPasswordResetOtp({
-          email: this.previousEmail,
           otp: otpValue,
         }),
       );
+
+      this.error$.pipe(takeUntil(this.destroy$)).subscribe((error) => {
+        if (error) {
+          this.verificationFailed = true;
+          this.statusMessage = "OTP verification failed. Please try again.";
+          this.otpForm.reset();
+          this.toastr.error("OTP verification failed. Please try again.");
+        }
+      });
     } else {
       this.otpForm.markAllAsTouched();
+      this.statusMessage = "Please fill in all OTP digits";
+      this.toastr.error("Please fill in all OTP digits");
     }
   }
 
@@ -168,19 +224,19 @@ export class ForgotPasswordComponent implements OnDestroy {
   }
 
   requestNewCode(): void {
-    this.store.dispatch(
-      AuthActions.requestNewOtp({ email: this.previousEmail }),
-    );
-    this.otpControls.controls.forEach((control) => {
-      control.enable();
-      control.reset();
-    });
-    this.startCountdown();
-    this.verificationFailed = false;
+    if (this.previousEmail) {
+      this.store.dispatch(
+        AuthActions.requestNewOtp({ email: this.previousEmail }),
+      );
+      this.otpForm.reset();
+      this.startCountdown();
+      this.verificationFailed = false;
+      this.timerExpired = false;
+    }
   }
 
   resetForm(): void {
-    this.isEmailSubmitted = true;
+    this.isEmailSubmitted = false;
     this.tryNewEmailClicked = true;
     this.showOtpScreen = false;
     this.verificationSuccessful = false;
@@ -188,6 +244,7 @@ export class ForgotPasswordComponent implements OnDestroy {
     this.clearTimer();
     this.forgotPasswordForm.reset();
     this.otpForm.reset();
+    this.statusMessage = "";
   }
 
   openMailApp(): void {
@@ -207,16 +264,13 @@ export class ForgotPasswordComponent implements OnDestroy {
     } else if (this.isEmailSubmitted) {
       this.isEmailSubmitted = false;
       this.tryNewEmailClicked = false;
-      this.forgotPasswordForm.reset();
     } else {
       this.router.navigate(["/auth/login"]);
     }
   }
 
   getBackButtonText(): string {
-    if (this.showOtpScreen) {
-      return "Back ";
-    } else if (this.isEmailSubmitted) {
+    if (this.showOtpScreen || this.isEmailSubmitted) {
       return "Back ";
     }
     return "Back";
@@ -234,5 +288,6 @@ export class ForgotPasswordComponent implements OnDestroy {
         email: this.previousEmail,
       });
     }
+    this.statusMessage = "";
   }
 }

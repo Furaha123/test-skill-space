@@ -77,6 +77,7 @@ export class TalentRegistrationFormComponent implements OnInit, OnDestroy {
         password,
         phoneNumber,
         firstName: userName,
+        lastName: "",
       };
 
       this.submitted = true;

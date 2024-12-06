@@ -4,7 +4,6 @@ import { AuthService } from "../../core/services/auth/auth-service.service";
 import * as AuthActions from "./auth.actions";
 import { catchError, map, mergeMap, tap, of } from "rxjs";
 import { Router } from "@angular/router";
-import { LoginResponse, LoginError } from "./auth.interface";
 import { ToastrService } from "ngx-toastr";
 
 @Injectable()
@@ -21,32 +20,49 @@ export class AuthEffects {
       ofType(AuthActions.login),
       mergeMap((action) =>
         this.authService.login(action.email, action.password).pipe(
-          tap((response: LoginResponse) => {
-            if (
-              response.status === "Success" &&
-              response.data?.token &&
-              response.data?.roles
-            ) {
+          map((response) => {
+            if (response.status === "Success" && response.data?.token) {
+              // Store token
               sessionStorage.setItem("authToken", response.data.token);
-              sessionStorage.setItem(
-                "authRoles",
-                JSON.stringify(response.data.roles),
-              );
+              if (response.data.roles) {
+                sessionStorage.setItem(
+                  "authRoles",
+                  JSON.stringify(response.data.roles),
+                );
+              }
+              return AuthActions.loginSuccess(response.data);
             }
+            return AuthActions.loginFailure({
+              error: response.message || "Login failed",
+            });
           }),
-          map((response: LoginResponse) =>
-            AuthActions.loginSuccess(response.data!),
-          ),
-          catchError((error: LoginError) =>
-            of(
-              AuthActions.loginFailure({
-                error: error.message || "Login failed",
-              }),
-            ),
-          ),
+          catchError((error) => {
+            let errorMessage = "Login failed";
+            if (error.status === 401) {
+              errorMessage = "Invalid email or password";
+            } else if (error.error?.message) {
+              errorMessage = error.error.message;
+            }
+            this.toastr.error(errorMessage);
+            return of(AuthActions.loginFailure({ error: errorMessage }));
+          }),
         ),
       ),
     ),
+  );
+
+  // Rest of the code remains the same...
+  loginSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.loginSuccess),
+        tap(({ roles }) => {
+          if (roles && roles.length > 0) {
+            this.handleRoleNavigation(roles);
+          }
+        }),
+      ),
+    { dispatch: false },
   );
 
   forgotPassword$ = createEffect(() =>
@@ -96,17 +112,17 @@ export class AuthEffects {
       ofType(AuthActions.verifyPasswordResetOtp),
       mergeMap(({ otp }) =>
         this.authService.verifyPasswordResetOtp(otp).pipe(
-          map((response) =>
-            AuthActions.verifyPasswordResetOtpSuccess({
+          map((response) => {
+            this.router.navigate(["/auth/reset-password"]);
+            return AuthActions.verifyPasswordResetOtpSuccess({
               message: response.message,
-            }),
-          ),
+              token: response.data.token,
+            });
+          }),
           catchError((error) =>
             of(
               AuthActions.verifyPasswordResetOtpFailure({
-                error:
-                  error.error?.message ||
-                  "Password reset OTP verification failed",
+                error: error.error?.message || "OTP verification failed",
               }),
             ),
           ),
@@ -120,21 +136,19 @@ export class AuthEffects {
       ofType(AuthActions.resetPassword),
       mergeMap(({ newPassword }) =>
         this.authService.resetPassword(newPassword).pipe(
-          tap((response) => {
-            if (response.status === "Success") {
-              this.router.navigate(["/auth/login"]);
-            }
+          map((response) => {
+            this.toastr.success("Password reset successfully");
+            this.router.navigate(["/auth/login"]);
+            return AuthActions.resetPasswordSuccess({
+              message: response.message,
+            });
           }),
-          map((response) =>
-            AuthActions.resetPasswordSuccess({ message: response.message }),
-          ),
-          catchError((error) =>
-            of(
-              AuthActions.resetPasswordFailure({
-                error: error.error?.message || "Failed to reset password",
-              }),
-            ),
-          ),
+          catchError((error) => {
+            this.toastr.error(error.error?.message || "Password reset failed");
+            return of(
+              AuthActions.resetPasswordFailure({ error: error.error?.message }),
+            );
+          }),
         ),
       ),
     ),
@@ -188,6 +202,7 @@ export class AuthEffects {
       ),
     { dispatch: false },
   );
+
   showCompanyRegistrationSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -204,6 +219,7 @@ export class AuthEffects {
       ),
     { dispatch: false },
   );
+
   private handleRoleNavigation(roles: string[]) {
     const roleRouteMap: Record<string, string> = {
       SYSTEM_ADMIN: "/admin-dashboard",

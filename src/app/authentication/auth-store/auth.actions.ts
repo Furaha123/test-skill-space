@@ -75,12 +75,12 @@ export const verifyResetOtpFailure = createAction(
 
 export const verifyPasswordResetOtp = createAction(
   "[Auth] Verify Password Reset OTP",
-  props<{ email: string; otp: string }>(),
+  props<{ otp: string }>(),
 );
 
 export const verifyPasswordResetOtpSuccess = createAction(
   "[Auth] Verify Password Reset OTP Success",
-  props<{ message: string }>(),
+  props<{ message: string; token: string }>(),
 );
 
 export const verifyPasswordResetOtpFailure = createAction(
@@ -88,6 +88,10 @@ export const verifyPasswordResetOtpFailure = createAction(
   props<{ error: string }>(),
 );
 
+export const resetPassword = createAction(
+  "[Auth] Reset Password",
+  props<{ newPassword: string }>(),
+);
 export const requestNewOtp = createAction(
   "[Auth] Request New OTP",
   props<{ email: string }>(),
@@ -101,15 +105,6 @@ export const requestNewOtpSuccess = createAction(
 export const requestNewOtpFailure = createAction(
   "[Auth] Request New OTP Failure",
   props<{ error: string }>(),
-);
-
-export const resetPassword = createAction(
-  "[Auth] Reset Password",
-  props<{
-    email: string;
-    newPassword: string;
-    confirmPassword: string;
-  }>(),
 );
 
 export const resetPasswordSuccess = createAction(

@@ -1,27 +1,148 @@
 @import "../../../../../styles.scss";
 
 .company-job-posting {
-  padding: $spacing-medium;
-  background-color: #fdf8f6;
   min-height: 100vh;
+  background-color: #fdf8f6;
+  padding: $spacing-medium;
+  position: relative;
 
+  // Loading Overlay
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid $primary-orange;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  // Error Message
+  .error-message {
+    background-color: #fef3f2;
+    color: #b42318;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: $spacing-medium;
+    font-size: $font-size-small;
+    border-left: 4px solid #f04438;
+  }
+
+  // Success Message Styles
+  .success-message {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 448px;
+    background-color: #f1fdf7;
+    border-radius: 8px;
+    padding: 12px 16px;
+    z-index: 1000;
+    animation: slideDown 0.3s ease-out;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+
+    &.success {
+      background-color: #f1fdf7;
+      .success-text {
+        color: #027a48;
+      }
+      .success-accent {
+        background: #12b76a;
+      }
+    }
+
+    &.error {
+      background-color: #fef3f2;
+      .success-text {
+        color: #b42318;
+      }
+      .success-accent {
+        background: #f04438;
+      }
+    }
+
+    .success-content {
+      @include flex-center-row;
+      gap: $spacing-small;
+      position: relative;
+      padding-left: 8px;
+
+      .success-icon {
+        flex-shrink: 0;
+
+        svg {
+          width: 20px;
+          height: 20px;
+          display: block;
+        }
+      }
+
+      .success-text {
+        font-weight: 500;
+        font-size: $font-size-small;
+        line-height: 1.5;
+        margin-left: 4px;
+      }
+    }
+
+    .success-accent {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+  }
+
+  &.show-form {
+    background-color: #fdf8f6;
+
+    .header,
+    .job-grid,
+    .no-results {
+      display: none;
+    }
+  }
+
+  .form-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #fdf8f6;
+  }
+
+  // Header Section
   .header {
     @include flex-between;
     margin-bottom: $spacing-large;
-    gap: $spacing-medium;
     padding: 0 16px;
+
+    .title {
+      font-size: $font-size-xlarge;
+      font-weight: $font-weight-bold;
+      color: $nav-text-dark;
+      white-space: nowrap;
+    }
 
     .header-left {
       @include flex-center-row;
       gap: $spacing-large;
       flex: 1;
-
-      .title {
-        font-size: $font-size-xlarge;
-        font-weight: $font-weight-bold;
-        color: $nav-text-dark;
-        white-space: nowrap;
-      }
 
       .search-box {
         @include flex-center-row;
@@ -30,7 +151,12 @@
         border: 1px solid $neutral-80;
         border-radius: 4px;
         padding: 8px $spacing-medium;
-        width: 480px; // Increased width
+        width: 480px;
+        transition: border-color 0.2s ease;
+
+        &:focus-within {
+          border-color: $primary-orange;
+        }
 
         img {
           width: 20px;
@@ -43,9 +169,11 @@
           width: 100%;
           font-size: $font-size-small;
           color: $nav-text-color;
+          background: transparent;
 
           &::placeholder {
             color: $nav-text-color;
+            opacity: 0.7;
           }
         }
       }
@@ -57,10 +185,11 @@
     }
   }
 
+  // Button Styles
   .filter-button {
     @include flex-center-row;
     gap: $spacing-small;
-    background-color: #ffe9e7; // Darker pink background
+    background-color: #ffe9e7;
     border: none;
     border-radius: 4px;
     padding: 8px $spacing-medium;
@@ -68,6 +197,7 @@
     font-size: $font-size-small;
     cursor: pointer;
     white-space: nowrap;
+    transition: background-color 0.2s ease;
 
     img {
       width: 20px;
@@ -76,6 +206,10 @@
 
     &:hover {
       background-color: darken(#ffe9e7, 5%);
+    }
+
+    &:active {
+      transform: translateY(1px);
     }
   }
 
@@ -90,6 +224,7 @@
     font-size: $font-size-small;
     cursor: pointer;
     white-space: nowrap;
+    transition: all 0.2s ease;
 
     img {
       width: 20px;
@@ -100,15 +235,29 @@
     &:hover {
       background-color: $primary-hover-color;
     }
+
+    &:active {
+      transform: translateY(1px);
+    }
   }
 
+  // Grid Layout
   .job-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     padding: 0 16px;
     width: 100%;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
   }
+
   .no-results {
     text-align: center;
     padding: $spacing-large;
@@ -116,6 +265,28 @@
     font-size: $font-size-large;
     background-color: $white;
     border-radius: 8px;
-    margin: $spacing-medium $spacing-large;
+    margin: $spacing-medium;
+    box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1);
+  }
+
+  // Animations
+  @keyframes slideDown {
+    from {
+      transform: translate(-50%, -100%);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 }

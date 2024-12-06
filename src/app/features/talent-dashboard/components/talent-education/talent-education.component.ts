@@ -1,6 +1,16 @@
 import { Component, OnInit } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { Observable } from "rxjs";
 import { EducationRecord } from "../../models/education.record.interface";
+
+import {
+  selectEducationError,
+  selectEducationLoading,
+  selectEducationRecords,
+} from "../../store/talent.selector";
+import { loadEducationRecords } from "../../store/talent.actions";
 import { TalentProfileService } from "../../services/talent-profile.service";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: "app-talent-education",
@@ -8,30 +18,26 @@ import { TalentProfileService } from "../../services/talent-profile.service";
   styleUrls: ["./talent-education.component.scss"],
 })
 export class TalentEducationComponent implements OnInit {
-  educationRecords: EducationRecord[] = [];
-  showUpdateComponent = false;
-  selectedRecord: EducationRecord | null = null;
-  mode: "add" | "update" = "add";
-  isLoading = true;
-  error: string | null = null;
+  educationRecords$: Observable<EducationRecord[]> = this.store.select(
+    selectEducationRecords,
+  );
+  isLoading$: Observable<boolean> = this.store.select(selectEducationLoading);
+  error$: Observable<string | null> = this.store.select(selectEducationError);
 
-  constructor(private readonly talentProfileService: TalentProfileService) {}
+  showUpdateComponent = false;
+  showDeleteDialog = false;
+  selectedRecord: EducationRecord | null = null;
+  recordToDelete: EducationRecord | null = null;
+  mode: "add" | "update" = "add"; // Determines if the update component is in add or update mode
+
+  constructor(
+    private readonly store: Store,
+    private readonly talentProfileService: TalentProfileService,
+    private readonly toastr: ToastrService,
+  ) {}
 
   ngOnInit(): void {
-    this.fetchEducationRecords();
-  }
-
-  fetchEducationRecords(): void {
-    this.talentProfileService.getSchools().subscribe({
-      next: (response) => {
-        this.educationRecords = response.data;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.error = "Failed to load education records.";
-        this.isLoading = false;
-      },
-    });
+    this.store.dispatch(loadEducationRecords());
   }
 
   startAddNewRecord(): void {
@@ -46,7 +52,7 @@ export class TalentEducationComponent implements OnInit {
       programStatus: "",
       commencementDate: "",
       completionDate: "",
-      academicTranscriptUrls: "",
+      academicTranscriptUrls: [],
     };
     this.showUpdateComponent = true;
   }
@@ -60,5 +66,33 @@ export class TalentEducationComponent implements OnInit {
   closeUpdateComponent(): void {
     this.showUpdateComponent = false;
     this.selectedRecord = null;
+  }
+  openDeleteDialog(record: EducationRecord): void {
+    this.recordToDelete = record;
+    this.showDeleteDialog = true;
+  }
+
+  closeDeleteDialog(): void {
+    this.recordToDelete = null;
+    this.showDeleteDialog = false;
+  }
+
+  confirmDelete(): void {
+    if (this.recordToDelete?.id) {
+      this.talentProfileService.deleteSchool(this.recordToDelete.id).subscribe({
+        next: () => {
+          this.toastr.success("Education record deleted successfully");
+          this.store.dispatch(loadEducationRecords());
+        },
+        error: (error) => {
+          this.toastr.error(
+            error.message || "Failed to delete education record",
+          );
+        },
+        complete: () => {
+          this.closeDeleteDialog();
+        },
+      });
+    }
   }
 }

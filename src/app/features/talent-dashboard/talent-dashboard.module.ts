@@ -18,6 +18,12 @@ import { MaterialModule } from "../../shared/material.module";
 import { ProgramApplicationFormComponent } from "./components/program-application-form/program-application-form.component";
 import { PreferencesComponent } from "./components/preferences/preferences.component";
 
+import { StoreModule } from "@ngrx/store";
+import { EffectsModule } from "@ngrx/effects";
+import { educationReducer } from "./store/talent.reducer";
+import { EducationEffects } from "./store/talent.effects";
+import { PersonalDetailsUpdateComponent } from "./components/personal-details-update/personal-details-update.component";
+
 @NgModule({
   declarations: [
     TalentDashboardComponent,
@@ -31,6 +37,7 @@ import { PreferencesComponent } from "./components/preferences/preferences.compo
     SingleProgramComponent,
     ProgramApplicationFormComponent,
     PreferencesComponent,
+    PersonalDetailsUpdateComponent,
   ],
   imports: [
     CommonModule,
@@ -40,6 +47,9 @@ import { PreferencesComponent } from "./components/preferences/preferences.compo
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+
+    StoreModule.forFeature("education", educationReducer),
+    EffectsModule.forFeature([EducationEffects]),
   ],
 })
 export class TalentDashboardModule {}

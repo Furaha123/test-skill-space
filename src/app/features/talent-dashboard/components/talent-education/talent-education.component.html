@@ -4,37 +4,100 @@
       <h2>Education</h2>
     </div>
 
-    <div *ngIf="isLoading" class="loading-spinner">
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading$ | async" class="loading-spinner">
       Loading education records...
     </div>
-    <div *ngIf="error" class="error-message">
-      {{ error }}
+
+    <!-- Error State -->
+    <div
+      *ngIf="(error$ | async) && (isLoading$ | async) === false"
+      class="error-state"
+    >
+      <div class="error-state-content">
+        <div class="error-state-text">
+          <h3>Something Went Wrong Please retry</h3>
+        </div>
+      </div>
     </div>
 
-    <div class="education-item" *ngFor="let record of educationRecords">
-      <div class="education-icon">
-        <img src="assets/icons/degree.svg" alt="Graduation cap" />
+    <!-- No Records State -->
+    <div
+      *ngIf="
+        (isLoading$ | async) === false &&
+        (error$ | async) === null &&
+        (educationRecords$ | async)?.length === 0
+      "
+      class="empty-state"
+    >
+      <div class="empty-state-content">
+        <div class="empty-state-icon">
+          <img src="assets/icons/degree.svg" alt="No Education Records" />
+        </div>
+        <div class="empty-state-text">
+          <h3>No Education Records Yet</h3>
+          <p>
+            Start building your educational profile by adding your academic
+            achievements
+          </p>
+        </div>
+        <button class="add-education-btn" (click)="startAddNewRecord()">
+          <img src="assets/icon/add-education.svg" alt="Add Education" />
+          <span>Add Education</span>
+        </button>
       </div>
-      <div class="education-details">
-        <h3>{{ record.name }}</h3>
-        <p class="degree">{{ record.programName }}</p>
-        <p class="duration">
-          {{ record.commencementDate | date: "MMM yyyy" }} -
-          {{ record.completionDate | date: "MMM yyyy" }}
-        </p>
+    </div>
+
+    <!-- Records List -->
+    <div
+      *ngIf="(error$ | async) === null && (isLoading$ | async) === false"
+      class="education-records"
+    >
+      <div
+        class="education-item"
+        *ngFor="let record of educationRecords$ | async"
+      >
+        <div class="education-icon">
+          <img src="assets/icons/degree.svg" alt="Graduation cap" />
+        </div>
+        <div class="education-details">
+          <h3>{{ record.name }}</h3>
+          <p class="degree">{{ record.programName }}</p>
+          <p class="duration">
+            {{ record.commencementDate | date: "MMM yyyy" }} -
+            {{ record.completionDate | date: "MMM yyyy" }}
+          </p>
+        </div>
+        <div class="education-actions">
+          <img
+            src="assets/icon/add-education.svg"
+            alt="Add Education"
+            (click)="startAddNewRecord()"
+          />
+          <img
+            src="assets/icon/pencile.svg"
+            alt="Edit Education"
+            (click)="startUpdate(record)"
+          />
+          <img
+            src="assets/icon/delete.svg"
+            alt="Delete Education"
+            (click)="openDeleteDialog(record)"
+          />
+        </div>
       </div>
-      <div class="education-actions">
-        <img
-          src="assets/icon/add-education.svg"
-          alt="Add Education"
-          (click)="startAddNewRecord()"
-        />
-        <img
-          src="assets/icon/pencile.svg"
-          alt="Edit Education"
-          (click)="startUpdate(record)"
-        />
-      </div>
+    </div>
+  </div>
+</div>
+
+<div class="delete-dialog" *ngIf="showDeleteDialog">
+  <div class="delete-dialog-overlay" (click)="closeDeleteDialog()"></div>
+  <div class="delete-dialog-content">
+    <h3>Delete Education Record</h3>
+    <p>Are you sure you want to delete this education record?</p>
+    <div class="delete-dialog-actions">
+      <button class="cancel-btn" (click)="closeDeleteDialog()">Cancel</button>
+      <button class="delete-btn" (click)="confirmDelete()">Delete</button>
     </div>
   </div>
 </div>

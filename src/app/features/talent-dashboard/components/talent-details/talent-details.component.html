@@ -1,53 +1,70 @@
 <div class="talent-details">
-  <div
-    class="personal-info"
-    *ngIf="personalDetails$ | async as personalDetails; else errorTemplate"
-  >
-    <div class="section-header">
-      <h2>Personal information</h2>
-      <span class="edit-icon">
-        <img src="assets/icon/pencile.svg" alt="edit" />
-      </span>
-    </div>
+  <ng-container *ngIf="!isEditing; else editTemplate">
+    <div
+      class="personal-info"
+      *ngIf="personalDetails$ | async as personalDetails; else errorTemplate"
+    >
+      <div class="section-header">
+        <h2>Personal information</h2>
+        <span class="edit-icon" (click)="onEdit()">
+          <img src="assets/icon/pencile.svg" alt="Edit" />
+        </span>
+      </div>
 
-    <div class="info-section">
-      <h3>About Me</h3>
-      <p>{{ personalDetails.introduction }}</p>
-    </div>
+      <div class="info-section">
+        <h3>About Me</h3>
+        <p>{{ personalDetails.introduction }}</p>
+      </div>
+      <div class="info-section">
+        <h3>Date Birth</h3>
+        <p>{{ personalDetails.birthDate }}</p>
+      </div>
+      <div class="info-section">
+        <h3>Nationality</h3>
+        <p>{{ personalDetails.nationality }}</p>
+      </div>
+      <div class="info-section">
+        <h3>Phone</h3>
+        <p>{{ personalDetails.phoneNumber }}</p>
+      </div>
 
-    <div class="info-section">
-      <h3>PHONE</h3>
-      <p>{{ personalDetails.phoneNumber }}</p>
-    </div>
+      <div class="info-section">
+        <h3>Phone Visibility</h3>
+        <p>{{ personalDetails.phoneVisibility }}</p>
+      </div>
 
-    <div class="info-section">
-      <h3>LOCATION</h3>
-      <p>{{ personalDetails.currentLocation }}</p>
-    </div>
+      <div class="info-section">
+        <h3>LOCATION</h3>
+        <p>{{ personalDetails.currentLocation }}</p>
+      </div>
 
-    <div class="info-section">
-      <h3>SOCIAL MEDIA</h3>
-      <div class="link-item" *ngFor="let social of personalDetails.socialMedia">
-        <img
-          [src]="'assets/icon/social/' + social.name.toLowerCase() + '.png'"
-          [alt]="social.name"
-        />
-        <a [href]="social.url" target="_blank">{{ social.name }}</a>
+      <div class="info-section">
+        <h3>SOCIAL MEDIA</h3>
+        <div
+          class="link-item"
+          *ngFor="let social of personalDetails.socialMedia"
+        >
+          <img
+            [src]="'assets/icon/social/' + social.name.toLowerCase() + '.png'"
+            [alt]="social.name"
+          />
+          <a [href]="social.url" target="_blank">{{ social.name }}</a>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3>PORTFOLIO LINKS</h3>
+        <div
+          class="link-item"
+          *ngFor="let portfolio of personalDetails.portfolios"
+        >
+          <a [href]="portfolio">
+            {{ portfolio }}
+          </a>
+        </div>
       </div>
     </div>
-
-    <div class="info-section">
-      <h3>PORTFOLIO LINKS</h3>
-      <div
-        class="link-item"
-        *ngFor="let portfolio of personalDetails.portfolios"
-      >
-        <a [href]="portfolio">
-          {{ portfolio }}
-        </a>
-      </div>
-    </div>
-  </div>
+  </ng-container>
 </div>
 <ng-template #errorTemplate>
   <div class="error-message">
@@ -56,4 +73,9 @@
       There was a problem fetching personal details. Please try again later.
     </p>
   </div>
+</ng-template>
+<ng-template #editTemplate>
+  <app-personal-details-update
+    (cancelEdit)="onCancelEdit()"
+  ></app-personal-details-update>
 </ng-template>

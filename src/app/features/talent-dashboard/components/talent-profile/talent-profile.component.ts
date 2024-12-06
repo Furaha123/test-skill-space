@@ -1,6 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { TalentProfileService } from "../../services/talent-profile.service";
-import { PersonalDetails } from "../../models/personal.detalis.interface";
+import {
+  ApiResponse,
+  PersonalDetails,
+  UserInfo,
+} from "../../models/personal.detalis.interface";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-talent-profile",
@@ -11,8 +16,11 @@ export class TalentProfileComponent implements OnInit {
   selectedTabIndex = 0;
   personalDetails!: PersonalDetails;
   error = false;
+  userInfo$: Observable<ApiResponse<UserInfo>>;
 
-  constructor(private readonly talentProfileService: TalentProfileService) {}
+  constructor(private readonly talentProfileService: TalentProfileService) {
+    this.userInfo$ = this.fetchUserInfo();
+  }
 
   onTabChange(index: number): void {
     this.selectedTabIndex = index;
@@ -28,5 +36,9 @@ export class TalentProfileComponent implements OnInit {
         this.error = true;
       },
     });
+  }
+
+  private fetchUserInfo(): Observable<ApiResponse<UserInfo>> {
+    return this.talentProfileService.getUserInfo();
   }
 }

@@ -23,3 +23,7 @@ export interface SocialMedia {
   name: string;
   url: string;
 }
+export interface UserInfo {
+  id: number;
+  email: string;
+}

@@ -14,7 +14,7 @@ type HttpRequestBody = unknown;
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private toastr: ToastrService) {}
+  constructor(private readonly toastr: ToastrService) {}
 
   intercept(
     req: HttpRequest<HttpRequestBody>,
@@ -36,7 +36,8 @@ export class AuthInterceptor implements HttpInterceptor {
       }
     }
 
-    const authToken = localStorage.getItem("authToken");
+    const authToken = sessionStorage.getItem("authToken");
+
     if (authToken) {
       const clonedReq = req.clone({
         headers: req.headers

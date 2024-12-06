@@ -5,8 +5,13 @@
         <img src="assets/icon/profile.svg" alt="Profile picture" />
       </div>
       <div class="profile-info" *ngIf="personalDetails">
-        <h2 class="talent-profile-name">{{ personalDetails.lastName }}</h2>
-        <p class="talent-profile-email">examplegmail.com</p>
+        <h2 class="talent-profile-name">
+          {{ personalDetails.firstName }}
+          <span>{{ personalDetails.lastName }}</span>
+        </h2>
+        <ng-container *ngIf="userInfo$ | async as userInfoResponse">
+          <p class="talent-profile-email">{{ userInfoResponse.data.email }}</p>
+        </ng-container>
       </div>
     </div>
   </section>

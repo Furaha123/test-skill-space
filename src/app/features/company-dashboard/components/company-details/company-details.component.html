@@ -1,172 +1,165 @@
-<div class="company-details" [formGroup]="companyForm">
-  <div class="main-container">
-    <div class="left-column">
-      <div class="company-info">
-        <h2>Company Name</h2>
-        <p>This is what applicants will see on your profile.</p>
-        <div class="input-group">
-          <label for="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            formControlName="name"
-            [value]="companyForm.get('name')?.value"
-            class="resize-input"
-          />
-        </div>
-      </div>
-
-      <div class="company-info">
-        <h2>Update Document</h2>
-        <p>This document will be displayed on your profile.</p>
-
-        <div class="file-preview" *ngIf="companyForm.get('documentUrl')?.value">
-          <div class="file-content">
-            <button class="delete-button" (click)="deleteFile('document')">
-              <img src="assets/icon/remove.svg" alt="Delete" />
+<ng-container
+  *ngIf="companyDetails$ | async as company; else loadingPlaceholder"
+>
+  <ng-container *ngIf="!showEditor; else editorTemplate">
+    <div class="company-details">
+      <div class="sections-container">
+        <!-- Company Info Section -->
+        <div class="company-info">
+          <div class="section-header">
+            <div class="header-content">
+              <h2>Company Profile</h2>
+            </div>
+            <button mat-icon-button class="edit-icon" (click)="onEdit()">
+              <mat-icon>edit</mat-icon>
             </button>
-            <div class="file-icon">
+          </div>
+
+          <div class="info-section">
+            <h3>Contact Information</h3>
+            <p class="info-value">
+              {{ company.phoneNumber || "Not available" }}
+            </p>
+          </div>
+
+          <div class="info-section">
+            <h3>Location</h3>
+            <p class="info-value">Rwanda, Kigali</p>
+          </div>
+
+          <div class="info-section">
+            <h3>Timezone</h3>
+            <p class="info-value">GMT+2</p>
+          </div>
+
+          <div class="info-section" *ngIf="company.websiteUrl">
+            <h3>Company Website</h3>
+            <div class="link-item">
+              <a
+                [href]="'https://' + company.websiteUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ company.websiteUrl }}
+              </a>
+            </div>
+          </div>
+          <div class="info-section" *ngIf="company.logoUrl">
+            <h3>Company Logo</h3>
+            <div class="logo-container">
               <img
-                [src]="companyForm.get('documentUrl')?.value"
-                alt="Uploaded Document"
+                [src]="getSafeImageUrl(company.logoUrl)"
+                [alt]="company.name + ' logo'"
+                class="company-logo"
+                loading="lazy"
               />
             </div>
-            <p class="file-name">Document Uploaded</p>
           </div>
-        </div>
-
-        <div class="upload-box" (click)="documentInput.click()">
-          <input
-            #documentInput
-            type="file"
-            accept=".png, .jpg, .jpeg, .pdf"
-            (change)="onFileSelected($event, 'document')"
-            style="display: none"
-            class="resize-input"
-          />
-          <div class="upload-icon">
-            <img src="assets/icon/upload.svg" alt="Upload Document" />
-          </div>
-          <div class="upload-text">
-            <p>Click here or drag your document to upload</p>
-            <p class="supported-formats">
-              Supported formats: PNG, JPG, JPEG, PDF (5mb max)
+          <div class="info-section">
+            <h3>Registration Date</h3>
+            <p class="info-value">
+              {{ company.registrationDate }}
             </p>
           </div>
         </div>
-      </div>
 
-      <div class="company-info">
-        <h2>Update Logo</h2>
-        <p>This logo will be displayed on your profile.</p>
-
-        <div class="file-preview" *ngIf="companyForm.get('logo')?.value">
-          <div class="file-content">
-            <button class="delete-button" (click)="deleteFile('logo')">
-              <img src="assets/icon/remove.svg" alt="Delete" />
-            </button>
-            <div class="file-icon">
-              <img [src]="companyForm.get('logo')?.value" alt="Uploaded Logo" />
+        <div class="preferences-info">
+          <div class="section-header">
+            <div class="header-content">
+              <h2>Settings & Preferences</h2>
             </div>
-            <p class="file-name">Logo Uploaded</p>
           </div>
-        </div>
 
-        <div class="upload-box" (click)="fileInput.click()">
-          <input
-            #fileInput
-            type="file"
-            accept=".png, .jpg, .jpeg"
-            (change)="onFileSelected($event, 'logo')"
-            style="display: none"
-            class="resize-input"
-          />
-          <div class="upload-icon">
-            <img src="assets/icon/upload.svg" alt="Upload Logo" />
-          </div>
-          <div class="upload-text">
-            <p>Click here or drag your logo to upload</p>
-            <p class="supported-formats">
-              Supported formats: PNG, JPG, JPEG (5mb max)
+          <div class="notification-section">
+            <h3>Notifications</h3>
+            <p class="section-description">
+              Control how you receive notifications
             </p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="right-column">
-      <div class="company-info">
-        <h2>Company phone number</h2>
-        <p>You can set this as private/public to control who sees it.</p>
-        <div class="phone-input-group">
-          <div class="country-code">
-            <label for="country-code">Country Code</label>
-            <div class="country-codes">
-              <app-country-codes />
+            <div class="notification-group">
+              <h4>Communication email Notifications</h4>
+              <p class="group-description">
+                Receive emails about your account activities
+              </p>
+
+              <div class="notification-options">
+                <p class="label">Notify me about:</p>
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="email-all"
+                    name="email-notifications"
+                    checked
+                  />
+                  <label for="email-all">All</label>
+                </div>
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="email-status"
+                    name="email-notifications"
+                  />
+                  <label for="email-status">Application status change</label>
+                </div>
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="email-messages"
+                    name="email-notifications"
+                  />
+                  <label for="email-messages">All new messages</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="notification-group">
+              <h4>Push Notifications</h4>
+              <p class="group-description">
+                Receive In-app notifications about your account activities
+              </p>
+
+              <div class="notification-options">
+                <p class="label">Notify me about:</p>
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="push-all"
+                    name="push-notifications"
+                    checked
+                  />
+                  <label for="push-all">All</label>
+                </div>
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="push-status"
+                    name="push-notifications"
+                  />
+                  <label for="push-status">Application status change</label>
+                </div>
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="push-messages"
+                    name="push-notifications"
+                  />
+                  <label for="push-messages">All new messages</label>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div class="phone-number">
-            <label for="phone">Phone Number</label>
-            <input
-              type="tel"
-              id="phone"
-              formControlName="phone"
-              [value]="companyForm.get('phone')?.value"
-              class="resize-input"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="company-info">
-        <h2>Update Website Link</h2>
-        <p>You can set this as private/public to control who sees it.</p>
-
-        <div formArrayName="websites">
-          <div
-            *ngFor="let website of websites.controls; let i = index"
-            class="input-group-website"
-            [class.two]="i > 0"
-          >
-            <input
-              type="text"
-              [formControlName]="i"
-              class="resize-input"
-              [class.is-invalid]="isWebsiteInvalid(i)"
-            />
-            <button
-              class="icon-button minus"
-              (click)="removeWebsite(i)"
-              *ngIf="websites.length > 1"
-            >
-              <img src="assets/icon/minus.svg" alt="Remove Website" />
-            </button>
-            <button
-              *ngIf="i === websites.length - 1"
-              class="icon-button add"
-              (click)="addWebsite()"
-            >
-              <img src="assets/icon/plus.svg" alt="Add Website" />
-            </button>
-          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
+</ng-container>
 
-  <div class="save-btn cancel-btn">
-    <button class="btn save" (click)="onSave()">Save changes</button>
-    <button class="btn cancel">Cancel</button>
+<ng-template #loadingPlaceholder>
+  <div class="loading-container">
+    <p>Loading company details...</p>
   </div>
-</div>
-<div *ngIf="isModalOpen" class="modal-overlay">
-  <div class="modal-content">
-    <div class="success-header">
-      <img src="assets/icon/social/success.svg" alt="Success" />
-      <h2>Success</h2>
-    </div>
-    <p>Your information has been successfully updated.</p>
-    <button class="btn ok" (click)="closeModal()">O.K</button>
-  </div>
-</div>
+</ng-template>
+
+<ng-template #editorTemplate>
+  <app-company-update (closeEditor)="closeEditor()"></app-company-update>
+</ng-template>

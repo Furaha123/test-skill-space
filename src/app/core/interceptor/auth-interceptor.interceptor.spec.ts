@@ -56,15 +56,13 @@ describe("AuthInterceptor", () => {
     it("should add auth token to headers if token exists", (done) => {
       const token = "test-token";
       sessionStorage.setItem("authToken", token);
-
       const request = new HttpRequest<null>("GET", "test-url");
-
       mockHandler.handle.mockReturnValue(of(new HttpResponse()));
       mockHandler.handle.mockImplementationOnce((req) => {
-        expect(req.headers.get("Authorization")).toBe(null);
+        // Updated expectation to include 'Bearer' prefix
+        expect(req.headers.get("Authorization")).toBe(`Bearer ${token}`);
         return of(new HttpResponse());
       });
-
       interceptor.intercept(request, mockHandler).subscribe({
         next: () => {
           expect(mockHandler.handle).toHaveBeenCalledWith(

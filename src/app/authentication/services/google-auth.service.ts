@@ -11,15 +11,18 @@ export class GoogleAuthService {
 
   postRegistration(token: string, email: string) {
     return this.http.post<AuthResponse>(
-      environment.apiUrlForPostRegisterGoogle,
+      `${environment.apiUrl}/auth/register/google`,
       { token, email },
     );
   }
 
   postLogin(token: string, email: string) {
-    return this.http.post<AuthResponse>(environment.apiUrlForPostLoginGoogle, {
-      token,
-      email,
-    });
+    return this.http.post<AuthResponse>(
+      `${environment.apiUrl}/auth/login/google`,
+      {
+        token,
+        email,
+      },
+    );
   }
 }

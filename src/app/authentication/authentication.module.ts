@@ -29,7 +29,7 @@ import { CompanyVerificationPageComponent } from "./pages/company-verification-p
     CreateNewPasswordComponent,
     GoogleButtonComponent,
     CompanyVerificationPageComponent,
-     LoginComponent
+    LoginComponent,
   ],
 
   imports: [

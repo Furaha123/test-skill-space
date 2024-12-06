@@ -39,11 +39,13 @@ export class AdminService {
 
   approveCompany(companyId: string): Observable<Company> {
     const url = `${environment.apiUrl}/companys/${companyId}/approve`;
+    // const url = environment.approveCompanyUrl.replace("{companyId}", companyId);
     return this.http.post<Company>(url, {}, { headers });
   }
 
   rejectCompany(companyId: string): Observable<Company> {
     const url = `${environment.apiUrl}/companys/${companyId}/reject`;
+    // const url = environment.rejectCompanyUrl.replace("{companyId}", companyId);
     return this.http.post<Company>(url, {}, { headers });
   }
 

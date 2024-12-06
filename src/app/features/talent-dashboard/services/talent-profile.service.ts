@@ -6,7 +6,6 @@ import {
   PersonalDetails,
 } from "../models/personal.detalis.interface";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { environment } from "../../../../environments/environment.development";
 import { EducationRecord } from "../models/education.record.interface";
 import { HttpError } from "../models/http-error.interface";
 
@@ -24,7 +23,6 @@ export class TalentProfileService {
 
   private getHeaders(): HttpHeaders {
     return new HttpHeaders({
-      Authorization: `Bearer ${environment.token}`,
       "Content-Type": "application/json",
       "ngrok-skip-browser-warning": "true",
     });

@@ -1,7 +1,0 @@
-{
-  "/api": {
-    "target": "https://f521-102-22-146-226.ngrok-free.app",
-    "secure": false,
-    "changeOrigin": true
-  }
-}

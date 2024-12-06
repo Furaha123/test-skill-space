@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, retry } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Talent } from "../../../shared/models/talent.interface";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -15,12 +15,13 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {}
 
   talentRegister(user: Talent): Observable<ResponseInterface> {
-    const headers = new HttpHeaders({ "Content-Type": "application/json" });
-    return this.http.post<ResponseInterface>(
-      `${this.apiUrl}/talent/register`,
-      user,
-      { headers },
-    );
+    const headers = new HttpHeaders({
+      "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
+    });
+    return this.http.post<ResponseInterface>(`/api/v1/talent/register`, user, {
+      headers,
+    });
   }
 
   forgotPassword(email: string): Observable<ResponseInterface> {
@@ -34,10 +35,13 @@ export class AuthService {
     email?: string;
     otp: string;
   }): Observable<ResponseInterface> {
-    return this.http.post<ResponseInterface>(
-      `${this.apiUrl}/otp/verify-otp`,
-      otp,
-    );
+    return this.http.post<ResponseInterface>(`/api/v1/otp/verify-otp`, otp);
+  }
+  verifyCompanyOTP(otp: {
+    email?: string;
+    otp: string;
+  }): Observable<ResponseInterface> {
+    return this.http.post<ResponseInterface>(`/api/v1/otp/verify-otp`, otp);
   }
 
   verifyPasswordResetOtp(otp: string): Observable<ResponseInterface> {
@@ -79,12 +83,22 @@ export class AuthService {
     }>(`${this.apiUrl}/auth/login`, body, { headers });
   }
 
-  companyRegister(company: Company): Observable<ResponseInterface> {
-    const headers = new HttpHeaders({ "Content-Type": "application/json" });
-    return this.http.post<ResponseInterface>(
-      `${this.apiUrl}/companys/register`,
-      company,
-      { headers },
-    );
+  companyRegister(data: Company): Observable<ResponseInterface> {
+    const formData = new FormData();
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "logo" && value instanceof File) {
+        formData.append(key, value, value.name);
+      } else if (key === "certificates" && value instanceof File) {
+        formData.append(key, value, value.name);
+      } else if (value instanceof Date) {
+        formData.append(key, value.toISOString());
+      } else if (value !== null) {
+        formData.append(key, value.toString());
+      }
+    });
+    return this.http
+      .post<ResponseInterface>(`/api/v1/companys/register`, formData)
+      .pipe(retry(1));
   }
 }

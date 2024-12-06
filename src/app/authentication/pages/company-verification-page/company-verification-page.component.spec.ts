@@ -27,7 +27,7 @@ interface MockKeyboardEvent extends KeyboardEvent {
 
 // Mock implementations to ensure type safety
 class MockAuthService {
-  verifyOTP = jest.fn();
+  verifyCompanyOTP = jest.fn();
   requestNewOTP = jest.fn();
 }
 
@@ -168,13 +168,13 @@ describe("CompanyVerificationPageComponent", () => {
         otp: ["1", "2", "3", "4", "5"],
       });
 
-      mockAuthService.verifyOTP.mockReturnValue(of({}));
+      mockAuthService.verifyCompanyOTP.mockReturnValue(of({}));
 
       component.onSubmit();
 
       tick();
 
-      expect(mockAuthService.verifyOTP).toHaveBeenCalledWith({
+      expect(mockAuthService.verifyCompanyOTP).toHaveBeenCalledWith({
         email: "test@example.com",
         otp: "12345",
       });
@@ -195,7 +195,9 @@ describe("CompanyVerificationPageComponent", () => {
       });
 
       const mockError = new HttpErrorResponse({ status: 400 });
-      mockAuthService.verifyOTP.mockReturnValue(throwError(() => mockError));
+      mockAuthService.verifyCompanyOTP.mockReturnValue(
+        throwError(() => mockError),
+      );
 
       component.onSubmit();
 

@@ -6,9 +6,9 @@ branch_name=$(git rev-parse --abbrev-ref HEAD)
 # Define regex patterns for each branch type
 feature_regex="^ft\/[a-z0-9-]+-#MLSPC-[0-9]+$"
 chore_regex="^ch\/[a-z0-9-]+-#MLSPC-[0-9]+$"
-docs_regex="^docs\/[a-z0-9-]+$"
-hotfix_regex="^hotFix\/[a-z0-9-]+$"
-bugfix_regex="^bugFix\/[a-z0-9-]+$"
+docs_regex="^docs\/[a-z0-9-]+-#MLSPC-[0-9]+$"
+hotfix_regex="^hotFix\/[a-z0-9-]+-#MLSPC-[0-9]+$"
+bugfix_regex="^bugFix\/[a-z0-9-]+-#MLSPC-[0-9]+$"
 develop_branch="develop"
 
 # Allow push if on develop branch

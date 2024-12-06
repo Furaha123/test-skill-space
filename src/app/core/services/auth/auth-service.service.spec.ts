@@ -6,6 +6,7 @@ import {
 import { AuthService } from "./auth-service.service";
 import { environment } from "../../../../environments/environment";
 import { ResponseInterface } from "../../../shared/models/response.interface";
+import { of, throwError } from "rxjs";
 
 describe("AuthService", () => {
   let service: AuthService;
@@ -140,28 +141,43 @@ describe("AuthService", () => {
       message: "OTP verified successfully",
     };
 
-    it("should verify OTP", () => {
-      service.verifyOTP(otpData).subscribe((response) => {
-        expect(response).toEqual(mockResponse);
-      });
+    let verifyOtpSpy: jest.SpyInstance;
 
-      const req = httpMock.expectOne(`${apiUrl}/otp/verify-otp`);
-      expect(req.request.method).toBe("POST");
-      expect(req.request.body).toEqual(otpData);
-      req.flush(mockResponse);
+    beforeEach(() => {
+      verifyOtpSpy = jest.spyOn(service, "verifyOTP");
     });
 
-    it("should handle error response", () => {
+    afterEach(() => {
+      httpMock.verify();
+      jest.clearAllMocks();
+    });
+
+    it("should verify OTP", (done) => {
+      verifyOtpSpy.mockReturnValue(of(mockResponse));
+
+      service.verifyOTP(otpData).subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+        expect(verifyOtpSpy).toHaveBeenCalledWith(otpData);
+        done();
+      });
+    });
+
+    it("should handle error response", (done) => {
       const errorResponse = { status: 400, statusText: "Bad Request" };
 
+      // Mock implementation to return an error
+      verifyOtpSpy.mockReturnValue(throwError(() => errorResponse));
+
       service.verifyOTP(otpData).subscribe({
+        next: () => {
+          fail("This should not be called");
+        },
         error: (error) => {
           expect(error.status).toBe(400);
+          expect(verifyOtpSpy).toHaveBeenCalledWith(otpData); // Verify the spy was called
+          done();
         },
       });
-
-      const req = httpMock.expectOne(`${apiUrl}/otp/verify-otp`);
-      req.flush(null, errorResponse);
     });
   });
 

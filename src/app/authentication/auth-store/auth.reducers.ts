@@ -37,11 +37,14 @@ export const authReducer = createReducer(
   on(AuthActions.registerCompanySuccess, (state) => ({
     ...state,
     loading: false,
+    isRegistered: true,
+    successMessage: "Registration successful. Please check your mail to verify",
     error: null,
   })),
   on(AuthActions.registerCompanyFailure, (state, { error }) => ({
     ...state,
     loading: false,
+    successMessage: null,
     error,
   })),
 

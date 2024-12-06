@@ -138,7 +138,7 @@ export class CompanyVerificationPageComponent implements OnInit, OnDestroy {
     const { otp } = this.form.getRawValue();
 
     this.authService
-      .verifyOTP({ email: this.userEmail, otp: otp.join("") })
+      .verifyCompanyOTP({ email: this.userEmail, otp: otp.join("") })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {

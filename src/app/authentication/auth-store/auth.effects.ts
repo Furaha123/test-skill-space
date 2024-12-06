@@ -250,7 +250,14 @@ export class AuthEffects {
       ofType(AuthActions.registerCompany),
       mergeMap(({ company }) =>
         this.authService.companyRegister(company).pipe(
-          map(() => AuthActions.registerCompanySuccess()),
+          map(() => {
+            this.toastr.success(
+              "Registration successful. Please check your mail for further instructions",
+            );
+
+            this.router.navigateByUrl("/auth/company-verification");
+            return AuthActions.registerCompanySuccess();
+          }),
           catchError(() => {
             this.toastr.error(
               "An unexpected error occured. Please try again",

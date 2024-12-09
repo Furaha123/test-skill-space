@@ -9,7 +9,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "prepare": "husky",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
     "check-coverage": "npx nyc check-coverage --statements 80 --branches 80 --functions 80 --lines 80",

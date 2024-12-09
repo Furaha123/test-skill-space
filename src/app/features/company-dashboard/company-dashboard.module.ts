@@ -58,6 +58,7 @@ const materialModules = [
   MatChipsModule,
   MatTabsModule,
 ];
+import { CompanyUpdateComponent } from "./components/company-update/company-update.component";
 
 @NgModule({
   declarations: [
@@ -70,6 +71,7 @@ const materialModules = [
     AddJobFormComponent,
     CareerProgramsComponent,
     CreateProgramComponent,
+    CompanyUpdateComponent,
   ],
   imports: [
     CommonModule,

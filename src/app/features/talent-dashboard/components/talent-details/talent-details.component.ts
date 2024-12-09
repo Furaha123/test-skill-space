@@ -12,6 +12,7 @@ import { map, catchError } from "rxjs/operators";
 export class TalentDetailsComponent implements OnInit {
   personalDetails$!: Observable<PersonalDetails>;
   error = false;
+  isEditing = false;
 
   constructor(private readonly talentProfileService: TalentProfileService) {}
 
@@ -23,5 +24,13 @@ export class TalentDetailsComponent implements OnInit {
         throw err;
       }),
     );
+  }
+
+  onEdit(): void {
+    this.isEditing = true;
+  }
+
+  onCancelEdit(): void {
+    this.isEditing = false;
   }
 }

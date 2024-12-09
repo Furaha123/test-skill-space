@@ -1,0 +1,253 @@
+<form
+  [formGroup]="personalDetailsForm"
+  (ngSubmit)="onSubmit()"
+  class="talent-details"
+>
+  <div class="profile-left-section">
+    <div class="display-names">
+      <h2>Display Name</h2>
+      <p>
+        This is what employers will see on your profile and what will appear on
+        all your earned certificates.
+      </p>
+      <div class="name-inputs">
+        <div class="input-group">
+          <input formControlName="firstName" placeholder="Enter First Name" />
+        </div>
+        <div class="input-group">
+          <input formControlName="lastName" placeholder="Enter Last Name" />
+        </div>
+      </div>
+    </div>
+
+    <div class="display-names">
+      <h2>Introduction</h2>
+      <p>
+        This is your opening introduction to employers. Keep it concise and
+        impactful, showcasing your strengths, skills, and experience (in not
+        more than 250 words).
+      </p>
+      <div class="text-group">
+        <div class="textarea-container">
+          <textarea
+            formControlName="introduction"
+            rows="6"
+            maxlength="250"
+            placeholder="Driven and results-oriented professional with a passion for innovation..."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="display-names">
+      <h2>Upload your C.V</h2>
+      <p>You can upload up to 1 document.</p>
+      <div class="talent-logo">
+        <div
+          class="upload-box"
+          (dragover)="$event.preventDefault()"
+          (drop)="onFileChange($event, 'cvUrl')"
+        >
+          <input
+            type="file"
+            (change)="onFileChange($event, 'cvUrl')"
+            accept=".pdf,.doc,.docx"
+            class="resize-input"
+            #fileInput
+          />
+          <div class="upload-icon">
+            <img src="assets/icon/upload.svg" alt="Upload Logo" />
+          </div>
+          <div class="upload-text">
+            <p (click)="fileInput.click()">
+              Click here or drag your files to upload
+            </p>
+            <p class="supported-formats">
+              Supported formats: PDF, DOC, DOCX (10mb max)
+            </p>
+          </div>
+        </div>
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+        <div
+          *ngIf="personalDetailsForm.get('cvUrl')?.value"
+          class="file-preview"
+        >
+          <p>
+            Selected file: {{ personalDetailsForm.get("cvUrl")?.value.name }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-right-section">
+    <div class="birth-date-container">
+      <h2>Date of Birth</h2>
+      <p>This is set to private. Only you can see this.</p>
+      <div class="input-group date">
+        <input type="date" formControlName="birthDate" />
+      </div>
+    </div>
+
+    <div class="birth-date-container">
+      <h2>Nationality</h2>
+      <p>The country where you claim your citizenship.</p>
+      <div class="date-input nation-option">
+        <div class="date-input">
+          <div class="dropdown">
+            <select class="country-select">
+              <option value="us">Rwandan</option>
+              <option value="ca">Ghana</option>
+              <option value="uk">Germany</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="birth-date-container">
+      <h2>Current Location</h2>
+      <p>Enter your current city/town.</p>
+      <div class="name-inputs">
+        <div class="input-group">
+          <input
+            formControlName="currentLocation"
+            placeholder="Kigali"
+            class="current-location-input"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="birth-date-container">
+      <h2>Phone Number</h2>
+      <p>You can set this as private/public to control who sees it.</p>
+      <div class="phone-input-group">
+        <div class="phone-number">
+          <input
+            formControlName="phoneNumber"
+            type="tel"
+            class="resize-input"
+          />
+        </div>
+      </div>
+      <div class="checkbox-group">
+        <div class="checkbox">
+          <input
+            type="radio"
+            formControlName="phoneVisibility"
+            value="public"
+            id="public"
+            class="checkbox-input"
+          />
+          <label for="public" class="checkbox-label">
+            <div class="checkbox-box"></div>
+            <p>Public</p>
+          </label>
+        </div>
+        <div class="checkbox">
+          <input
+            type="radio"
+            formControlName="phoneVisibility"
+            value="private"
+            id="private"
+            class="checkbox-input"
+          />
+          <label for="private" class="checkbox-label">
+            <div class="checkbox-box"></div>
+            <p>Private</p>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="social-media-section">
+      <h2>Social Media</h2>
+      <div formArrayName="socialMedia">
+        <div
+          *ngFor="let social of socialMediaControls; let i = index"
+          [formGroupName]="i"
+          class="icons-input-group"
+        >
+          <div class="url-input">
+            <input
+              type="url"
+              formControlName="url"
+              class="social-url-input"
+              placeholder="Enter URL"
+            />
+          </div>
+          <button
+            type="button"
+            (click)="removeSocialMedia(i)"
+            class="remove-button"
+          >
+            <img src="assets/icon/cancel.svg" alt="Remove" />
+          </button>
+        </div>
+      </div>
+      <div class="add-button-container">
+        <div class="url-input">
+          <input type="url" placeholder="Enter URL" class="social-url-input" />
+        </div>
+        <button type="button" (click)="addSocialMedia()" class="add-button">
+          <img src="assets/icon/add.svg" alt="Add" />
+        </button>
+      </div>
+    </div>
+
+    <div class="portfolio-section">
+      <h2>Portfolio Links</h2>
+      <div formArrayName="portfolios">
+        <div
+          *ngFor="let portfolio of portfolioControls; let i = index"
+          class="portfolio-item"
+        >
+          <div class="url-input">
+            <input
+              type="url"
+              [formControlName]="i"
+              placeholder="Enter Portfolio URL"
+              class="portfolio-url-input"
+            />
+          </div>
+          <button
+            type="button"
+            (click)="removePortfolio(i)"
+            class="remove-button"
+          >
+            <img src="assets/icon/cancel.svg" alt="Remove" />
+          </button>
+        </div>
+      </div>
+      <div class="add-button-container">
+        <div class="url-input">
+          <input
+            type="url"
+            placeholder="Enter Portfolio URL"
+            class="portfolio-url-input"
+          />
+        </div>
+        <button type="button" (click)="addPortfolio()" class="add-button">
+          <img src="assets/icon/add.svg" alt="Add" />
+        </button>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button
+        type="submit"
+        [disabled]="!personalDetailsForm.valid"
+        class="btn save"
+        (click)="onSubmit()"
+      >
+        Save changes
+      </button>
+      <button type="button" class="btn cancel" (click)="onCancel()">
+        Cancel
+      </button>
+    </div>
+  </div>
+</form>

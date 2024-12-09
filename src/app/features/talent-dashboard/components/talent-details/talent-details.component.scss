@@ -1,11 +1,10 @@
 @import "../../../../../styles.scss";
 .talent-details {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 100% 1fr;
   gap: $spacing-xlarge;
   padding: $spacing-large;
 
-  // Left Column Styles
   .personal-info {
     .section-header {
       @include flex-between;

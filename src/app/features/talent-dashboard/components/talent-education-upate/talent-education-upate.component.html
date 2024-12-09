@@ -44,7 +44,7 @@
               placeholder="Select country"
               fieldType="select"
               formControlName="country"
-              [options]="['United States', 'Canada', 'United Kingdom']"
+              [options]="['Rwanda', 'Ghana', 'Germany']"
             ></app-input>
           </div>
 
@@ -114,11 +114,7 @@
 
         <div
           class="file-preview"
-          *ngFor="
-            let file of parseTranscriptUrls(
-              record?.academicTranscriptUrls || ''
-            )
-          "
+          *ngFor="let file of record?.academicTranscriptUrls || []"
         >
           <div class="file-content">
             <button class="delete-button" (click)="onDeleteFile(file)">
@@ -153,7 +149,7 @@
         <app-button
           text="Save changes"
           [customClasses]="'btn save'"
-          (click)="onSave()"
+          (click)="onSubmit()"
         >
           Save changes
         </app-button>

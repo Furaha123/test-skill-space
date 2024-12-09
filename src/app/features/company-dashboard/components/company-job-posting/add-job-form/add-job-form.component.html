@@ -1,0 +1,492 @@
+<form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-alert">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Form Header -->
+  <div class="form-header">
+    <h2>Post a job</h2>
+    <p>* Indicates a required field</p>
+  </div>
+
+  <!-- Validation Error Messages -->
+  <div *ngIf="jobForm.invalid && jobForm.touched" class="form-errors">
+    <div *ngFor="let control of jobForm.controls | keyvalue">
+      <div
+        *ngIf="
+          jobForm.get(control.key)?.invalid && jobForm.get(control.key)?.touched
+        "
+        class="error-message"
+      >
+        {{ control.key | titlecase }} is required
+      </div>
+    </div>
+  </div>
+
+  <!-- Job Details Section -->
+  <div class="form-section">
+    <h3>Job details <span class="required">*</span></h3>
+
+    <div class="form-grid">
+      <!-- Job Title -->
+      <div class="form-group">
+        <label>Job Title <span class="required">*</span></label>
+        <input
+          type="text"
+          formControlName="title"
+          placeholder="Enter program name"
+          [class.invalid]="isFieldInvalid('title')"
+        />
+      </div>
+
+      <!-- Company -->
+      <div class="form-group">
+        <label>Company <span class="required">*</span></label>
+        <input
+          type="text"
+          formControlName="company"
+          placeholder="ex: AmaliTech"
+          [class.invalid]="isFieldInvalid('company')"
+        />
+      </div>
+
+      <!-- Workplace Type -->
+      <div class="form-group">
+        <label>Workplace type <span class="required">*</span></label>
+        <div class="select-wrapper">
+          <select
+            formControlName="workplaceType"
+            [class.invalid]="isFieldInvalid('workplaceType')"
+          >
+            <option value="" disabled selected>Select workplace type</option>
+            <option *ngFor="let type of workplaceTypes" [value]="type.value">
+              {{ type.viewValue }}
+            </option>
+          </select>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="select-icon"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Job Location -->
+      <div class="form-group">
+        <label>Job Location <span class="required">*</span></label>
+        <input
+          type="text"
+          formControlName="location"
+          placeholder="ex: Kigali city, Rwanda"
+          [class.invalid]="isFieldInvalid('location')"
+        />
+      </div>
+
+      <!-- Job Type -->
+      <div class="form-group">
+        <label>Job type <span class="required">*</span></label>
+        <div class="select-wrapper">
+          <select
+            formControlName="jobType"
+            [class.invalid]="isFieldInvalid('jobType')"
+          >
+            <option value="" disabled selected>Select job type</option>
+            <option *ngFor="let type of jobTypes" [value]="type.value">
+              {{ type.viewValue }}
+            </option>
+          </select>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="select-icon"
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Salary Range -->
+      <div class="form-group">
+        <label>Salary range <span class="required">*</span></label>
+        <input
+          type="text"
+          formControlName="salaryRange"
+          placeholder="ex: 20000-25000"
+          [class.invalid]="isFieldInvalid('salaryRange')"
+        />
+      </div>
+
+      <!-- Deadline -->
+      <div class="form-group">
+        <label>Deadline <span class="required">*</span></label>
+        <input
+          type="date"
+          formControlName="deadline"
+          [class.invalid]="isFieldInvalid('deadline')"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Job Description Section -->
+  <div class="form-section">
+    <label>Job description <span class="required">*</span></label>
+    <div
+      class="editor-container"
+      [class.invalid]="isFieldInvalid('description')"
+    >
+      <div
+        #editor
+        class="editor-content"
+        contenteditable="true"
+        [innerHTML]="jobForm.get('description')?.value"
+        [class.error]="isFieldInvalid('description')"
+        (blur)="onEditorBlur()"
+        (input)="onEditorInput($event)"
+        [attr.aria-label]="'Job description'"
+      ></div>
+      <div class="editor-toolbar">
+        <div class="toolbar-group">
+          <button
+            type="button"
+            mat-icon-button
+            (click)="formatText('justifyLeft')"
+            aria-label="Align left"
+          >
+            <mat-icon>format_align_left</mat-icon>
+          </button>
+          <button
+            type="button"
+            mat-icon-button
+            (click)="formatText('justifyCenter')"
+            aria-label="Align center"
+          >
+            <mat-icon>format_align_center</mat-icon>
+          </button>
+          <button
+            type="button"
+            mat-icon-button
+            (click)="formatText('justifyRight')"
+            aria-label="Align right"
+          >
+            <mat-icon>format_align_right</mat-icon>
+          </button>
+          <button
+            type="button"
+            mat-icon-button
+            (click)="formatText('justifyFull')"
+            aria-label="Justify text"
+          >
+            <mat-icon>format_align_justify</mat-icon>
+          </button>
+        </div>
+
+        <mat-divider [vertical]="true"></mat-divider>
+
+        <div class="toolbar-group">
+          <button
+            type="button"
+            mat-icon-button
+            (click)="formatText('insertUnorderedList')"
+            aria-label="Insert bullet list"
+          >
+            <mat-icon>format_list_bulleted</mat-icon>
+          </button>
+          <button
+            type="button"
+            mat-icon-button
+            (click)="formatText('bold')"
+            aria-label="Bold text"
+          >
+            <mat-icon>format_bold</mat-icon>
+          </button>
+          <button
+            type="button"
+            mat-icon-button
+            (click)="formatText('underline')"
+            aria-label="Underline text"
+          >
+            <mat-icon>format_underlined</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngIf="isFieldInvalid('description')"
+      class="error-message"
+      role="alert"
+    >
+      Job description is required
+    </div>
+  </div>
+
+  <!-- Skills Section -->
+  <div class="form-section">
+    <h3>Skills</h3>
+    <p class="skills-note">
+      Add skill keywords (max 5) to make your job more visible to the right
+      candidates
+    </p>
+
+    <div class="skills-wrapper">
+      <div class="skills-grid">
+        <button
+          type="button"
+          *ngFor="let skill of presetSkills"
+          class="skill-tag"
+          [class.active]="selectedSkills.includes(skill)"
+          (click)="onSelectSkill(skill, $event)"
+        >
+          {{ skill }}
+        </button>
+        <button
+          type="button"
+          class="add-skill-btn"
+          (click)="openAddSkillDialog()"
+        >
+          + Add skill
+        </button>
+      </div>
+
+      <!-- Selected Skills -->
+      <div *ngIf="selectedSkills.length > 0" class="selected-skills">
+        <h4>Selected Skills:</h4>
+        <div class="selected-skills-list">
+          <span *ngFor="let skill of selectedSkills" class="selected-skill">
+            {{ skill }}
+            <button
+              type="button"
+              class="remove-skill"
+              (click)="onSelectSkill(skill, $event)"
+            >
+              ×
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Qualifications Section -->
+  <div class="form-section qualifications-section">
+    <div class="section-header">
+      <h3>Qualifications</h3>
+      <button type="button" class="add-qualification-btn">
+        + Add Qualification
+      </button>
+    </div>
+
+    <div class="qualification-rows">
+      <!-- Degree Qualification -->
+      <div class="qualification-row">
+        <div class="form-group">
+          <label
+            >Have you completed University?
+            <span class="required">*</span></label
+          >
+          <input
+            type="text"
+            formControlName="degree"
+            placeholder="Enter program name"
+            [class.invalid]="isFieldInvalid('degree')"
+          />
+        </div>
+        <div class="form-group">
+          <label>Ideal answer</label>
+          <input type="text" formControlName="idealAnswer" placeholder="Yes" />
+        </div>
+        <div class="must-have-section">
+          <div class="checkbox-wrapper">
+            <input
+              type="checkbox"
+              id="mustHaveDegree"
+              formControlName="mustHaveDegree"
+              class="custom-checkbox"
+            />
+            <label for="mustHaveDegree" class="checkbox-label"
+              >Must-have Qualification</label
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Experience Qualification -->
+      <div class="qualification-row">
+        <div class="form-group">
+          <label
+            >How many years of work experience?
+            <span class="required">*</span></label
+          >
+          <input
+            type="text"
+            formControlName="experience"
+            placeholder="React"
+            [class.invalid]="isFieldInvalid('experience')"
+          />
+        </div>
+        <div class="form-group">
+          <label>Ideal answer(minimum year (s))</label>
+          <input
+            type="number"
+            formControlName="idealExperience"
+            placeholder="2"
+          />
+        </div>
+        <div class="must-have-section">
+          <div class="checkbox-wrapper">
+            <input
+              type="checkbox"
+              id="mustHaveExperience"
+              formControlName="mustHaveExperience"
+              class="custom-checkbox"
+            />
+            <label for="mustHaveExperience" class="checkbox-label"
+              >Must-have Qualification</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="form-actions">
+    <button
+      type="button"
+      class="back-btn"
+      (click)="onBack()"
+      [disabled]="isLoading"
+    >
+      Back
+    </button>
+    <div class="right-actions">
+      <button
+        type="button"
+        class="preview-btn"
+        (click)="onPreview()"
+        [disabled]="isLoading"
+      >
+        Preview
+      </button>
+      <button
+        type="submit"
+        class="post-job-btn"
+        [disabled]="isLoading || jobForm.invalid"
+      >
+        {{ isLoading ? "Posting..." : "Post Job" }}
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- Add Skill Dialog -->
+<ng-template #addSkillDialog>
+  <h2 mat-dialog-title>Add Custom Skill</h2>
+  <mat-dialog-content>
+    <mat-form-field>
+      <input matInput [(ngModel)]="newSkill" placeholder="Enter new skill" />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button
+      mat-button
+      [mat-dialog-close]="newSkill"
+      [disabled]="!newSkill.trim()"
+    >
+      Add
+    </button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Preview Dialog -->
+<ng-template #previewDialog>
+  <h2 mat-dialog-title>Job Preview</h2>
+  <mat-dialog-content>
+    <div class="preview-section">
+      <h3>Job Details</h3>
+      <p><strong>Title:</strong> {{ jobForm.get("title")?.value }}</p>
+      <p><strong>Company:</strong> {{ jobForm.get("company")?.value }}</p>
+      <p><strong>Location:</strong> {{ jobForm.get("location")?.value }}</p>
+      <p>
+        <strong>Workplace Type:</strong>
+        {{ jobForm.get("workplaceType")?.value }}
+      </p>
+      <p><strong>Job Type:</strong> {{ jobForm.get("jobType")?.value }}</p>
+      <p>
+        <strong>Salary Range:</strong> {{ jobForm.get("salaryRange")?.value }}
+      </p>
+      <p>
+        <strong>Deadline:</strong> {{ jobForm.get("deadline")?.value | date }}
+      </p>
+    </div>
+
+    <div class="preview-section">
+      <h3>Job Description</h3>
+      <div [innerHTML]="jobForm.get('description')?.value"></div>
+    </div>
+
+    <div class="preview-section">
+      <h3>Skills</h3>
+      <div class="preview-skills">
+        <span *ngFor="let skill of selectedSkills" class="skill-tag">{{
+          skill
+        }}</span>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <h3>Qualifications</h3>
+      <div class="preview-qualification">
+        <p>
+          <strong>University Degree:</strong> {{ jobForm.get("degree")?.value }}
+        </p>
+        <p>
+          <strong>Ideal Answer:</strong> {{ jobForm.get("idealAnswer")?.value }}
+        </p>
+        <p *ngIf="jobForm.get('mustHaveDegree')?.value">
+          Must have qualification
+        </p>
+      </div>
+
+      <div class="preview-qualification">
+        <p>
+          <strong>Work Experience:</strong>
+          {{ jobForm.get("experience")?.value }}
+        </p>
+        <p>
+          <strong>Minimum Years:</strong>
+          {{ jobForm.get("idealExperience")?.value }}
+        </p>
+        <p *ngIf="jobForm.get('mustHaveExperience')?.value">
+          Must have qualification
+        </p>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</ng-template>

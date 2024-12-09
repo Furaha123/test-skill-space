@@ -102,6 +102,7 @@ export const authReducer = createReducer(
   on(AuthActions.verifyResetOtpFailure, (state, { error }) => ({
     ...state,
     loading: false,
+    successMessage: null,
     error,
     otpVerified: false,
   })),
@@ -123,6 +124,7 @@ export const authReducer = createReducer(
   on(AuthActions.verifyPasswordResetOtpFailure, (state, { error }) => ({
     ...state,
     loading: false,
+    successMessage: null,
     error,
     otpVerified: false,
   })),
@@ -151,14 +153,15 @@ export const authReducer = createReducer(
     loading: true,
     error: null,
     passwordReset: false,
+    successMessage: null,
   })),
 
   on(AuthActions.resetPasswordSuccess, (state, { message }) => ({
     ...state,
     loading: false,
     error: null,
-    successMessage: message,
     passwordReset: true,
+    successMessage: message,
   })),
 
   on(AuthActions.resetPasswordFailure, (state, { error }) => ({
@@ -166,5 +169,6 @@ export const authReducer = createReducer(
     loading: false,
     error,
     passwordReset: false,
+    successMessage: null,
   })),
 );

@@ -7,7 +7,6 @@ import { ErrorToastComponent } from "./components/error-toast/error-toast.compon
 import { ButtonComponent } from "./components/button/button.component";
 import { LoaderComponent } from "./components/loader/loader.component";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-
 import { CountryCodesComponent } from "./components/country-codes/country-codes.component";
 import { CalendarComponent } from "./components/calendar/calendar.component";
 import { AuthLayoutComponent } from "./auth-layout/auth-layout.component";
@@ -33,7 +32,6 @@ import { ReactiveFormsModule } from "@angular/forms";
 
   imports: [CommonModule, MatProgressSpinnerModule, ReactiveFormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-
   exports: [
     LayoutComponent,
     InputComponent,

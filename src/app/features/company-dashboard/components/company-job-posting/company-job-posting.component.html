@@ -1,42 +1,104 @@
-<div class="company-job-posting">
-  <div class="header">
-    <div class="header-left">
-      <h2 class="title">Job Posting</h2>
-      <div class="search-box">
-        <img src="assets/icon/search.svg" alt="Search" />
-        <input
-          type="text"
-          placeholder="Search by: Job title, Position, Keyword..."
-          [value]="searchQuery"
-          (input)="onSearch($event)"
-        />
+<div class="company-job-posting" [ngClass]="containerClass">
+  <!-- Loading State -->
+  <div *ngIf="loading$ | async" class="loading-overlay">
+    <div class="spinner">Loading...</div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error$ | async as error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Success Message -->
+  <div
+    *ngIf="(successMessage$ | async)?.show"
+    class="success-message"
+    [class.success]="(successMessage$ | async)?.type === 'success'"
+    [class.error]="(successMessage$ | async)?.type === 'error'"
+  >
+    <div class="success-content">
+      <div class="success-icon">
+        <ng-container *ngIf="(successMessage$ | async)?.type === 'success'">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z"
+              fill="#12B76A"
+            />
+          </svg>
+        </ng-container>
       </div>
+      <span class="success-text">{{ (successMessage$ | async)?.message }}</span>
     </div>
-    <div class="header-right">
-      <button class="filter-button">
-        <img src="assets/icon/filter.svg" alt="Filter" />
-        <span>Filters</span>
-      </button>
-      <button class="add-job-button" (click)="onAddJob()">
-        <img src="assets/icon/add1.svg" alt="Add" />
-        <span>Add Job</span>
-      </button>
-    </div>
+    <div class="success-accent"></div>
   </div>
 
-  <div class="job-grid">
-    <app-job-posting-card
-      *ngFor="let job of filteredJobs"
-      [jobPosting]="job"
-      variant="company"
-      [isEditable]="true"
-      (editClicked)="onEditJob($event)"
-      (deleteClicked)="onDeleteJob($event)"
-    >
-    </app-job-posting-card>
-  </div>
+  <div class="form-container">
+    <ng-container *ngIf="!showAddForm; else addJobForm">
+      <!-- Header Section -->
+      <div class="header">
+        <div class="header-left">
+          <h2 class="title">Job Posting</h2>
+          <div class="search-box">
+            <img src="assets/icon/search.svg" alt="Search" />
+            <input
+              type="text"
+              placeholder="Search by: Job title, Position, Keyword..."
+              [value]="searchQuery"
+              (input)="onSearch($event)"
+              aria-label="Search jobs"
+            />
+          </div>
+        </div>
 
-  <div *ngIf="filteredJobs.length === 0" class="no-results">
-    No jobs found matching your search criteria.
+        <div class="header-right">
+          <button type="button" class="filter-button" aria-label="Filter jobs">
+            <img src="assets/icon/filter.svg" alt="" />
+            <span>Filters</span>
+          </button>
+
+          <button
+            type="button"
+            class="add-job-button"
+            (click)="onAddJob()"
+            aria-label="Add new job"
+          >
+            <img src="assets/icon/add1.svg" alt="" />
+            <span>Add Job</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Job Grid Section -->
+      <div class="job-grid">
+        <app-job-posting-card
+          *ngFor="let job of filteredJobs; trackBy: trackByJobId"
+          [jobPosting]="job"
+          variant="company"
+          [isEditable]="true"
+          (editClicked)="onEditJob($event)"
+          (deleteClicked)="onDeleteJob($event)"
+        >
+        </app-job-posting-card>
+
+        <!-- No Results Message -->
+        <div *ngIf="filteredJobs.length === 0" class="no-results">
+          No jobs found matching your search criteria.
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Add Job Form -->
+    <ng-template #addJobForm>
+      <app-add-job-form
+        (closeForm)="onCloseForm()"
+        (submitForm)="onSubmitJob($event)"
+      ></app-add-job-form>
+    </ng-template>
   </div>
 </div>

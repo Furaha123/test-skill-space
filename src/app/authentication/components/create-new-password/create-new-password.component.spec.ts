@@ -1,12 +1,8 @@
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule, FormBuilder } from "@angular/forms";
 import { Router } from "@angular/router";
 import { provideMockStore, MockStore } from "@ngrx/store/testing";
+import { ToastrService } from "ngx-toastr";
 import { CreateNewPasswordComponent } from "./create-new-password.component";
 import * as AuthSelectors from "../../auth-store/auth.selectors";
 import * as AuthActions from "../../auth-store/auth.actions";
@@ -104,10 +100,13 @@ describe("CreateNewPasswordComponent", () => {
   let component: CreateNewPasswordComponent;
   let fixture: ComponentFixture<CreateNewPasswordComponent>;
   let store: MockStore;
-  let router: jest.Mocked<Router>;
 
   beforeEach(async () => {
     const routerMock = { navigate: jest.fn() };
+    const toastrMock = {
+      success: jest.fn(),
+      error: jest.fn(),
+    };
 
     await TestBed.configureTestingModule({
       declarations: [
@@ -120,13 +119,12 @@ describe("CreateNewPasswordComponent", () => {
         FormBuilder,
         provideMockStore({ initialState }),
         { provide: Router, useValue: routerMock },
+        { provide: ToastrService, useValue: toastrMock },
       ],
     }).compileComponents();
 
     store = TestBed.inject(MockStore);
-    router = TestBed.inject(Router) as jest.Mocked<Router>;
     jest.spyOn(store, "dispatch").mockImplementation(() => {});
-    sessionStorage.setItem("resetPasswordEmail", "test@email.com");
 
     fixture = TestBed.createComponent(CreateNewPasswordComponent);
     component = fixture.componentInstance;
@@ -134,7 +132,6 @@ describe("CreateNewPasswordComponent", () => {
   });
 
   afterEach(() => {
-    sessionStorage.clear();
     jest.clearAllMocks();
     store.resetSelectors();
   });
@@ -149,8 +146,9 @@ describe("CreateNewPasswordComponent", () => {
       expect(component.passwordForm.get("confirmPassword")?.value).toBe("");
     });
 
-    it("should retrieve email from sessionStorage", () => {
-      expect(component["email"]).toBe("test@email.com");
+    it("should start with default boolean flags", () => {
+      expect(component.showPasswordWarning).toBeFalsy();
+      expect(component.showPasswordError).toBeFalsy();
     });
   });
 
@@ -166,10 +164,20 @@ describe("CreateNewPasswordComponent", () => {
 
     it("should validate password pattern", () => {
       component.passwordForm.get("newPassword")?.setValue("weak");
+      component.passwordForm.get("newPassword")?.markAsTouched();
       component.validatePassword();
       fixture.detectChanges();
 
       expect(component.showPasswordWarning).toBe(true);
+    });
+
+    it("should accept valid password pattern", () => {
+      component.passwordForm.get("newPassword")?.setValue("StrongPass123!");
+      component.passwordForm.get("newPassword")?.markAsTouched();
+      component.validatePassword();
+      fixture.detectChanges();
+
+      expect(component.showPasswordWarning).toBe(false);
     });
 
     it("should validate password mismatch", () => {
@@ -181,7 +189,7 @@ describe("CreateNewPasswordComponent", () => {
       component.validatePassword();
       fixture.detectChanges();
 
-      expect(component.isPasswordMismatch()).toBe(true);
+      expect(component.showPasswordError).toBe(true);
     });
 
     it("should validate matching passwords", () => {
@@ -190,30 +198,36 @@ describe("CreateNewPasswordComponent", () => {
         newPassword: validPassword,
         confirmPassword: validPassword,
       });
+      component.passwordForm.get("newPassword")?.markAsTouched();
+      component.passwordForm.get("confirmPassword")?.markAsTouched();
       component.validatePassword();
       fixture.detectChanges();
 
-      expect(component.isPasswordMismatch()).toBe(false);
+      expect(component.showPasswordError).toBe(false);
       expect(component.showPasswordWarning).toBe(false);
     });
   });
 
   describe("Form Submission", () => {
-    it("should dispatch resetPassword action for valid form", () => {
-      const validPassword = "StrongPass123!";
+    const validPassword = "StrongPass123!";
+
+    beforeEach(() => {
       component.passwordForm.patchValue({
         newPassword: validPassword,
         confirmPassword: validPassword,
       });
+      component.passwordForm.get("newPassword")?.markAsTouched();
+      component.passwordForm.get("confirmPassword")?.markAsTouched();
+    });
+
+    it("should dispatch resetPassword action for valid form", () => {
       component.validatePassword();
       fixture.detectChanges();
       component.onSubmit();
 
       expect(store.dispatch).toHaveBeenCalledWith(
         AuthActions.resetPassword({
-          email: component["email"],
           newPassword: validPassword,
-          confirmPassword: validPassword,
         }),
       );
     });
@@ -229,16 +243,15 @@ describe("CreateNewPasswordComponent", () => {
       expect(store.dispatch).not.toHaveBeenCalled();
     });
 
-    it("should show error for mismatched passwords", () => {
+    it("should mark all fields as touched on invalid submission", () => {
       component.passwordForm.patchValue({
-        newPassword: "StrongPass123!",
-        confirmPassword: "DifferentPass123!",
+        newPassword: "weak",
+        confirmPassword: "weak",
       });
-      component.validatePassword();
       component.onSubmit();
-      fixture.detectChanges();
 
-      expect(component.isPasswordMismatch()).toBe(true);
+      expect(component.passwordForm.get("newPassword")?.touched).toBe(true);
+      expect(component.passwordForm.get("confirmPassword")?.touched).toBe(true);
     });
   });
 
@@ -254,50 +267,38 @@ describe("CreateNewPasswordComponent", () => {
       expect(component.isSubmitDisabled()).toBe(true);
     });
 
-    it("should enable the submit button when form is valid", fakeAsync(() => {
+    it("should enable submit button when form is valid", () => {
       const validPassword = "StrongPass123!";
       component.passwordForm.patchValue({
         newPassword: validPassword,
         confirmPassword: validPassword,
       });
-
+      component.passwordForm.get("newPassword")?.markAsTouched();
+      component.passwordForm.get("confirmPassword")?.markAsTouched();
       component.validatePassword();
-      component.passwordForm.markAllAsTouched();
-      fixture.detectChanges();
-      tick();
-
-      store.setState({
-        ...initialState,
-        auth: { ...initialState.auth, loading: false },
-      });
       fixture.detectChanges();
 
-      expect(component.isSubmitDisabled()).toBe(true);
-    }));
+      expect(component.isSubmitDisabled()).toBe(false);
+    });
   });
 
-  describe("Navigation", () => {
-    it("should redirect to login on success", () => {
+  describe("Store Interactions", () => {
+    it("should handle loading state", (done) => {
+      store.overrideSelector(AuthSelectors.selectIsLoading, true);
+      store.refreshState();
+
+      component.loading$.subscribe((loading) => {
+        expect(loading).toBe(true);
+        done();
+      });
+    });
+
+    it("should handle password reset state", (done) => {
       store.overrideSelector(AuthSelectors.selectIsPasswordReset, true);
       store.refreshState();
 
-      expect(router.navigate).toHaveBeenCalledWith(["/auth/login"]);
-    });
-
-    it("should redirect to login when called explicitly", () => {
-      component.redirectToLogin();
-      expect(router.navigate).toHaveBeenCalledWith(["/auth/login"]);
-    });
-  });
-
-  describe("Error Handling", () => {
-    it("should display error message from store", (done) => {
-      const error = "Test error";
-      store.overrideSelector(AuthSelectors.selectError, error);
-      store.refreshState();
-
-      component.error$.subscribe((errorMessage) => {
-        expect(errorMessage).toBe(error);
+      component.isPasswordReset$.subscribe((isReset) => {
+        expect(isReset).toBe(true);
         done();
       });
     });

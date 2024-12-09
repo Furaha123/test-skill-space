@@ -235,7 +235,7 @@ describe("TalentProfileService", () => {
     });
   });
   describe("Error Handling", () => {
-    it("should retry once before throwing error", () => {
+    it("should retry once  throwing error", () => {
       localStorage.removeItem(service["PERSONAL_DETAILS_KEY"]);
 
       const serverError: HttpError = {

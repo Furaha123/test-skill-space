@@ -1,0 +1,26 @@
+@import "../../../../../styles.scss";
+
+.successfull-screen-wrapper {
+//   @extend %wrapper-base;
+
+  div {
+    background-color: $neutral-100;
+
+    text-align: center;
+    width: 700px;
+  }
+
+  h3 {
+    color: $primary-grey;
+    @include font("Roboto", 500, 1.5rem);
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: $primary-grey;
+    @include font("Archivo", 400, 0.875rem);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    padding: 0 1rem;
+  }
+}

@@ -1,0 +1,292 @@
+@import "../../../../../styles.scss";
+
+.settings-container {
+  @include padding($spacing-large);
+}
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-large;
+}
+
+.settings-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background-color: $neutral-90;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .settings-section {
+    background-color: $white;
+    @include padding($spacing-medium);
+    border-radius: 0;
+    margin: 0;
+  }
+}
+
+// For sections outside the wrapper
+.settings-section {
+  background-color: $white;
+  @include border-radius(8px);
+  @include padding($spacing-large);
+  margin-top: $spacing-large;
+}
+
+.settings-header {
+  @include flex-between;
+  margin-bottom: $spacing-small;
+
+  h2 {
+    font-size: $font-size-large;
+    font-weight: $font-weight-bold !important;
+    color: $neutral-0;
+    font-family: inherit;
+  }
+}
+
+.settings-description {
+  color: $nav-text-color;
+  @include font($font-primary, $font-weight-regular, $font-size-base);
+}
+
+.contact-item {
+  @include flex-between;
+  @include padding($spacing-small 0);
+  border-bottom: 1px solid $neutral-90;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-medium;
+  align-items: center;
+
+  .contact-icon {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+  }
+
+  .contact-value {
+    @include font($font-primary, $font-weight-medium, $font-size-base);
+    color: $neutral-20;
+  }
+}
+
+.contact-actions {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-medium;
+  align-items: center;
+
+  img {
+    width: 16px;
+    height: 16px;
+    margin-right: $spacing-small;
+    object-fit: contain;
+    cursor: pointer;
+  }
+
+  .btn-edit,
+  .verification-status {
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-verify {
+    color: $primary-60;
+    border-color: $primary-60;
+    border-radius: $spacing-medium;
+    padding: $spacing-small;
+    width: 100px;
+    text-align: center;
+  }
+
+  .verification-status {
+    .verified {
+      border: 1px solid $primary-90;
+      padding: $spacing-small;
+      color: $primary-90;
+      border-radius: $spacing-medium;
+      width: 100px;
+      text-align: center;
+    }
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+.contact-number {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-medium;
+}
+
+.contact-icon {
+  color: $nav-text-color;
+}
+
+.contact-value {
+  @include font($font-primary, $font-weight-medium, $font-size-base);
+  color: $neutral-20;
+}
+
+.btn-edit,
+.btn-verify {
+  @include padding($spacing-small);
+  @include border-radius(4px);
+  @include transition(all);
+  @include font($font-primary, $font-weight-medium, $font-size-small);
+}
+
+.btn-edit {
+  color: $nav-text-color;
+  background-color: transparent;
+
+  &:hover {
+    color: $primary-60;
+  }
+}
+
+.btn-verify {
+  color: $primary-60;
+  border: 1px solid $primary-60;
+  background-color: transparent;
+
+  &:hover {
+    background-color: rgba($primary-60, 0.1);
+  }
+}
+
+.verification-status {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-small;
+}
+.verified {
+  color: $primary-60;
+  border: 1px solid $primary-60;
+  background-color: transparent;
+}
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-large;
+}
+
+.password-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-large;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-small;
+
+  label {
+    @include font($font-primary, $font-weight-medium, $font-size-small);
+    color: $neutral-40;
+  }
+
+  input {
+    padding: $spacing-small;
+    font-size: 1em;
+    border: 2px solid $tertiary-90;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+
+    &:focus {
+      border-color: $primary-60;
+      outline: none;
+    }
+  }
+}
+
+.password-hint {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-small;
+  padding: $spacing-medium;
+  background-color: $tertiary-95;
+  border-radius: 4px;
+
+  i {
+    color: $primary-60;
+  }
+
+  span {
+    @include font($font-primary, $font-weight-regular, $font-size-small);
+    color: $neutral-40;
+  }
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .toggle-slider {
+      background-color: $primary-60;
+    }
+
+    &:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+  }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $neutral-80;
+    transition: 0.4s;
+    border-radius: 24px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: $white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+  }
+}
+
+.email-description {
+  color: $nav-text-color;
+  margin-bottom: $spacing-large;
+}

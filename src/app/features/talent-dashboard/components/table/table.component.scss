@@ -1,0 +1,98 @@
+@import "../../../../../styles.scss";
+
+.table-container {
+  @include padding($spacing-large);
+
+  .assessment-table {
+    width: 100%;
+    @include border-radius(4px);
+    margin-bottom: $spacing-large;
+    background: $white;
+
+    th,
+    td {
+      @include padding($spacing-medium);
+      text-align: left;
+      border: none;
+
+      &.checkbox-column {
+        width: 40px;
+        text-align: center;
+      }
+    }
+
+    th {
+      background-color: $white;
+      color: $primary-60;
+      @include font($font-primary, $font-weight-medium, $font-size-base);
+      white-space: nowrap;
+    }
+
+    tr {
+      @include transition(background-color);
+
+      &:last-child {
+        border-bottom: none; // Remove border from last row
+      }
+
+      &:hover {
+        background-color: $neutral-98;
+      }
+    }
+
+    .status {
+      &-pass {
+        color: $success-color;
+      }
+
+      &-fail {
+        color: $error-50;
+      }
+    }
+  }
+}
+
+.pagination {
+  @include flex-center;
+  gap: $spacing-small;
+  margin-top: $spacing-large;
+
+  .nav-btn {
+    @include padding($spacing-small $spacing-medium);
+    @include border-radius(4px);
+    @include transition(all);
+    background: $white;
+    color: $primary-60;
+    cursor: pointer;
+
+    &:disabled {
+      color: $neutral-60;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      background: $neutral-98;
+    }
+  }
+
+  .page-numbers {
+    @include flex-center;
+    gap: 5px;
+
+    span {
+      @include padding($spacing-small $spacing-medium);
+      @include border-radius(4px);
+      @include transition(all);
+      cursor: pointer;
+
+      &:hover {
+        background: $neutral-98;
+      }
+
+      &.active {
+        background: $primary-60;
+        color: $white;
+      }
+    }
+  }
+}

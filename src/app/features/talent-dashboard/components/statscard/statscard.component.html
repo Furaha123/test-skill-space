@@ -1,0 +1,36 @@
+<div class="stats-card">
+  <div class="stats-card__icon-container" [ngClass]="getIconClass()">
+    <img [src]="data.icon" alt="" class="stats-card__icon" />
+  </div>
+
+  <div class="stats-card__content">
+    <div class="stats-card__main">
+      <h3 class="stats-card__value">{{ formatStatValue(data.value) }}</h3>
+      <p class="stats-card__label">{{ data.label }}</p>
+    </div>
+
+    <div
+      class="stats-card__trend"
+      *ngIf="data.trend"
+      [ngClass]="getTrendClass(data.trend)"
+    >
+      <span class="stats-card__trend-value">
+        {{ formatTrendValue(data.trend.value) }}
+      </span>
+
+      <span class="stats-card__trend-label">
+        {{ data.trend.label }}
+      </span>
+
+      <img
+        [src]="
+          calculateTrendDirection(data.trend.value)
+            ? 'assets/icon/trending-up.svg'
+            : 'assets/icon/trending-down.svg'
+        "
+        alt=""
+        class="stats-card__trend-icon"
+      />
+    </div>
+  </div>
+</div>

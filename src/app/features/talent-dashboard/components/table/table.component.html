@@ -1,0 +1,57 @@
+<div class="table-container">
+  <table class="assessment-table">
+    <thead>
+      <tr>
+        <th class="checkbox-column"><input type="checkbox" /></th>
+        <th>Assessment name</th>
+        <th>Date Taken</th>
+        <th>Score (%)</th>
+        <th>Pass/Fail Status</th>
+        <th>Badge Earned</th>
+        <th>Time Taken</th>
+        <th>Retake Option</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let assessment of paginatedAssessments">
+        <td class="checkbox-column"><input type="checkbox" /></td>
+        <td>{{ assessment.name }}</td>
+        <td>{{ assessment.dateTaken }}</td>
+        <td>{{ assessment.score }}%</td>
+        <td
+          [ngClass]="{
+            'status-pass': assessment.status === 'Pass',
+            'status-fail': assessment.status === 'Fail',
+          }"
+        >
+          {{ assessment.status }}
+        </td>
+        <td>{{ assessment.badgeEarned ? "Yes" : "No" }}</td>
+        <td>{{ assessment.timeTaken }}</td>
+        <td>{{ assessment.retakeOption }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button [disabled]="currentPage === 1" (click)="prevPage()" class="nav-btn">
+      ← Prev
+    </button>
+    <div class="page-numbers">
+      <span
+        *ngFor="let page of [1, 2, 3, 4]"
+        [ngClass]="{ active: currentPage === page }"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </span>
+    </div>
+    <button
+      [disabled]="currentPage === totalPages"
+      (click)="nextPage()"
+      class="nav-btn"
+    >
+      Next →
+    </button>
+  </div>
+</div>

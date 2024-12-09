@@ -23,8 +23,7 @@ const routes: Routes = [
     path: AUTH_PATHS.verifyCompany,
     component: CompanyVerificationPageComponent,
   },
-  
-  
+
   { path: AUTH_PATHS.login, component: LoginComponent },
   { path: AUTH_PATHS.resetpassword, component: CreateNewPasswordComponent },
 ];

@@ -1,0 +1,80 @@
+@import "../../../../../styles.scss";
+
+.chart-container {
+  width: 100%;
+  padding: $spacing-medium;
+  background-color: $neutral-100;
+  height: 100%;
+  @include border-radius($border-radius-medium);
+}
+
+.chart-header {
+  @include flex-between;
+  margin-bottom: $spacing-medium;
+}
+
+.chart-title {
+  @include font(
+    $family: $font-secondary,
+    $weight: $font-weight-bold,
+    $size: $font-size-large
+  );
+  color: $neutral-20;
+  margin: 0;
+}
+
+.period-selector {
+  @include flex-center;
+  gap: 4px;
+  padding: 6px $spacing-medium;
+  background-color: rgba($error-50, 0.1);
+  color: $error-50;
+  @include border-radius($border-radius-small);
+  border: none;
+  cursor: pointer;
+
+  @include font(
+    $family: $font-primary,
+    $weight: $font-weight-medium,
+    $size: $font-size-base
+  );
+
+  &:hover {
+    background-color: rgba($error-50, 0.15);
+  }
+
+  .chevron-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+  }
+}
+
+:host ::ng-deep {
+  .custom-tooltip {
+    padding: $spacing-small;
+    background-color: $neutral-100;
+    border: 1px solid $neutral-90;
+    @include border-radius($border-radius-small);
+
+    .tooltip-label {
+      display: block;
+      color: $neutral-50;
+      margin-bottom: 4px;
+      @include font(
+        $family: $font-primary,
+        $weight: $font-weight-regular,
+        $size: $font-size-small
+      );
+    }
+
+    .tooltip-value {
+      @include font(
+        $family: $font-primary,
+        $weight: $font-weight-bold,
+        $size: $font-size-base
+      );
+      color: $neutral-20;
+    }
+  }
+}

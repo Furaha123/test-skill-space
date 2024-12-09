@@ -99,7 +99,7 @@ export class VerificationPageComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.verrificationError = false;
           this.toastr.success("Registration Approved", "Success");
-          this.router.navigateByUrl("/auth/login");
+          this.router.navigateByUrl("company/company-success");
         },
         error: (err: unknown) => {
           this.isLoading = false;

@@ -1,0 +1,29 @@
+<div class="chart-container">
+  <div class="chart-header">
+    <h2 class="chart-title">Top performing programs</h2>
+    <button class="period-selector">
+      {{ selectedPeriod }}
+      <img
+        src="assets/icon/chevron_down.svg"
+        alt="chevron down"
+        class="chevron-icon"
+      />
+    </button>
+  </div>
+
+  <div class="chart-content">
+    <apx-chart
+      #chart
+      [series]="chartOptions.series!"
+      [chart]="chartOptions.chart!"
+      [xaxis]="chartOptions.xaxis!"
+      [yaxis]="chartOptions.yaxis!"
+      [plotOptions]="chartOptions.plotOptions!"
+      [dataLabels]="chartOptions.dataLabels!"
+      [grid]="chartOptions.grid!"
+      [colors]="chartOptions.colors!"
+      [tooltip]="chartOptions.tooltip!"
+      [legend]="chartOptions.legend!"
+    ></apx-chart>
+  </div>
+</div>

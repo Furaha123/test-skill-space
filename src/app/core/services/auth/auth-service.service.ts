@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Observable, tap, retry } from "rxjs";
-import { environment } from "../../../../environments/environment";
+import { environment } from "../../../../environments/environment.development";
 import { Talent } from "../../../shared/models/talent.interface";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { ResponseInterface } from "../../../shared/models/response.interface";
@@ -118,7 +118,7 @@ export class AuthService {
       status: string;
       message: string;
       data: { token: string; roles: string[] };
-    }>(`${this.apiUrl}/auth/login`, body, { headers });
+    }>(`${this.apiUrl}/v1/auth/login`, body, { headers });
   }
 
   companyRegister(data: Company): Observable<ResponseInterface> {
@@ -138,5 +138,10 @@ export class AuthService {
     return this.http
       .post<ResponseInterface>(`/api/v1/companys/register`, formData)
       .pipe(retry(1));
+  }
+
+  logout(): void {
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("reset_token");
   }
 }

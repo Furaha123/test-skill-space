@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { filter } from "rxjs/operators";
+import { AuthService } from "../../core/services/auth/auth-service.service";
 const sidebarItems = [
   {
     label: "Dashboard",
@@ -35,6 +36,7 @@ export class LayoutComponent implements OnInit {
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -95,5 +97,10 @@ export class LayoutComponent implements OnInit {
     this.selectedSetting = true;
     this.selectedIndex = -1;
     this.router.navigate(["settings"], { relativeTo: this.route });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(["/auth/login"]);
   }
 }

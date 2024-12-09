@@ -24,7 +24,7 @@ const routes: Routes = [
   },
   {
     path: "",
-    redirectTo: ROUTE_PATHS["company"],
+    redirectTo: ROUTE_PATHS["auth"],
     pathMatch: "full",
   },
   {

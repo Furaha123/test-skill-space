@@ -59,6 +59,7 @@ const materialModules = [
   MatTabsModule,
 ];
 import { CompanyUpdateComponent } from "./components/company-update/company-update.component";
+import { CompanyRegisterSuccessComponent } from './components/company-register-success/company-register-success.component';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { CompanyUpdateComponent } from "./components/company-update/company-upda
     CareerProgramsComponent,
     CreateProgramComponent,
     CompanyUpdateComponent,
+    CompanyRegisterSuccessComponent,
   ],
   imports: [
     CommonModule,

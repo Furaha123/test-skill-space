@@ -8,6 +8,7 @@ import { CompanyJobPostingComponent } from "./components/company-job-posting/com
 import { CreateProgramComponent } from "../company-dash-board/components/create-program/create-program.component";
 import { CareerProgramsComponent } from "../company-dash-board/components/career-programs/career-programs.component";
 import { COMPANY_PATHS } from "./company.routes";
+import { CompanyRegisterSuccessComponent } from "./components/company-register-success/company-register-success.component";
 const routes: Routes = [
   {
     path: "",
@@ -29,6 +30,10 @@ const routes: Routes = [
       {
         path: COMPANY_PATHS.edit_program,
         component: CreateProgramComponent,
+      },
+      {
+        path: COMPANY_PATHS.company_register_sucess,
+        component: CompanyRegisterSuccessComponent,
       },
     ],
   },

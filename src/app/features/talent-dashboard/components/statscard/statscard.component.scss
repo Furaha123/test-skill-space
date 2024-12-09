@@ -1,0 +1,103 @@
+@import "../../../../../styles.scss";
+
+.stats-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $spacing-small;
+  background-color: $neutral-100;
+  @include border-radius($border-radius-small);
+  padding: $spacing-medium;
+  min-width: 180px;
+
+  &__icon-container {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    @include border-radius($border-radius-small);
+    background-color: rgba($primary-50, 0.1);
+    flex-shrink: 0;
+
+    img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; // Reduced gap
+    flex: 1;
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; // Reduced gap
+  }
+
+  &__label {
+    @include font(
+      $family: $font-primary,
+      $weight: $font-weight-medium,
+      $size: $font-size-small // Smaller font
+    );
+    color: $neutral-50;
+    margin: 0;
+    order: -1;
+  }
+
+  &__value {
+    @include font(
+      $family: $font-secondary,
+      $weight: $font-weight-bold,
+      $size: 24px // Smaller font size
+    );
+    color: $neutral-20;
+    margin: 0;
+    line-height: 1;
+  }
+
+  &__trend {
+    @include flex-center-between;
+    margin-top: 2px; // Reduced margin
+    gap: 4px;
+
+    &.trend--positive {
+      .stats-card__trend-value {
+        color: $success-color;
+      }
+    }
+
+    &.trend--negative {
+      .stats-card__trend-value {
+        color: $error-50;
+      }
+    }
+  }
+
+  &__trend-value {
+    @include font(
+      $family: $font-primary,
+      $weight: $font-weight-medium,
+      $size: $font-size-small
+    );
+  }
+
+  &__trend-label {
+    @include font(
+      $family: $font-primary,
+      $weight: $font-weight-regular,
+      $size: $font-size-small
+    );
+    color: $neutral-60;
+  }
+
+  &__trend-icon {
+    width: 12px; // Smaller icon
+    height: 12px; // Smaller icon
+    margin-left: 2px; // Reduced margin
+  }
+}
